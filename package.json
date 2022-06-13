@@ -1,0 +1,13 @@
+{
+  "name": "enthusiast-2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/sevarubbo/enthusiast-2.git",
+  "license": "MIT",
+  "scripts": {
+    "build": "sh scripts/build.sh"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.43"
+  }
+}
