@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "strict": true,
+    "downlevelIteration": true,
+    "sourceMap": true,
+    "noUncheckedIndexedAccess": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "source",
+    "**/*.ts",
+    ".eslintrc.js",
+  ],
+}
