@@ -45,11 +45,13 @@ export function createTriangle(): Triangle {
     y: 400,
     color: "yellow",
     radius: 10,
-    speed: 3,
+    speed: 20,
 
     update() {
+      this.speed = getPointerPosition().x / 10;
+
       if (!this.targetPoint) {
-        this.targetPoint = { x: Math.random() * 500, y: Math.random() * 500 };
+        this.targetPoint = { x: Math.random() * 1000, y: Math.random() * 600 };
       }
 
       // Walk to random points
