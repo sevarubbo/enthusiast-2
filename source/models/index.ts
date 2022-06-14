@@ -1,6 +1,8 @@
 import { createId } from "../helpers";
 import { getPointerPosition } from "../services/io";
+import { vector } from "../services/vector";
 import type { Drawable, Identifiable, Updatable } from "../services/state";
+import type { Vector } from "../services/vector";
 
 interface Circle extends Identifiable, Drawable, Updatable {
   type: "circle";
@@ -29,6 +31,7 @@ export function createCircle(): Circle {
 interface Triangle extends Identifiable, Drawable, Updatable {
   type: "triangle";
   color: "yellow";
+  targetPoint?: Vector;
 }
 
 export function createTriangle(): Triangle {
@@ -42,8 +45,23 @@ export function createTriangle(): Triangle {
     drawable: true,
 
     update() {
-      this.x -= 1;
-      this.y += 1;
+      if (!this.targetPoint) {
+        this.targetPoint = { x: Math.random() * 500, y: Math.random() * 500 };
+      }
+
+      // Walk to random points
+      const d = vector.distance(this, this.targetPoint);
+
+      if (d < 100) {
+        this.targetPoint = undefined;
+
+        return;
+      }
+
+      const direction = vector.direction(this, this.targetPoint);
+
+      this.x += direction.x;
+      this.y += direction.y;
     },
   };
 }
