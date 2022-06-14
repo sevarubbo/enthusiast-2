@@ -1,4 +1,5 @@
 import { createId } from "../helpers";
+import { getPointerPosition } from "../services/io";
 import type { Drawable, Identifiable, Updatable } from "../services/state";
 
 interface Circle extends Identifiable, Drawable, Updatable {
@@ -16,8 +17,10 @@ export function createCircle(): Circle {
     drawable: true,
 
     update() {
-      this.x += 1;
-      this.y += 1;
+      const pointerPosition = getPointerPosition();
+
+      this.x = pointerPosition.x;
+      this.y = pointerPosition.y;
     },
   };
 }

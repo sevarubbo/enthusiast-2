@@ -1,19 +1,11 @@
 import { createDefaultState } from "./data";
+import { createCanvas } from "./services/canvas";
+import { setPointerPosition } from "./services/io";
 import type { Drawable } from "./services/state";
 
-// Create canvas
-const canvas = document.createElement("canvas");
+const { canvas, onCanvasMouseMove } = createCanvas();
 
-// Set canvas resolution
-canvas.width = document.body.offsetWidth;
-canvas.height = document.body.offsetHeight;
-
-// Set canvas styles
-canvas.style.width = "100%";
-canvas.style.height = "100%";
-
-// Add canvas to the DOM
-document.body.appendChild(canvas);
+onCanvasMouseMove((position) => setPointerPosition(position));
 
 // Draw on canvas
 
