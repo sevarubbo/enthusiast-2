@@ -1,20 +1,5 @@
 import { createId } from "../helpers";
-
-export interface Identifiable {
-  id: string;
-}
-
-export interface Drawable {
-  drawable: true;
-  x: number;
-  y: number;
-  color: string;
-  radius: number;
-}
-
-export interface Updatable {
-  update(): void;
-}
+import type { Drawable, Identifiable, Updatable } from "../services/state";
 
 interface Circle extends Identifiable, Drawable, Updatable {
   type: "circle";

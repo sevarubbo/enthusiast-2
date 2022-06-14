@@ -1,5 +1,5 @@
-import { createCircle, createTriangle } from "./models";
-import type { Drawable, Identifiable, Updatable } from "./models";
+import { createDefaultState } from "./data";
+import type { Drawable } from "./services/state";
 
 // Create canvas
 const canvas = document.createElement("canvas");
@@ -24,6 +24,7 @@ if (!canvasContext) {
   throw new Error("Context not found");
 }
 
+// Drawer
 function draw (ctx: CanvasRenderingContext2D, drawable: Drawable) {
   ctx.beginPath();
   ctx.arc(drawable.x, drawable.y, drawable.radius, 0, Math.PI * 2, false);
@@ -32,20 +33,10 @@ function draw (ctx: CanvasRenderingContext2D, drawable: Drawable) {
   ctx.closePath();
 }
 
-interface State {
-  objects: Record<string, Updatable | Identifiable>;
-}
+// State
+const state = createDefaultState();
 
-const circle = createCircle();
-const triangle = createTriangle();
-
-const state: State = {
-  objects: {
-    [circle.id]: circle,
-    [triangle.id]: triangle,
-  },
-};
-
+// Game loop
 const gameLoop = (ctx: CanvasRenderingContext2D) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
