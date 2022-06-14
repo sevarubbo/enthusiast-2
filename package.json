@@ -10,6 +10,7 @@
   "devDependencies": {
     "esbuild": "^0.14.43",
     "eslint": "^8.17.0",
-    "eslint-config-seva": "sevarubbo/eslint-config-seva"
+    "eslint-config-seva": "sevarubbo/eslint-config-seva",
+    "typescript": "^4.7.3"
   }
 }
