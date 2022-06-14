@@ -5,6 +5,7 @@ export interface Identifiable {
 }
 
 export interface Drawable {
+  drawable: true;
   x: number;
   y: number;
   color: string;
@@ -27,9 +28,33 @@ export function createCircle(): Circle {
     y: 200,
     color: "green",
     radius: 20,
+    drawable: true,
 
     update() {
       this.x += 1;
+      this.y += 1;
+    },
+  };
+}
+
+// Triangle
+interface Triangle extends Identifiable, Drawable, Updatable {
+  type: "triangle";
+  color: "yellow";
+}
+
+export function createTriangle(): Triangle {
+  return {
+    id: createId(),
+    type: "triangle",
+    x: 500,
+    y: 400,
+    color: "yellow",
+    radius: 10,
+    drawable: true,
+
+    update() {
+      this.x -= 1;
       this.y += 1;
     },
   };

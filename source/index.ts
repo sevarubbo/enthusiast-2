@@ -1,4 +1,4 @@
-import { createCircle } from "./models";
+import { createCircle, createTriangle } from "./models";
 import type { Drawable, Identifiable, Updatable } from "./models";
 
 // Create canvas
@@ -37,10 +37,12 @@ interface State {
 }
 
 const circle = createCircle();
+const triangle = createTriangle();
 
 const state: State = {
   objects: {
     [circle.id]: circle,
+    [triangle.id]: triangle,
   },
 };
 
@@ -56,9 +58,11 @@ const gameLoop = (ctx: CanvasRenderingContext2D) => {
     if ("update" in object) {
       object.update();
     }
-  }
 
-  draw(canvasContext, circle);
+    if ("drawable" in object) {
+      draw(canvasContext, object);
+    }
+  }
 
   requestAnimationFrame(() => gameLoop(ctx));
 };

@@ -1,5 +1,7 @@
-const lastId = 0;
+let lastId = 0;
 
 export function createId() {
-  return `${lastId + 1}`;
+  lastId += 1;
+
+  return `${lastId}`;
 }
