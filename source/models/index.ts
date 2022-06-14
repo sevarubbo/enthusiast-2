@@ -1,11 +1,13 @@
 import { createId } from "../helpers";
 import { getPointerPosition } from "../services/io";
 import { vector } from "../services/vector";
-import type { Drawable, Identifiable, Updatable } from "../services/state";
+import type { Identifiable, Updatable } from "../services/state";
 import type { Vector } from "../services/vector";
 
-interface Circle extends Identifiable, Drawable, Updatable {
+export interface Circle extends Identifiable, Updatable, Vector {
   type: "circle";
+  color: "green";
+  radius: 20;
 }
 
 export function createCircle(): Circle {
@@ -16,7 +18,6 @@ export function createCircle(): Circle {
     y: 200,
     color: "green",
     radius: 20,
-    drawable: true,
 
     update() {
       const pointerPosition = getPointerPosition();
@@ -28,10 +29,12 @@ export function createCircle(): Circle {
 }
 
 // Triangle
-interface Triangle extends Identifiable, Drawable, Updatable {
+export interface Triangle extends Identifiable, Updatable, Vector {
   type: "triangle";
   color: "yellow";
+  radius: 10;
   targetPoint?: Vector;
+  speed: number;
 }
 
 export function createTriangle(): Triangle {
@@ -42,7 +45,7 @@ export function createTriangle(): Triangle {
     y: 400,
     color: "yellow",
     radius: 10,
-    drawable: true,
+    speed: 3,
 
     update() {
       if (!this.targetPoint) {
@@ -52,7 +55,7 @@ export function createTriangle(): Triangle {
       // Walk to random points
       const d = vector.distance(this, this.targetPoint);
 
-      if (d < 100) {
+      if (d < this.speed) {
         this.targetPoint = undefined;
 
         return;
@@ -60,8 +63,8 @@ export function createTriangle(): Triangle {
 
       const direction = vector.direction(this, this.targetPoint);
 
-      this.x += direction.x;
-      this.y += direction.y;
+      this.x += direction.x * this.speed;
+      this.y += direction.y * this.speed;
     },
   };
 }

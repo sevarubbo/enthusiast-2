@@ -1,7 +1,7 @@
 import { createDefaultState } from "./data";
+import { createCanvasDrawer } from "./graphics";
 import { createCanvas } from "./services/canvas";
 import { setPointerPosition } from "./services/io";
-import type { Drawable } from "./services/state";
 
 const { canvas, onCanvasMouseMove } = createCanvas();
 
@@ -16,17 +16,10 @@ if (!canvasContext) {
   throw new Error("Context not found");
 }
 
-// Drawer
-function draw (ctx: CanvasRenderingContext2D, drawable: Drawable) {
-  ctx.beginPath();
-  ctx.arc(drawable.x, drawable.y, drawable.radius, 0, Math.PI * 2, false);
-  ctx.fillStyle = drawable.color;
-  ctx.fill();
-  ctx.closePath();
-}
-
 // State
 const state = createDefaultState();
+
+const { draw } = createCanvasDrawer(canvasContext);
 
 // Game loop
 const gameLoop = (ctx: CanvasRenderingContext2D) => {
@@ -42,8 +35,8 @@ const gameLoop = (ctx: CanvasRenderingContext2D) => {
       object.update();
     }
 
-    if ("drawable" in object) {
-      draw(canvasContext, object);
+    if ("type" in object) {
+      draw(object);
     }
   }
 
