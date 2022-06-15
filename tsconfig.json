@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "strict": true,
-    "baseUrl": "./source"
+    "baseUrl": "./source",
+    "target": "ES2017",
+    "moduleResolution":  "node"
   },
   "include": [
     "source",

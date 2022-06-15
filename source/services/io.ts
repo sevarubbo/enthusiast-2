@@ -10,14 +10,26 @@ export function getPointerPosition() {
   return pointerPosition;
 }
 
-export type KeyboardKey = "0" | "1" | "2" | "3" | "=" | "-";
+export type KeyboardKey = (
+    | "0" | "1" | "2" | "3" | "=" | "-"
+    | "ArrowUp"
+    | "ArrowDown"
+    | "ArrowLeft"
+    | "ArrowRight"
+    );
 
 let currentKeyPressed: KeyboardKey | null = null;
-let prevKey: KeyboardKey | null = null;
+
+const currentKeysPressed: Set<KeyboardKey> = new Set<KeyboardKey>();
 
 export function setKeyPressed(key: KeyboardKey | null) {
-  prevKey = currentKeyPressed;
+  // eslint-disable-next-line no-console
+  console.log("Key: ", key);
   currentKeyPressed = key;
+
+  if (key) {
+    currentKeysPressed.add(key);
+  }
 }
 
 export function getKeyPressed() {
@@ -28,12 +40,18 @@ let currentKeyUp: KeyboardKey | null = null;
 
 export function setKeyUp(key: KeyboardKey | null) {
   currentKeyUp = key;
+
+  if (key) {
+    currentKeysPressed.delete(key);
+  }
 }
 
 export function getKeyUp() {
   return currentKeyUp;
 }
 
-export function getChangedKey() {
-  return prevKey !== currentKeyUp ? currentKeyUp : null;
+export function getKeysPressed() {
+  return {
+    keysPressed: currentKeysPressed,
+  };
 }

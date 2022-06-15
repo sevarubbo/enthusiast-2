@@ -35,6 +35,7 @@ const { draw } = createCanvasDrawer(canvasContext);
 // Game loop
 const gameLoop = (ctx: CanvasRenderingContext2D) => {
   state.gameSpeedManager.update(() => state);
+  state.cameraManager.update(() => state);
 
   if (state.gameSpeedManager.gameSpeed > 0) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);

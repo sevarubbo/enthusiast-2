@@ -1,4 +1,4 @@
-import { getKeyPressed } from "./io";
+import { getKeyPressed, getKeysPressed } from "./io";
 import { vector } from "./vector";
 import type { Vector } from "./vector";
 
@@ -53,6 +53,8 @@ export interface CameraManager extends Updatable {
   toScreen(coordinates: Vector): Vector;
 }
 
+const SCROLL_SPEED = 2;
+
 export const createCameraManager = (): CameraManager => ({
   position: { x: -100, y: -100 },
   toScreen(coordinates: Vector) {
@@ -63,6 +65,22 @@ export const createCameraManager = (): CameraManager => ({
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(getState: () => State<object>) {
-    //
+    const { keysPressed } = getKeysPressed();
+
+    if (keysPressed.has("ArrowUp")) {
+      this.position.y -= SCROLL_SPEED;
+    }
+
+    if (keysPressed.has("ArrowDown")) {
+      this.position.y += SCROLL_SPEED;
+    }
+
+    if (keysPressed.has("ArrowRight")) {
+      this.position.x += SCROLL_SPEED;
+    }
+
+    if (keysPressed.has("ArrowLeft")) {
+      this.position.x -= SCROLL_SPEED;
+    }
   },
 });
