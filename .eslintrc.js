@@ -1,4 +1,11 @@
 module.exports = {
-  root: true,
+  "root": true,
   "extends": "eslint-config-seva",
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": ["./source"],
+      },
+    },
+  },
 };

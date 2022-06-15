@@ -5,6 +5,7 @@
   "repository": "https://github.com/sevarubbo/enthusiast-2.git",
   "license": "MIT",
   "scripts": {
+    "check-types": "tsc --noEmit",
     "build": "sh scripts/build.sh"
   },
   "devDependencies": {

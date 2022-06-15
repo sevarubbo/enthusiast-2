@@ -45,10 +45,10 @@ export function createTriangle(): Triangle {
     y: 400,
     color: "yellow",
     radius: 10,
-    speed: 20,
+    speed: 1,
 
-    update() {
-      this.speed = getPointerPosition().x / 10;
+    update(getState) {
+      const speed = this.speed * getState().gameSpeedManager.gameSpeed;
 
       if (!this.targetPoint) {
         this.targetPoint = { x: Math.random() * 1000, y: Math.random() * 600 };
@@ -57,7 +57,7 @@ export function createTriangle(): Triangle {
       // Walk to random points
       const d = vector.distance(this, this.targetPoint);
 
-      if (d < this.speed) {
+      if (d < speed) {
         this.targetPoint = undefined;
 
         return;
@@ -65,8 +65,8 @@ export function createTriangle(): Triangle {
 
       const direction = vector.direction(this, this.targetPoint);
 
-      this.x += direction.x * this.speed;
-      this.y += direction.y * this.speed;
+      this.x += direction.x * speed;
+      this.y += direction.y * speed;
     },
   };
 }

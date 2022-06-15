@@ -10,11 +10,13 @@ export function getPointerPosition() {
   return pointerPosition;
 }
 
-export type KeyboardKey = "0" | "1" | "2";
+export type KeyboardKey = "0" | "1" | "2" | "3" | "=" | "-";
 
 let currentKeyPressed: KeyboardKey | null = null;
+let prevKey: KeyboardKey | null = null;
 
 export function setKeyPressed(key: KeyboardKey | null) {
+  prevKey = currentKeyPressed;
   currentKeyPressed = key;
 }
 
@@ -30,4 +32,8 @@ export function setKeyUp(key: KeyboardKey | null) {
 
 export function getKeyUp() {
   return currentKeyUp;
+}
+
+export function getChangedKey() {
+  return prevKey !== currentKeyUp ? currentKeyUp : null;
 }

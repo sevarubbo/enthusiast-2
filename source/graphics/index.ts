@@ -1,4 +1,4 @@
-import type { StateObject } from "../data";
+import type { StateObject } from "types";
 
 function drawCircle(ctx: CanvasRenderingContext2D, o: { x: number; y: number; radius: number; color: string }) {
   ctx.beginPath();
