@@ -19,11 +19,12 @@ export function createCircle(): Circle {
     color: "green",
     radius: 20,
 
-    update() {
+    update(getState) {
       const pointerPosition = getPointerPosition();
+      const p = getState().cameraManager.fromScreen(pointerPosition);
 
-      this.x = pointerPosition.x;
-      this.y = pointerPosition.y;
+      this.x = p.x;
+      this.y = p.y;
     },
   };
 }
@@ -48,10 +49,11 @@ export function createTriangle(): Triangle {
     speed: 1,
 
     update(getState) {
-      const speed = this.speed * getState().gameSpeedManager.gameSpeed;
+      const state = getState();
+      const speed = this.speed * state.gameSpeedManager.gameSpeed;
 
       if (!this.targetPoint) {
-        this.targetPoint = { x: Math.random() * 1000, y: Math.random() * 600 };
+        this.targetPoint = { x: Math.random() * state.world.size.x, y: Math.random() * state.world.size.y };
       }
 
       // Walk to random points

@@ -1,4 +1,6 @@
 import { getKeyPressed } from "./io";
+import { vector } from "./vector";
+import type { Vector } from "./vector";
 
 export interface Identifiable {
   id: string;
@@ -6,6 +8,10 @@ export interface Identifiable {
 
 export interface State<OT> {
   gameSpeedManager: GameSpeedManager;
+  world: {
+    size: Vector;
+  };
+  cameraManager: CameraManager;
   objects: Record<string, OT>;
 }
 
@@ -38,5 +44,25 @@ export const createGameSpeedManager = (): GameSpeedManager => ({
         this.gameSpeed = 0;
       }
     }
+  },
+});
+
+export interface CameraManager extends Updatable {
+  position: Vector;
+  fromScreen(coordinates: Vector): Vector;
+  toScreen(coordinates: Vector): Vector;
+}
+
+export const createCameraManager = (): CameraManager => ({
+  position: { x: -100, y: -100 },
+  toScreen(coordinates: Vector) {
+    return vector.subtract(coordinates, this.position);
+  },
+  fromScreen(coordinates: Vector) {
+    return vector.add(coordinates, this.position);
+  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  update(getState: () => State<object>) {
+    //
   },
 });

@@ -47,11 +47,9 @@ const gameLoop = (ctx: CanvasRenderingContext2D) => {
       if ("update" in object) {
         object.update(() => state);
       }
-
-      if ("type" in object) {
-        draw(object);
-      }
     }
+
+    draw(state);
   }
 
   requestAnimationFrame(() => gameLoop(ctx));
