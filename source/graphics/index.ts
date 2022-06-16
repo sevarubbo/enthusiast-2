@@ -1,5 +1,6 @@
 import type { Vector } from "../services/vector";
-import type { GameState, StateObject } from "types";
+import type { State } from "services/state";
+import type { StateObject } from "types";
 
 function drawCircle(ctx: CanvasRenderingContext2D, o: { position: Vector; radius: number; color: string }) {
   ctx.beginPath();
@@ -16,7 +17,7 @@ function drawRectangle(ctx: CanvasRenderingContext2D, o: { position: Vector; siz
   ctx.strokeRect(o.position.x, o.position.y, o.size.x, o.size.y);
 }
 
-function drawObject(ctx: CanvasRenderingContext2D, state: GameState, object: StateObject) {
+function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateObject) {
   switch (object.type) {
     case "circle": {
       drawCircle(ctx, {
@@ -49,8 +50,8 @@ function drawObject(ctx: CanvasRenderingContext2D, state: GameState, object: Sta
 
 function drawObjects(
   ctx: CanvasRenderingContext2D,
-  state: GameState,
-  objects: GameState["gameObjectsManager"]["objects"],
+  state: State,
+  objects: State["gameObjectsManager"]["objects"],
 ) {
   for (const objectId in objects) {
     const object = objects[objectId];
@@ -63,7 +64,7 @@ function drawObjects(
 
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
   return {
-    draw: (state: GameState) => {
+    draw: (state: State) => {
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.fillStyle = "#111";
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);

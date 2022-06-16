@@ -7,6 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "check-types": "tsc --noEmit",
+    "verify": "yarn check-types && yarn lint",
     "build": "sh scripts/build.sh"
   },
   "devDependencies": {

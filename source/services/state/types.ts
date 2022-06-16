@@ -3,17 +3,17 @@ import type { GameObjectsManager } from "./gameObjectsManager";
 import type { GameSpeedManager } from "./gameSpeedManager";
 import type { Vector } from "services/vector";
 
-export interface State<OT> {
+export interface State {
   cameraManager: CameraManager;
   gameSpeedManager: GameSpeedManager;
-  gameObjectsManager: GameObjectsManager<OT>;
+  gameObjectsManager: GameObjectsManager;
   world: {
     size: Vector;
   };
 }
 
 export interface Updatable {
-  update(getState: () => State<object>): void;
+  update(getState: () => State): void;
 }
 
 export interface Identifiable {

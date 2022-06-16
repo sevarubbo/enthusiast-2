@@ -1,15 +1,13 @@
 import type { Updatable } from "./types";
-import type { Vector } from "services/vector";
+import type { StateObject } from "types";
 
-type DefaultGameObject = Updatable | Vector | object;
-
-export interface GameObjectsManager<OT = DefaultGameObject> extends Updatable {
-  objects: Record<string, OT>;
+export interface GameObjectsManager extends Updatable {
+  objects: Record<string, StateObject>;
 }
 
-export const createGameObjectsManager = <OT extends DefaultGameObject = DefaultGameObject>(
-  o: Partial<Pick<GameObjectsManager<OT>, "objects">>,
-): GameObjectsManager<OT> => ({
+export const createGameObjectsManager = (
+  o: Partial<Pick<GameObjectsManager, "objects">>,
+): GameObjectsManager => ({
   objects: o.objects || {},
   update(getState) {
     const state = getState();
