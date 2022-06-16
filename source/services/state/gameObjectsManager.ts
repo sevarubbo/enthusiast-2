@@ -4,15 +4,20 @@ import type { StateObject } from "types";
 export interface GameObjectsManager extends Updatable {
   objects: Record<string, StateObject>;
   spawnObject(object: StateObject): void;
+  despawnObject(object: StateObject): void;
 }
 
 export const createGameObjectsManager = (
-  o: Partial<Pick<GameObjectsManager, "objects" | "update">>,
+  options: Partial<Pick<GameObjectsManager, "objects" | "update">>,
 ): GameObjectsManager => ({
-  objects: o.objects || {},
+  objects: options.objects || {},
 
   spawnObject(object) {
     this.objects[object.id] = object;
+  },
+
+  despawnObject(object) {
+    delete this.objects[object.id];
   },
 
   update(delta, getState) {
@@ -28,8 +33,8 @@ export const createGameObjectsManager = (
       }
     }
 
-    if (o.update) {
-      o.update(delta, getState);
+    if (options.update) {
+      options.update(delta, getState);
     }
   },
 });

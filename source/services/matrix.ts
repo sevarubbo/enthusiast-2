@@ -17,4 +17,24 @@ export const matrix = {
 
     return vector.create(x, y);
   },
+
+  withinBox(point: Vector, mtrx: Matrix): boolean {
+    if (point.x < mtrx[0].x) {
+      return false;
+    }
+
+    if (point.y < mtrx[0].y) {
+      return false;
+    }
+
+    if (point.x > mtrx[0].x + mtrx[1].x) {
+      return false;
+    }
+
+    if (point.y > mtrx[0].y + mtrx[1].y) {
+      return false;
+    }
+
+    return true;
+  },
 };

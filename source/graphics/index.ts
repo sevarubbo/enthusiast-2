@@ -14,11 +14,13 @@ function drawUI(
   state: State,
 ) {
   ctx.fillStyle = "#fff";
-  ctx.font = "48px serif";
+  ctx.font = "36px serif";
 
   const n = Object.keys(state.gameObjectsManager.objects).length;
+  const LEFT_OFFSET = 50;
 
-  ctx.fillText(`${n}`, 100, 100);
+  ctx.fillText(`${n}`, LEFT_OFFSET, 100);
+  ctx.fillText(`${state.gameSpeedManager.gameSpeed.toFixed(2)}`, LEFT_OFFSET, 150);
 }
 
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
