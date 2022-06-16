@@ -6,11 +6,13 @@ import { vector } from "services/vector";
 import type { State } from "services/state";
 
 const circle = createCircle();
-const triangle = createTriangle();
-const triangle2 = createTriangle();
-const triangle3 = createTriangle();
+// const triangle = createTriangle();
+// const triangle2 = createTriangle();
+// const triangle3 = createTriangle();
 
 export function createDefaultState(): State {
+  let timeSinceLastSpawn = 0;
+
   return {
     world: {
       size: { x: 700, y: 700 },
@@ -26,9 +28,18 @@ export function createDefaultState(): State {
     gameObjectsManager: createGameObjectsManager({
       objects: {
         [circle.id]: circle,
-        [triangle.id]: triangle,
-        [triangle2.id]: triangle2,
-        [triangle3.id]: triangle3,
+        // [triangle.id]: triangle,
+        // [triangle2.id]: triangle2,
+        // [triangle3.id]: triangle3,
+      },
+      update(delta, getState) {
+        timeSinceLastSpawn += delta;
+
+        if (timeSinceLastSpawn > 1000) {
+          timeSinceLastSpawn = 0;
+
+          getState().gameObjectsManager.spawnObject(createTriangle());
+        }
       },
     }),
   };

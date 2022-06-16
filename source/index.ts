@@ -32,15 +32,25 @@ const state = createDefaultState();
 
 const { draw } = createCanvasDrawer(canvasContext);
 
+let lastNow: number;
+const MAX_DELTA = 10;
+
 // Game loop
-const gameLoop = (ctx: CanvasRenderingContext2D) => {
-  state.gameSpeedManager.update(() => state);
-  state.cameraManager.update(() => state);
-  state.gameObjectsManager.update(() => state);
+const gameLoop = (ctx: CanvasRenderingContext2D, now: number) => {
+  const delta = Math.min(now - lastNow, MAX_DELTA) * state.gameSpeedManager.gameSpeed;
+
+  lastNow = now;
+
+  state.gameSpeedManager.update(delta, () => state);
+  state.cameraManager.update(delta, () => state);
+  state.gameObjectsManager.update(delta, () => state);
 
   draw(state);
 
-  requestAnimationFrame(() => gameLoop(ctx));
+  requestAnimationFrame((newNow) => gameLoop(ctx, newNow));
 };
 
-requestAnimationFrame(() => gameLoop(canvasContext));
+requestAnimationFrame((now) => {
+  lastNow = now;
+  gameLoop(canvasContext, now);
+});

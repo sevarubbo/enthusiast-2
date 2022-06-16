@@ -13,7 +13,7 @@ export interface State {
 }
 
 export interface Updatable {
-  update(getState: () => State): void;
+  update(delta: number, getState: () => State): void;
 }
 
 export interface Identifiable {

@@ -19,7 +19,7 @@ export function createCircle(): Circle {
     color: "green",
     radius: 20,
 
-    update(getState) {
+    update(delta, getState) {
       const pointerPosition = getPointerPosition();
       const p = getState().cameraManager.fromScreen(pointerPosition);
 
@@ -46,11 +46,11 @@ export function createTriangle(): Triangle {
     y: 400,
     color: "yellow",
     radius: 10,
-    speed: 1,
+    speed: 0.1,
 
-    update(getState) {
+    update(delta, getState) {
       const state = getState();
-      const speed = this.speed * state.gameSpeedManager.gameSpeed;
+      const speed = this.speed * delta;
 
       if (!this.targetPoint) {
         this.targetPoint = { x: Math.random() * state.world.size.x, y: Math.random() * state.world.size.y };
