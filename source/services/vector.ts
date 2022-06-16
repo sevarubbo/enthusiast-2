@@ -4,6 +4,9 @@ export interface Vector {
 }
 
 export const vector = {
+  create(x: number, y: number): Vector {
+    return { x, y };
+  },
   distance(vector1: Vector, vector2: Vector) {
     return Math.sqrt((vector2.x - vector1.x) ** 2 + (vector2.y - vector1.y) ** 2);
   },
@@ -13,10 +16,10 @@ export const vector = {
       y: v.y * value,
     };
   },
-  add(vector1: Vector, vector2: Vector): Vector {
+  add(...vectors: Vector[]): Vector {
     return {
-      x: vector1.x + vector2.x,
-      y: vector1.y + vector2.y,
+      x: vectors.reduce((s, c) => s + c.x, 0),
+      y: vectors.reduce((s, c) => s + c.y, 0),
     };
   },
   subtract(vector1: Vector, vector2: Vector): Vector {

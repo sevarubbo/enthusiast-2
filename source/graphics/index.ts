@@ -9,11 +9,11 @@ function drawCircle(ctx: CanvasRenderingContext2D, o: { position: Vector; radius
   ctx.closePath();
 }
 
-function drawRectangle(ctx: CanvasRenderingContext2D, o: { position: Vector; width: number; height: number }) {
+function drawRectangle(ctx: CanvasRenderingContext2D, o: { position: Vector; size: Vector }) {
   ctx.lineWidth = 1;
-  ctx.strokeStyle = "#fff";
+  ctx.strokeStyle = "#333";
 
-  ctx.strokeRect(o.position.x, o.position.y, o.width, o.height);
+  ctx.strokeRect(o.position.x, o.position.y, o.size.x, o.size.y);
 }
 
 function drawObject(ctx: CanvasRenderingContext2D, state: GameState, object: StateObject) {
@@ -38,7 +38,7 @@ function drawObject(ctx: CanvasRenderingContext2D, state: GameState, object: Sta
         drawCircle(ctx, {
           position: state.cameraManager.toScreen(object.targetPoint),
           color: "#fff",
-          radius: 5,
+          radius: 3,
         });
       }
 
@@ -51,7 +51,9 @@ function drawObjects(ctx: CanvasRenderingContext2D, state: GameState, objects: G
   for (const objectId in objects) {
     const object = objects[objectId];
 
-    drawObject(ctx, state, object);
+    if (state.cameraManager.isWithinFrame(state.cameraManager.toScreen(object))) {
+      drawObject(ctx, state, object);
+    }
   }
 }
 
@@ -63,8 +65,13 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
       // Draw world pane
       drawRectangle(ctx, {
         position: state.cameraManager.toScreen({ x: 0, y: 0 }),
-        width: state.world.size.x,
-        height: state.world.size.y,
+        size: state.world.size,
+      });
+
+      // Draw camera frame
+      drawRectangle(ctx, {
+        position: state.cameraManager.frame.position,
+        size: state.cameraManager.frame.size,
       });
     },
   } as const;
