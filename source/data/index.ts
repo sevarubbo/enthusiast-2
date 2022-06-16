@@ -11,7 +11,8 @@ const circle = createCircle();
 // const triangle3 = createTriangle();
 
 export function createDefaultState(): State {
-  let timeSinceLastSpawn = 0;
+  let timeSinceLastTriangleSpawn = 0;
+  const MAX_TRIANGLES = 3;
 
   return {
     world: {
@@ -33,12 +34,26 @@ export function createDefaultState(): State {
         // [triangle3.id]: triangle3,
       },
       update(delta, getState) {
-        timeSinceLastSpawn += delta;
+        const gameObjectsManager = getState().gameObjectsManager;
 
-        if (timeSinceLastSpawn > 1000) {
-          timeSinceLastSpawn = 0;
+        timeSinceLastTriangleSpawn += delta;
 
-          getState().gameObjectsManager.spawnObject(createTriangle());
+        let trianglesCount = 0;
+
+        for (const id in gameObjectsManager.objects) {
+          const object = gameObjectsManager.objects[id];
+
+          trianglesCount += object.type === "triangle" ? 1 : 0;
+        }
+
+        if (trianglesCount >= MAX_TRIANGLES) {
+          return;
+        }
+
+        if (timeSinceLastTriangleSpawn > 1000) {
+          timeSinceLastTriangleSpawn = 0;
+
+          gameObjectsManager.spawnObject(createTriangle());
         }
       },
     }),
