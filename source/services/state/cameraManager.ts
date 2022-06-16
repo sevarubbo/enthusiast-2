@@ -1,7 +1,7 @@
-import { getKeysPressed } from "./io";
-import { vector } from "./vector";
-import type { Updatable } from "./state";
-import type { Vector } from "./vector";
+import { getKeysPressed } from "../io";
+import { vector } from "../vector";
+import type { Updatable } from ".";
+import type { Vector } from "../vector";
 
 export interface CameraManager extends Updatable {
   frame: {

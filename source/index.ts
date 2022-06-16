@@ -36,22 +36,9 @@ const { draw } = createCanvasDrawer(canvasContext);
 const gameLoop = (ctx: CanvasRenderingContext2D) => {
   state.gameSpeedManager.update(() => state);
   state.cameraManager.update(() => state);
+  state.gameObjectsManager.update(() => state);
 
-  if (state.gameSpeedManager.gameSpeed > 0) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvasContext.fillStyle = "#111";
-    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-
-    for (const objectId in state.objects) {
-      const object = state.objects[objectId];
-
-      if ("update" in object) {
-        object.update(() => state);
-      }
-    }
-
-    draw(state);
-  }
+  draw(state);
 
   requestAnimationFrame(() => gameLoop(ctx));
 };

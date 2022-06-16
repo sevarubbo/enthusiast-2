@@ -1,5 +1,5 @@
-import { getKeyPressed } from "./io";
-import type { Updatable } from "./state";
+import { getKeyPressed } from "../io";
+import type { Updatable } from "./index";
 
 export interface GameSpeedManager extends Updatable {
   gameSpeed: number;

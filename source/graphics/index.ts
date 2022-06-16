@@ -47,7 +47,11 @@ function drawObject(ctx: CanvasRenderingContext2D, state: GameState, object: Sta
   }
 }
 
-function drawObjects(ctx: CanvasRenderingContext2D, state: GameState, objects: GameState["objects"]) {
+function drawObjects(
+  ctx: CanvasRenderingContext2D,
+  state: GameState,
+  objects: GameState["gameObjectsManager"]["objects"],
+) {
   for (const objectId in objects) {
     const object = objects[objectId];
 
@@ -60,7 +64,11 @@ function drawObjects(ctx: CanvasRenderingContext2D, state: GameState, objects: G
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
   return {
     draw: (state: GameState) => {
-      drawObjects(ctx, state, state.objects);
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.fillStyle = "#111";
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      drawObjects(ctx, state, state.gameObjectsManager.objects);
 
       // Draw world pane
       drawRectangle(ctx, {

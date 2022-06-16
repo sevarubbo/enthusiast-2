@@ -1,8 +1,9 @@
+import { createGameObjectsManager } from "../services/state/gameObjectsManager";
 import { createCircle, createTriangle } from "models";
-import { createCameraManager } from "services/cameraManager";
-import { createGameSpeedManager } from "services/gameSpeedManager";
+import { createCameraManager } from "services/state/cameraManager";
+import { createGameSpeedManager } from "services/state/gameSpeedManager";
 import { vector } from "services/vector";
-import type { GameState } from "types";
+import type { GameState, StateObject } from "types";
 
 const circle = createCircle();
 const triangle = createTriangle();
@@ -11,6 +12,9 @@ const triangle3 = createTriangle();
 
 export function createDefaultState(): GameState {
   return {
+    world: {
+      size: { x: 700, y: 700 },
+    },
     gameSpeedManager: createGameSpeedManager(),
     cameraManager: createCameraManager({
       frame: {
@@ -19,14 +23,13 @@ export function createDefaultState(): GameState {
       },
       worldTargetPoint: vector.create(350, 350),
     }),
-    world: {
-      size: { x: 700, y: 700 },
-    },
-    objects: {
-      [circle.id]: circle,
-      [triangle.id]: triangle,
-      [triangle2.id]: triangle2,
-      [triangle3.id]: triangle3,
-    },
+    gameObjectsManager: createGameObjectsManager<StateObject>({
+      objects: {
+        [circle.id]: circle,
+        [triangle.id]: triangle,
+        [triangle2.id]: triangle2,
+        [triangle3.id]: triangle3,
+      },
+    }),
   };
 }
