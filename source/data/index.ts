@@ -1,12 +1,10 @@
 import { createGameObjectsManager } from "../services/state/gameObjectsManager";
-import { createCircle, createEnemy } from "models";
+import { createEnemy, createTower } from "models";
 import { createCameraManager } from "services/state/cameraManager";
 import { createGameSpeedManager } from "services/state/gameSpeedManager";
 import { vector } from "services/vector";
 import type { State, Updatable } from "services/state";
 import type { Vector } from "services/vector";
-
-const circle = createCircle();
 
 const createEnemySpawner = (): Updatable => {
   let timeSinceLastSpawn = 0;
@@ -58,11 +56,14 @@ const createEnemySpawner = (): Updatable => {
 };
 
 export function createDefaultState(): State {
+  const WORLD_SIZE = vector.create(600, 600);
+
   const enemySpawner = createEnemySpawner();
+  const tower = createTower(vector.scale(WORLD_SIZE, 1 / 2));
 
   return {
     world: {
-      size: { x: 600, y: 600 },
+      size: WORLD_SIZE,
     },
     gameSpeedManager: createGameSpeedManager(),
     cameraManager: createCameraManager({
@@ -70,11 +71,11 @@ export function createDefaultState(): State {
         position: vector.create(200, 200),
         size: vector.create(700, 700),
       },
-      worldTargetPoint: vector.create(300, 300),
+      worldTargetPoint: vector.scale(WORLD_SIZE, 1 / 2),
     }),
     gameObjectsManager: createGameObjectsManager({
       objects: {
-        [circle.id]: circle,
+        [tower.id]: tower,
       },
       update(delta, getState) {
         enemySpawner.update(delta, getState);

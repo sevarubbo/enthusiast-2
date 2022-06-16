@@ -1,14 +1,6 @@
+import { drawObjects } from "./objects";
 import type { Vector } from "../services/vector";
 import type { State } from "services/state";
-import type { StateObject } from "types";
-
-function drawCircle(ctx: CanvasRenderingContext2D, o: { position: Vector; radius: number; color: string }) {
-  ctx.beginPath();
-  ctx.arc(o.position.x, o.position.y, o.radius, 0, Math.PI * 2, false);
-  ctx.fillStyle = o.color;
-  ctx.fill();
-  ctx.closePath();
-}
 
 function drawRectangle(ctx: CanvasRenderingContext2D, o: { position: Vector; size: Vector }) {
   ctx.lineWidth = 1;
@@ -17,49 +9,16 @@ function drawRectangle(ctx: CanvasRenderingContext2D, o: { position: Vector; siz
   ctx.strokeRect(o.position.x, o.position.y, o.size.x, o.size.y);
 }
 
-function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateObject) {
-  switch (object.type) {
-    case "circle": {
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-        ...object,
-      });
-
-      return;
-    }
-
-    case "enemy": {
-      // Draw next point
-      if (object.targetPoint) {
-        drawCircle(ctx, {
-          position: state.cameraManager.toScreen(object.targetPoint),
-          color: "#fff",
-          radius: 3,
-        });
-      }
-
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-        ...object,
-      });
-
-      return;
-    }
-  }
-}
-
-function drawObjects(
+function drawUI(
   ctx: CanvasRenderingContext2D,
   state: State,
-  objects: State["gameObjectsManager"]["objects"],
 ) {
-  for (const objectId in objects) {
-    const object = objects[objectId];
+  ctx.fillStyle = "#fff";
+  ctx.font = "48px serif";
 
-    if (state.cameraManager.isWithinFrame(state.cameraManager.toScreen(object))) {
-      drawObject(ctx, state, object);
-    }
-  }
+  const n = Object.keys(state.gameObjectsManager.objects).length;
+
+  ctx.fillText(`${n}`, 100, 100);
 }
 
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
@@ -83,6 +42,9 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
 
       // Draw objects
       drawObjects(ctx, state, state.gameObjectsManager.objects);
+
+      // Draw UI
+      drawUI(ctx, state);
     },
   } as const;
 }

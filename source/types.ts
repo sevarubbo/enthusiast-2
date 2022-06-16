@@ -1,6 +1,6 @@
-import type { Circle, Enemy } from "./models";
+import type { Enemy, Tower } from "./models";
 
 export type StateObject = (
-  | Circle
   | Enemy
+  | Tower
 );
