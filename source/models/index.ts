@@ -1,6 +1,5 @@
 import { createId } from "../helpers";
 import { getPointerPosition } from "../services/io";
-import { vector } from "../services/vector";
 import type { Identifiable, Updatable } from "../services/state";
 import type { Vector } from "../services/vector";
 
@@ -29,46 +28,4 @@ export function createCircle(): Circle {
   };
 }
 
-// Triangle
-export interface Triangle extends Identifiable, Updatable, Vector {
-  type: "triangle";
-  color: "yellow";
-  radius: 10;
-  targetPoint?: Vector;
-  speed: number;
-}
-
-export function createTriangle(): Triangle {
-  return {
-    id: createId(),
-    type: "triangle",
-    x: 500,
-    y: 400,
-    color: "yellow",
-    radius: 10,
-    speed: 0.1,
-
-    update(delta, getState) {
-      const state = getState();
-      const speed = this.speed * delta;
-
-      if (!this.targetPoint) {
-        this.targetPoint = { x: Math.random() * state.world.size.x, y: Math.random() * state.world.size.y };
-      }
-
-      // Walk to random points
-      const d = vector.distance(this, this.targetPoint);
-
-      if (d < speed) {
-        this.targetPoint = undefined;
-
-        return;
-      }
-
-      const direction = vector.direction(this, this.targetPoint);
-
-      this.x += direction.x * speed;
-      this.y += direction.y * speed;
-    },
-  };
-}
+export * from "./enemy";

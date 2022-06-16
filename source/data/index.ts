@@ -1,18 +1,46 @@
 import { createGameObjectsManager } from "../services/state/gameObjectsManager";
-import { createCircle, createTriangle } from "models";
+import { createCircle, createEnemy } from "models";
 import { createCameraManager } from "services/state/cameraManager";
 import { createGameSpeedManager } from "services/state/gameSpeedManager";
 import { vector } from "services/vector";
-import type { State } from "services/state";
+import type { State, Updatable } from "services/state";
 
 const circle = createCircle();
-// const triangle = createTriangle();
-// const triangle2 = createTriangle();
-// const triangle3 = createTriangle();
+
+const createEnemySpawner = (): Updatable => {
+  let timeSinceLastSpawn = 0;
+  const MAX_ENEMY_COUNT = 4;
+  const SPAWN_FREQUENCY = 1;
+
+  return {
+    update(delta, getState) {
+      const { gameObjectsManager } = getState();
+
+      timeSinceLastSpawn += delta;
+
+      let enemyCount = 0;
+
+      for (const id in gameObjectsManager.objects) {
+        const object = gameObjectsManager.objects[id];
+
+        enemyCount += object.type === "enemy" ? 1 : 0;
+      }
+
+      if (enemyCount >= MAX_ENEMY_COUNT) {
+        return;
+      }
+
+      if (timeSinceLastSpawn > 1 / SPAWN_FREQUENCY) {
+        timeSinceLastSpawn = 0;
+
+        gameObjectsManager.spawnObject(createEnemy());
+      }
+    },
+  };
+};
 
 export function createDefaultState(): State {
-  let timeSinceLastTriangleSpawn = 0;
-  const MAX_TRIANGLES = 3;
+  const enemySpawner = createEnemySpawner();
 
   return {
     world: {
@@ -29,32 +57,9 @@ export function createDefaultState(): State {
     gameObjectsManager: createGameObjectsManager({
       objects: {
         [circle.id]: circle,
-        // [triangle.id]: triangle,
-        // [triangle2.id]: triangle2,
-        // [triangle3.id]: triangle3,
       },
       update(delta, getState) {
-        const gameObjectsManager = getState().gameObjectsManager;
-
-        timeSinceLastTriangleSpawn += delta;
-
-        let trianglesCount = 0;
-
-        for (const id in gameObjectsManager.objects) {
-          const object = gameObjectsManager.objects[id];
-
-          trianglesCount += object.type === "triangle" ? 1 : 0;
-        }
-
-        if (trianglesCount >= MAX_TRIANGLES) {
-          return;
-        }
-
-        if (timeSinceLastTriangleSpawn > 1000) {
-          timeSinceLastTriangleSpawn = 0;
-
-          gameObjectsManager.spawnObject(createTriangle());
-        }
+        enemySpawner.update(delta, getState);
       },
     }),
   };

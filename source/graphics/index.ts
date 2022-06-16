@@ -28,12 +28,7 @@ function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateOb
       return;
     }
 
-    case "triangle": {
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-        ...object,
-      });
-
+    case "enemy": {
       // Draw next point
       if (object.targetPoint) {
         drawCircle(ctx, {
@@ -42,6 +37,11 @@ function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateOb
           radius: 3,
         });
       }
+
+      drawCircle(ctx, {
+        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
+        ...object,
+      });
 
       return;
     }

@@ -1,6 +1,6 @@
-import type { Circle, Triangle } from "./models";
+import type { Circle, Enemy } from "./models";
 
 export type StateObject = (
   | Circle
-  | Triangle
+  | Enemy
 );
