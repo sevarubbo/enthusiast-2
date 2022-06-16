@@ -12,14 +12,14 @@ export interface Enemy extends Identifiable, Updatable, Vector {
   speed: number;
 }
 
-export function createEnemy(): Enemy {
+export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
   const RANDOM_POINT_OFFSET = 40;
 
   return {
     id: createId(),
     type: "enemy",
-    x: 0,
-    y: 0,
+    x: o.x || 0,
+    y: o.y || 0,
     color: "red",
     radius: 7,
     speed: 0.01,

@@ -69,8 +69,6 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
       ctx.fillStyle = "#111";
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      drawObjects(ctx, state, state.gameObjectsManager.objects);
-
       // Draw world pane
       drawRectangle(ctx, {
         position: state.cameraManager.toScreen({ x: 0, y: 0 }),
@@ -82,6 +80,9 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
         position: state.cameraManager.frame.position,
         size: state.cameraManager.frame.size,
       });
+
+      // Draw objects
+      drawObjects(ctx, state, state.gameObjectsManager.objects);
     },
   } as const;
 }
