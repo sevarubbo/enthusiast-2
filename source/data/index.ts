@@ -59,8 +59,8 @@ export function createDefaultState(): State {
   const WORLD_SIZE = vector.create(600, 600);
 
   const enemySpawner = createEnemySpawner();
-  const tower = createTower(vector.scale(WORLD_SIZE, 1 / 2));
-  const tower2 = createTower(vector.scale(WORLD_SIZE, 1 / 3));
+  const tower = createTower(vector.scale(WORLD_SIZE, 1 / 3));
+  const tower2 = createTower(vector.scale(WORLD_SIZE, 2 / 3));
 
   return {
     world: {

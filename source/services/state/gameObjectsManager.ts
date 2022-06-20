@@ -5,7 +5,6 @@ export interface GameObjectsManager extends Updatable {
   objects: Record<string, StateObject>;
   spawnObject(object: StateObject): void;
   despawnObject(object: StateObject): void;
-  forEachObject(callback: (object: StateObject) => void): void;
 }
 
 export const createGameObjectsManager = (

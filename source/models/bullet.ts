@@ -4,10 +4,12 @@ import { vector } from "services/vector";
 import type { Collidable, Identifiable, Updatable } from "services/state";
 import type { Vector } from "services/vector";
 
+const RADIUS = 3;
+
 export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   type: "bullet";
   color: "yellow";
-  radius: 2;
+  radius: typeof RADIUS;
   belongsTo: string;
   speed: 0.2;
   direction: Vector;
@@ -18,8 +20,8 @@ export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsT
     id: createId(),
     type: "bullet",
     color: "yellow",
-    radius: 2,
-    collisionCircle: { radius: 2 },
+    radius: RADIUS,
+    collisionCircle: { radius: RADIUS },
     speed: 0.2,
     ...o,
 
