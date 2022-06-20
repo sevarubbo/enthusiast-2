@@ -53,9 +53,9 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
       this.angle = vector.getAngleBetweenTwoPoints(this, cameraManager.fromScreen(pointerPosition));
 
       if (this.shotInterval.ready) {
+        const bulletPosition = vector.add(this, vector.scale(vector.fromAngle(this.angle), 10));
         const bullet = createBullet({
-          x: this.x,
-          y: this.y,
+          ...bulletPosition,
           direction: vector.fromAngle(this.angle),
           belongsTo: this.id,
         });
