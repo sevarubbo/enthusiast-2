@@ -1,10 +1,10 @@
 import { createId } from "../helpers";
 import { matrix } from "../services/matrix";
 import { vector } from "services/vector";
-import type { Identifiable, Updatable } from "services/state";
+import type { Collidable, Identifiable, Updatable } from "services/state";
 import type { Vector } from "services/vector";
 
-export interface Enemy extends Identifiable, Updatable, Vector {
+export interface Enemy extends Identifiable, Updatable, Vector, Collidable {
   type: "enemy";
   color: "red";
   radius: 7;
@@ -22,6 +22,7 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
     y: o.y || 0,
     color: "red",
     radius: 7,
+    collisionCircle: { radius: 7 },
     speed: 0.01,
 
     update(delta, getState) {

@@ -19,3 +19,9 @@ export interface Updatable {
 export interface Identifiable {
   id: string;
 }
+
+export interface Collidable {
+  collisionCircle: {
+    radius: number;
+  };
+}
