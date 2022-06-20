@@ -7,7 +7,7 @@ export function setPointerPosition(position: Vector) {
 }
 
 export function getPointerPosition() {
-  return pointerPosition;
+  return { pointerPosition };
 }
 
 export type KeyboardKey = (

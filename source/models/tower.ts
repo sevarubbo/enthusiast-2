@@ -1,4 +1,5 @@
 import { createBullet } from "./bullet";
+import { getPointerPosition } from "../services/io";
 import { createId } from "helpers";
 import { vector } from "services/vector";
 import type { Identifiable, Updatable } from "services/state";
@@ -9,6 +10,7 @@ export interface Tower extends Identifiable, Updatable, Vector {
   color: "green";
   radius: 20;
   shotInterval: IntervalManager;
+  angle: number;
 }
 
 interface IntervalManager extends Updatable {
@@ -41,14 +43,20 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     color: "green",
     radius: 20,
     shotInterval: createIntervalManager(1000),
+    angle: 0,
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     update(delta, getState) {
+      const { cameraManager } = getState();
+      const { pointerPosition } = getPointerPosition();
+
+      this.angle = vector.getAngleBetweenTwoPoints(this, cameraManager.fromScreen(pointerPosition));
+
       if (this.shotInterval.ready) {
         const bullet = createBullet({
           x: this.x,
           y: this.y,
-          direction: vector.normalize(vector.create(-1 + Math.random() * 2, -1 + Math.random() * 2)),
+          direction: vector.fromAngle(this.angle),
           belongsTo: this.id,
         });
 

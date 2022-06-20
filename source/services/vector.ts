@@ -36,4 +36,10 @@ export const vector = {
   direction(vector1: Vector, vector2: Vector): Vector {
     return vector.normalize(vector.subtract(vector2, vector1));
   },
+  fromAngle(angle: number) {
+    return vector.create(Math.cos(angle), Math.sin(angle));
+  },
+  getAngleBetweenTwoPoints(p1: Vector, p2: Vector): number {
+    return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+  },
 };

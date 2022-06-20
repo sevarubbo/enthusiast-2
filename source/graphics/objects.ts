@@ -1,3 +1,4 @@
+import { vector } from "services/vector";
 import type { State } from "services/state";
 import type { Vector } from "services/vector";
 import type { StateObject } from "types";
@@ -34,6 +35,14 @@ function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateOb
       drawCircle(ctx, {
         position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
         ...object,
+      });
+
+      const directionPointPosition = vector.scale(vector.fromAngle(object.angle), 10);
+
+      drawCircle(ctx, {
+        position: state.cameraManager.toScreen(vector.add(object, directionPointPosition)),
+        color: "#fff",
+        radius: 5,
       });
 
       return;
