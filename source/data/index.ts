@@ -60,6 +60,7 @@ export function createDefaultState(): State {
 
   const enemySpawner = createEnemySpawner();
   const tower = createTower(vector.scale(WORLD_SIZE, 1 / 2));
+  const tower2 = createTower(vector.scale(WORLD_SIZE, 1 / 3));
 
   return {
     world: {
@@ -76,6 +77,7 @@ export function createDefaultState(): State {
     gameObjectsManager: createGameObjectsManager({
       objects: {
         [tower.id]: tower,
+        [tower2.id]: tower2,
       },
       update(delta, getState) {
         enemySpawner.update(delta, getState);
