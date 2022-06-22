@@ -56,6 +56,15 @@ function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateOb
 
       return;
     }
+
+    case "house": {
+      drawCircle(ctx, {
+        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
+        ...object,
+      });
+
+      return;
+    }
   }
 }
 

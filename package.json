@@ -5,7 +5,7 @@
   "repository": "https://github.com/sevarubbo/enthusiast-2.git",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --fix --report-unused-disable-directives",
     "check-types": "tsc --noEmit",
     "verify": "yarn check-types && yarn lint --fix",
     "build": "sh scripts/build.sh",

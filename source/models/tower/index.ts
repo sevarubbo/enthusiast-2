@@ -1,9 +1,9 @@
 import { towerUpdate } from "./update";
 import { createId } from "helpers";
-import type { Identifiable, Updatable } from "services/state";
+import type { Collidable, Identifiable, Updatable } from "services/state";
 import type { Vector } from "services/vector";
 
-export interface Tower extends Identifiable, Updatable, Vector {
+export interface Tower extends Identifiable, Updatable, Vector, Collidable {
   type: "tower";
   color: "green";
   radius: 20;
@@ -52,6 +52,9 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     radius: 20,
     shotInterval: createIntervalManager(1000),
     angle: 0,
+    collisionCircle: {
+      radius: 20,
+    },
 
     update(delta, getState) {
       towerUpdate(this, delta, getState);

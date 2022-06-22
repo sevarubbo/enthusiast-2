@@ -1,10 +1,10 @@
-import { matrix } from "../services/matrix";
 import { createId } from "helpers";
-import { vector } from "services/vector";
+import { circle } from "services/circle";
+import { matrix } from "services/matrix";
 import type { Collidable, Identifiable, Updatable } from "services/state";
 import type { Vector } from "services/vector";
 
-const RADIUS = 3;
+const RADIUS = 1;
 
 export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   type: "bullet";
@@ -25,7 +25,6 @@ export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsT
     speed: 0.2,
     ...o,
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     update(delta, getState) {
       const { world, gameObjectsManager } = getState();
 
@@ -45,8 +44,16 @@ export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsT
           continue;
         }
 
-        const distance = vector.distance(this, object);
-        const collides = distance < this.collisionCircle.radius + object.collisionCircle.radius;
+        const collides = circle.circlesCollide({
+          x: this.x,
+          y: this.y,
+          radius: this.collisionCircle.radius,
+        },
+        {
+          x: object.x,
+          y: object.y,
+          radius: object.collisionCircle.radius,
+        });
 
         if (collides) {
           gameObjectsManager.despawnObject(object);

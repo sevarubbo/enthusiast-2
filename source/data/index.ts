@@ -1,5 +1,5 @@
 import { createGameObjectsManager } from "../services/state/gameObjectsManager";
-import { createEnemy, createTower } from "models";
+import { createEnemy, createHouse, createTower } from "models";
 import { createCameraManager } from "services/state/cameraManager";
 import { createGameSpeedManager } from "services/state/gameSpeedManager";
 import { vector } from "services/vector";
@@ -61,6 +61,7 @@ export function createDefaultState(): State {
   const enemySpawner = createEnemySpawner();
   const tower = createTower(vector.scale(WORLD_SIZE, 1 / 3));
   const tower2 = createTower(vector.scale(WORLD_SIZE, 2 / 3));
+  const house = createHouse(vector.scale(WORLD_SIZE, 1 / 6));
 
   return {
     world: {
@@ -78,6 +79,7 @@ export function createDefaultState(): State {
       objects: {
         [tower.id]: tower,
         [tower2.id]: tower2,
+        [house.id]: house,
       },
       update(delta, getState) {
         enemySpawner.update(delta, getState);

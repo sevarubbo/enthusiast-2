@@ -1,3 +1,5 @@
+import type { Matrix } from "./matrix";
+
 export interface Vector {
   x: number;
   y: number;
@@ -41,5 +43,19 @@ export const vector = {
   },
   getAngleBetweenTwoPoints(p1: Vector, p2: Vector): number {
     return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+  },
+  getAngleBetweenTwoLines(line1: Matrix, line2: Matrix) {
+    const dAx = line1[1].x - line1[0].x;
+    const dAy = line1[1].y - line1[0].y;
+    const dBx = line2[1].x - line2[0].x;
+    const dBy = line2[1].y - line2[0].y;
+
+    let angle = Math.atan2(dAx * dBy - dAy * dBx, dAx * dBx + dAy * dBy);
+
+    if (angle < 0) {
+      angle = angle * -1;
+    }
+
+    return angle;
   },
 };

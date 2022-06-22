@@ -1,7 +1,9 @@
 import { createBullet } from "../bullet";
+import { getFirstObjectLineCollision } from "../helpers";
 import { vector } from "services/vector";
 import type { Tower } from ".";
 import type { Enemy } from "models";
+import type { Matrix } from "services/matrix";
 import type { Updatable } from "services/state";
 
 type ObjectUpdateFunction<T extends Updatable> = (self: T, ...args: Parameters<T["update"]>) => void;
@@ -21,6 +23,15 @@ const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, getState) => {
       continue;
     }
 
+    // Check collision BEGIN
+    const shootingSegment: Matrix = [vector.create(self.x, self.y), vector.create(object.x, object.y)];
+    const willCollideWithFriendlyObject = !!(getFirstObjectLineCollision(getState, shootingSegment));
+    // Check collision END
+
+    if (willCollideWithFriendlyObject) {
+      continue;
+    }
+
     if (distance < closestDistance) {
       closestDistance = distance;
       closestEnemy = object;
@@ -33,7 +44,8 @@ const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, getState) => {
 const shoot: ObjectUpdateFunction<Tower> = (self, delta, getState) => {
   self.shotInterval.fire();
 
-  const bulletPosition = vector.add(self, vector.scale(vector.fromAngle(self.angle), 10));
+  const BULLET_OFFSET = 20;
+  const bulletPosition = vector.add(self, vector.scale(vector.fromAngle(self.angle), BULLET_OFFSET));
   const bullet = createBullet({
     ...bulletPosition,
     direction: vector.fromAngle(self.angle),
