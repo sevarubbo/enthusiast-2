@@ -1,7 +1,8 @@
 import { createId } from "../helpers";
 import { matrix } from "../services/matrix";
+import { createObjectHealthManager } from "services/state";
 import { vector } from "services/vector";
-import type { Collidable, Identifiable, Updatable } from "services/state";
+import type { ObjectHealthManager, Collidable, Identifiable, Updatable } from "services/state";
 import type { Vector } from "services/vector";
 
 export interface Enemy extends Identifiable, Updatable, Vector, Collidable {
@@ -10,6 +11,7 @@ export interface Enemy extends Identifiable, Updatable, Vector, Collidable {
   radius: 7;
   targetPoint?: Vector;
   speed: number;
+  health: ObjectHealthManager;
 }
 
 export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
@@ -24,8 +26,10 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
     radius: 7,
     collisionCircle: { radius: 7 },
     speed: 0.01,
+    health: createObjectHealthManager(10),
 
     update(delta, getState) {
+      this.health.update(this, getState);
       const state = getState();
       const speed = this.speed * delta;
 

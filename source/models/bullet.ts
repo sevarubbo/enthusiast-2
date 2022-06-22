@@ -13,6 +13,7 @@ export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   belongsTo: string;
   speed: 0.2;
   direction: Vector;
+  attack: 2;
 }
 
 export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo">): Bullet {
@@ -23,6 +24,7 @@ export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsT
     radius: RADIUS,
     collisionCircle: { radius: RADIUS },
     speed: 0.2,
+    attack: 2,
     ...o,
 
     update(delta, getState) {
@@ -56,8 +58,11 @@ export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsT
         });
 
         if (collides) {
-          gameObjectsManager.despawnObject(object);
           gameObjectsManager.despawnObject(this);
+
+          if ("health" in object) {
+            object.health.decrease(this.attack);
+          }
         }
       }
     },
