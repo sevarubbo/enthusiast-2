@@ -4,7 +4,8 @@ import { matrix } from "services/matrix";
 import type { Collidable, Identifiable, Updatable } from "services/state";
 import type { Vector } from "services/vector";
 
-const RADIUS = 1;
+const RADIUS = 2;
+const ATTACK = 3;
 
 export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   type: "bullet";
@@ -13,10 +14,10 @@ export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   belongsTo: string;
   speed: 0.2;
   direction: Vector;
-  attack: 2;
+  attack: typeof ATTACK;
 }
 
-export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo">): Bullet {
+export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo" >): Bullet {
   return {
     id: createId(),
     type: "bullet",
@@ -24,7 +25,7 @@ export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsT
     radius: RADIUS,
     collisionCircle: { radius: RADIUS },
     speed: 0.2,
-    attack: 2,
+    attack: ATTACK,
     ...o,
 
     update(delta, getState) {

@@ -22,7 +22,7 @@ export function createHouse(o: Pick<House, "x" | "y">): House {
     ...o,
 
     update(delta, getState) {
-      this.health.update(this, getState);
+      this.health.update(delta, getState, this);
     },
   };
 }

@@ -8,7 +8,7 @@ import type { Vector } from "services/vector";
 
 const createEnemySpawner = (): Updatable => {
   let timeSinceLastSpawn = 0;
-  const MAX_ENEMY_COUNT = 40;
+  const MAX_ENEMY_COUNT = 100;
   const SPAWN_FREQUENCY = 1 / 2000;
 
   return {
@@ -61,6 +61,7 @@ export function createDefaultState(): State {
   const enemySpawner = createEnemySpawner();
   const tower = createTower(vector.scale(WORLD_SIZE, 1 / 3));
   const tower2 = createTower(vector.scale(WORLD_SIZE, 2 / 3));
+  const tower3 = createTower(vector.create(WORLD_SIZE.x * 3 / 4, WORLD_SIZE.y / 4));
   const house = createHouse(vector.scale(WORLD_SIZE, 1 / 6));
 
   return {
@@ -79,6 +80,7 @@ export function createDefaultState(): State {
       objects: {
         [tower.id]: tower,
         [tower2.id]: tower2,
+        [tower3.id]: tower3,
         [house.id]: house,
       },
       update(delta, getState) {

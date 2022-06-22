@@ -3,15 +3,17 @@ import type { Matrix } from "services/matrix";
 import type { State } from "services/state";
 import type { StateObject } from "types";
 
-export function getFirstObjectLineCollision(getState: () => State, line: Matrix): StateObject | null {
+export function getFirstObjectLineCollision(
+  getState: () => State,
+  line: Matrix,
+  condition: (object: StateObject) => boolean,
+): StateObject | null {
   const { gameObjectsManager } = getState();
 
   for (const otherObjectId in gameObjectsManager.objects) {
     const otherObject = gameObjectsManager.objects[otherObjectId];
 
-    if (
-      otherObject.type !== "house"
-    ) {
+    if (!condition(otherObject)) {
       continue;
     }
 

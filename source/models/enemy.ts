@@ -29,7 +29,7 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
     health: createObjectHealthManager(10),
 
     update(delta, getState) {
-      this.health.update(this, getState);
+      this.health.update(delta, getState, this);
       const state = getState();
       const speed = this.speed * delta;
 

@@ -1,46 +1,20 @@
 import { towerUpdate } from "./update";
 import { createId } from "helpers";
-import type { Collidable, Identifiable, Updatable } from "services/state";
+import { createIntervalManager, createObjectHealthManager } from "services/state";
+import type { Collidable, Healthy, Identifiable, Updatable, IntervalManager } from "services/state";
 import type { Vector } from "services/vector";
 
-export interface Tower extends Identifiable, Updatable, Vector, Collidable {
+const SHOOTING_SPEED = 2;
+
+export interface Tower extends Identifiable, Updatable, Vector, Collidable, Healthy {
   type: "tower";
   color: "green";
   radius: 20;
   shotInterval: IntervalManager;
   angle: number;
   targetEnemyId?: string;
+  aimError: number;
 }
-
-interface IntervalManager extends Updatable {
-  duration: number;
-  timeSinceLastFire: number;
-  ready: boolean;
-  fire(): void;
-}
-
-const createIntervalManager = (duration: number): IntervalManager => ({
-  duration,
-  timeSinceLastFire: 0,
-  ready: false,
-
-  fire() {
-    if (!this.ready) {
-      throw new Error("Interval not ready to fire!");
-    }
-
-    this.timeSinceLastFire = 0;
-  },
-
-  update(delta) {
-    this.timeSinceLastFire += delta;
-    this.ready = false;
-
-    if (this.timeSinceLastFire > this.duration) {
-      this.ready = true;
-    }
-  },
-});
 
 export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
   return {
@@ -50,13 +24,16 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     y: o.y || 0,
     color: "green",
     radius: 20,
-    shotInterval: createIntervalManager(1000),
+    shotInterval: createIntervalManager(1000 / SHOOTING_SPEED),
     angle: 0,
     collisionCircle: {
       radius: 20,
     },
+    health: createObjectHealthManager(20),
+    aimError: 0.02,
 
     update(delta, getState) {
+      this.health.update(delta, getState, this);
       towerUpdate(this, delta, getState);
     },
   };
