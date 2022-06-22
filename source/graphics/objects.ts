@@ -1,17 +1,19 @@
+import { drawHealthBar } from "./healthbar";
+import { drawCircle } from "services/canvas";
 import { vector } from "services/vector";
 import type { State } from "services/state";
-import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
-function drawCircle(ctx: CanvasRenderingContext2D, o: { position: Vector; radius: number; color: string }) {
-  ctx.beginPath();
-  ctx.arc(o.position.x, o.position.y, o.radius, 0, Math.PI * 2, false);
-  ctx.fillStyle = o.color;
-  ctx.fill();
-  ctx.closePath();
-}
-
 function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateObject) {
+  if ("health" in object && object.health.current < object.health.max) {
+    const healthBarPosition = vector.add(
+      state.cameraManager.toScreen(object),
+      vector.create(0, -object.radius - 10),
+    );
+
+    drawHealthBar(ctx, healthBarPosition, object.health.current, object.health.max);
+  }
+
   switch (object.type) {
     case "enemy": {
       // Draw next point

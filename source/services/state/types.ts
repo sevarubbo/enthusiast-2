@@ -1,6 +1,7 @@
 import type { CameraManager } from "./cameraManager";
 import type { GameObjectsManager } from "./gameObjectsManager";
 import type { GameSpeedManager } from "./gameSpeedManager";
+import type { ObjectHealthManager } from "./objectHealthManager";
 import type { Vector } from "services/vector";
 
 export interface State {
@@ -24,4 +25,8 @@ export interface Collidable {
   collisionCircle: {
     radius: number;
   };
+}
+
+export interface Healthy {
+  health: ObjectHealthManager;
 }

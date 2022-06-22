@@ -1,5 +1,5 @@
+import { getFirstObjectLineCollision } from "../../services/state/helpers";
 import { createBullet } from "../bullet";
-import { getFirstObjectLineCollision } from "../helpers";
 import { vector } from "services/vector";
 import type { Tower } from ".";
 import type { Enemy } from "models";
