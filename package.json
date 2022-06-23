@@ -9,7 +9,7 @@
     "check-types": "tsc --noEmit",
     "verify": "yarn check-types && yarn lint --fix",
     "build": "sh scripts/build.sh",
-    "start": "esbuild source/index.ts --bundle --outfile=dist/bundle.js --servedir=dist"
+    "start": "esbuild source/index.ts --bundle --outfile=dist/bundle.js --servedir=dist --sourcemap"
   },
   "devDependencies": {
     "esbuild": "^0.14.43",

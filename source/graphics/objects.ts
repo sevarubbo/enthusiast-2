@@ -4,6 +4,13 @@ import { vector } from "services/vector";
 import type { State } from "services/state";
 import type { StateObject } from "types";
 
+function drawObjectAsCircle(ctx: CanvasRenderingContext2D, state: State, object: StateObject) {
+  return drawCircle(ctx, {
+    position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
+    ...object,
+  });
+}
+
 function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateObject) {
   if ("health" in object && object.health.current < object.health.max) {
     const healthBarPosition = vector.add(
@@ -51,19 +58,19 @@ function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateOb
     }
 
     case "bullet": {
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-        ...object,
-      });
+      drawObjectAsCircle(ctx, state, object);
 
       return;
     }
 
     case "house": {
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-        ...object,
-      });
+      drawObjectAsCircle(ctx, state, object);
+
+      return;
+    }
+
+    case "enemyB": {
+      drawObjectAsCircle(ctx, state, object);
 
       return;
     }

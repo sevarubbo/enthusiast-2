@@ -8,4 +8,7 @@ module.exports = {
       },
     },
   },
+  "rules": {
+    "max-lines": ["error", { "max": 100, "skipBlankLines": true, "skipComments": true }],
+  },
 };

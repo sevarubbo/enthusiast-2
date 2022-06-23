@@ -1,5 +1,5 @@
 import { createGameObjectsManager } from "../services/state/gameObjectsManager";
-import { createEnemy, createHouse, createTower } from "models";
+import { createEnemy, createEnemyB, createHouse, createTower } from "models";
 import { createCameraManager } from "services/state/cameraManager";
 import { createGameSpeedManager } from "services/state/gameSpeedManager";
 import { vector } from "services/vector";
@@ -77,6 +77,9 @@ export function createDefaultState(): State {
       worldTargetPoint: vector.scale(WORLD_SIZE, 1 / 2),
     }),
     gameObjectsManager: createGameObjectsManager({
+      objectsArray: [
+        createEnemyB(vector.create(0, WORLD_SIZE.y)),
+      ],
       objects: {
         [tower.id]: tower,
         [tower2.id]: tower2,

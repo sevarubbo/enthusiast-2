@@ -4,7 +4,8 @@ import { createIntervalManager, createObjectHealthManager } from "services/state
 import type { Collidable, Healthy, Identifiable, Updatable, IntervalManager } from "services/state";
 import type { Vector } from "services/vector";
 
-const SHOOTING_SPEED = 2;
+const SHOOTING_SPEED = 1;
+const BULLET_STRENGTH = 2;
 
 export interface Tower extends Identifiable, Updatable, Vector, Collidable, Healthy {
   type: "tower";
@@ -14,6 +15,7 @@ export interface Tower extends Identifiable, Updatable, Vector, Collidable, Heal
   angle: number;
   targetEnemyId?: string;
   aimError: number;
+  bulletStrength: typeof BULLET_STRENGTH;
 }
 
 export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
@@ -31,6 +33,7 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     },
     health: createObjectHealthManager(20),
     aimError: 0.02,
+    bulletStrength: BULLET_STRENGTH,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);

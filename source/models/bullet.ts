@@ -14,10 +14,12 @@ export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   belongsTo: string;
   speed: 0.2;
   direction: Vector;
-  attack: typeof ATTACK;
+  attack: number;
 }
 
-export function createBullet(o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo" >): Bullet {
+export function createBullet(
+  o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo"> & Partial<Pick<Bullet, "attack">>,
+): Bullet {
   return {
     id: createId(),
     type: "bullet",

@@ -2,6 +2,7 @@ import type { CameraManager } from "./cameraManager";
 import type { GameObjectsManager } from "./gameObjectsManager";
 import type { GameSpeedManager } from "./gameSpeedManager";
 import type { ObjectHealthManager } from "./objectHealthManager";
+import type { ObjectMovementManager } from "./objectMovementManager";
 import type { Vector } from "services/vector";
 
 export interface State {
@@ -29,4 +30,8 @@ export interface Collidable {
 
 export interface Healthy {
   health: ObjectHealthManager;
+}
+
+export interface Movable {
+  movement: ObjectMovementManager;
 }
