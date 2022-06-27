@@ -88,9 +88,17 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
 
           const collisionSpeed = relativeVelocity.x * collisionNorm.x + relativeVelocity.y * collisionNorm.y;
 
-          if (collisionSpeed < 0) {
+          if (collisionSpeed <= 0) {
             continue;
           }
+
+          const adjustedPosition = vector.add(
+            object,
+            vector.scale(collisionNorm, -(this.collisionCircle.radius + object.collisionCircle.radius)),
+          );
+
+          this.x = adjustedPosition.x;
+          this.y = adjustedPosition.y;
 
           this.movement.setSpeedVector(vector.scale(collisionNorm, -collisionSpeed));
         }
