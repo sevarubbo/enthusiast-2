@@ -74,6 +74,12 @@ function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateOb
 
       return;
     }
+
+    case "enemyC": {
+      drawObjectAsCircle(ctx, state, object);
+
+      return;
+    }
   }
 }
 

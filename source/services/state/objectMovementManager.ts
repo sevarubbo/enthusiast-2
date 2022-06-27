@@ -8,18 +8,25 @@ export interface ObjectMovementManager {
   realSpeed: number;
   direction: Vector;
   nextPosition: Vector;
+  speedVector: Vector;
   start(direction: Vector): void;
   stop(): void;
+  setSpeedVector(v: Vector): void;
 
   update(delta: number, getState: () => State, object: Vector): void;
 }
 
-export const createObjectMovementManager = (maxSpeed: number): ObjectMovementManager => ({
-  maxSpeed,
-  speed: maxSpeed,
+type Props<OB extends object, RP extends keyof OB, OP extends keyof OB> = Pick<OB, RP> & Partial<Pick<OB, OP>>;
+
+export const createObjectMovementManager = (
+  o: Props<ObjectMovementManager, "maxSpeed", "direction" | "speed">,
+): ObjectMovementManager => ({
+  maxSpeed: o.maxSpeed,
+  speed: o.maxSpeed,
   realSpeed: 0,
-  direction: vector.create(0, 0),
+  direction: o.direction || vector.create(0, 0),
   nextPosition: vector.create(0, 0),
+  speedVector: vector.create(0, 0),
 
   start(direction: Vector) {
     this.direction = direction;
@@ -29,18 +36,17 @@ export const createObjectMovementManager = (maxSpeed: number): ObjectMovementMan
     this.speed = 0;
   },
 
+  setSpeedVector(speedVector: Vector) {
+    this.speedVector = speedVector;
+    this.direction = vector.normalize(this.speedVector);
+  },
+
   update(delta, getState, object) {
-    if (!this.speed) {
-      return;
-    }
-
     this.realSpeed = this.speed * delta;
-
-    const speedVector = vector.scale(this.direction, this.realSpeed);
-
-    this.nextPosition = vector.add(object, speedVector);
+    this.speedVector = vector.scale(this.direction, this.realSpeed);
+    this.nextPosition = vector.add(object, this.speedVector);
 
     object.x = this.nextPosition.x;
     object.y = this.nextPosition.y;
   },
-});
+} as const);

@@ -5,7 +5,7 @@ import type { Collidable, Healthy, Identifiable, Updatable, IntervalManager } fr
 import type { Vector } from "services/vector";
 
 const SHOOTING_SPEED = 1;
-const BULLET_STRENGTH = 2;
+const BULLET_STRENGTH = 3;
 
 export interface Tower extends Identifiable, Updatable, Vector, Collidable, Healthy {
   type: "tower";

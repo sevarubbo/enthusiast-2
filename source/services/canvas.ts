@@ -27,6 +27,7 @@ export function drawCircle(ctx: CanvasRenderingContext2D, o: { position: Vector;
   ctx.beginPath();
   ctx.arc(o.position.x, o.position.y, o.radius, 0, Math.PI * 2, false);
   ctx.fillStyle = o.color;
+
   ctx.fill();
   ctx.closePath();
 }

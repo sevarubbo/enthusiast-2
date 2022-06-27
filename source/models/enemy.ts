@@ -26,7 +26,7 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
     radius: 7,
     collisionCircle: { radius: 7 },
     health: createObjectHealthManager(10),
-    movement: createObjectMovementManager(0.01),
+    movement: createObjectMovementManager({ maxSpeed: 0.01 }),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
@@ -76,8 +76,8 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
           })) {
             const newDirection = vector.direction(object, this);
 
-            this.x += newDirection.x * this.collisionCircle.radius;
-            this.y += newDirection.y * this.collisionCircle.radius;
+            this.x += newDirection.x * this.movement.realSpeed;
+            this.y += newDirection.y * this.movement.realSpeed;
 
             // Move in opposite direction from collision object
             this.movement.start(newDirection);

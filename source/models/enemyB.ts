@@ -23,7 +23,7 @@ export function createEnemyB(o: Partial<Pick<EnemyB, "x" | "y">> = {}): EnemyB {
     radius: 10,
     collisionCircle: { radius: 7 },
     health: createObjectHealthManager(10),
-    movement: createObjectMovementManager(0.1),
+    movement: createObjectMovementManager({ maxSpeed: 0.1 }),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);

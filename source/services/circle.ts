@@ -8,7 +8,7 @@ export interface Circle extends Vector {
 
 export const circle = {
   circlesCollide(c1: Circle, c2: Circle) {
-    return vector.distance(c1, c2) < c1.radius + c2.radius;
+    return vector.distanceSquared(c1, c2) <= (c1.radius + c2.radius) ** 2;
   },
   collidesWithLine(c: Circle, line: Matrix) {
     const bd: Matrix = [line[1], c];
@@ -16,5 +16,8 @@ export const circle = {
     const cdLength = Math.sin(angle) * vector.distance(...bd);
 
     return cdLength <= c.radius;
+  },
+  collidesWithPoint(c: Circle, p: Vector) {
+    return vector.distance(c, p) <= c.radius;
   },
 };

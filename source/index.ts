@@ -2,6 +2,7 @@ import { createDefaultState } from "./data";
 import { createCanvasDrawer } from "./graphics";
 import { createCanvas } from "./services/canvas";
 import { setKeyPressed, setKeyUp, setPointerPosition } from "./services/io";
+import { vector } from "./services/vector";
 import type { KeyboardKey } from "./services/io";
 
 const { canvas, onCanvasMouseMove } = createCanvas();
@@ -53,4 +54,11 @@ const gameLoop = (ctx: CanvasRenderingContext2D, now: number) => {
 requestAnimationFrame((now) => {
   lastNow = now;
   gameLoop(canvasContext, now);
+});
+
+// Export some global stuff
+Object.defineProperty(window, "Game", {
+  value: {
+    vector,
+  },
 });
