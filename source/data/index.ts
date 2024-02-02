@@ -42,11 +42,10 @@ const createEnemySpawner = (): Updatable => {
               return vector.create(world.size.x, Math.random() * world.size.y);
             case 3:
               return vector.create(Math.random() * world.size.x, world.size.y);
-            case 4:
+            // case 4:
+            default:
               return vector.create(0, Math.random() * world.size.y);
           }
-
-          return vector.create(0, 0);
         })();
 
         gameObjectsManager.spawnObject(createEnemy(enemySpawnPosition));
@@ -55,9 +54,9 @@ const createEnemySpawner = (): Updatable => {
   };
 };
 
-export function createDefaultState(): State {
-  const WORLD_SIZE = vector.create(600, 500);
+const WORLD_SIZE = vector.create(600, 500);
 
+export function createDefaultState(): State {
   const enemySpawner = createEnemySpawner();
   const tower = createTower(vector.scale(WORLD_SIZE, 1 / 3));
   const tower2 = createTower(vector.scale(WORLD_SIZE, 2 / 3));
