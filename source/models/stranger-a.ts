@@ -1,8 +1,18 @@
 import { createId } from "helpers";
-import { createObjectHealthManager, type Collidable, type Identifiable, type Movable, type ObjectHealthManager, type Updatable, createObjectMovementManager } from "services/state";
-import { vector, type Vector } from "services/vector";
+import {
+  createObjectHealthManager,
+  type Collidable,
+  type Identifiable,
+  type Movable,
+  type ObjectHealthManager,
+  type Updatable,
+  createObjectMovementManager,
+} from "services/state";
+import { type Vector } from "services/vector";
 
-export interface StrangerA extends Identifiable, Updatable, Collidable, Movable {
+type TypicalObject = Identifiable & Updatable & Collidable & Movable;
+
+export interface StrangerA extends TypicalObject {
   type: "enemyC";
   color: "green";
   radius: 12;
@@ -10,7 +20,9 @@ export interface StrangerA extends Identifiable, Updatable, Collidable, Movable 
   health: ObjectHealthManager;
 }
 
-export function createStrangerA(o: Partial<Pick<StrangerA, "x" | "y">> = {}): StrangerA {
+export function createStrangerA(
+  o: Partial<Pick<StrangerA, "x" | "y">> = {},
+): StrangerA {
   return {
     id: createId(),
     type: "enemyC",
@@ -27,6 +39,5 @@ export function createStrangerA(o: Partial<Pick<StrangerA, "x" | "y">> = {}): St
       this.movement.update(delta, getState, this);
       this.health.update(delta, getState, this);
     },
-
   };
 }

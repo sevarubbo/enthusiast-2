@@ -57,47 +57,6 @@ const createEnemySpawner = (): Updatable => {
 
 const WORLD_SIZE = vector.create(1200, 1200);
 
-// export function createDefaultState(): State {
-//   const enemySpawner = createEnemySpawner();
-//   const tower = createTower(vector.scale(WORLD_SIZE, 1 / 3));
-//   const tower2 = createTower(vector.scale(WORLD_SIZE, 2 / 3));
-//   const tower3 = createTower(vector.create(WORLD_SIZE.x * 3 / 4, WORLD_SIZE.y / 4));
-//   const house = createHouse(vector.scale(WORLD_SIZE, 1 / 6));
-
-//   return {
-//     world: {
-//       size: WORLD_SIZE,
-//     },
-//     gameSpeedManager: createGameSpeedManager(),
-//     cameraManager: createCameraManager({
-//       frame: {
-//         position: vector.create(200, 150),
-//         size: vector.create(700, 700),
-//       },
-//       worldTargetPoint: vector.scale(WORLD_SIZE, 1 / 2),
-//     }),
-//     gameObjectsManager: createGameObjectsManager({
-//       objectsArray: [
-//         createEnemyB(vector.create(0, WORLD_SIZE.y)),
-//         ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => {
-//           const pos = { x: Math.random() * WORLD_SIZE.x, y: Math.random() * WORLD_SIZE.y };
-
-//           return createEnemyC(pos);
-//         }),
-//       ],
-//       objects: {
-//         [tower.id]: tower,
-//         [tower2.id]: tower2,
-//         [tower3.id]: tower3,
-//         [house.id]: house,
-//       },
-//       update(delta, getState) {
-//         enemySpawner.update(delta, getState);
-//       },
-//     }),
-//   };
-// }
-
 const STRANGER_A = createStrangerA({ x: WORLD_SIZE.x - 100, y: WORLD_SIZE.y - 100 });
 
 export function createDefaultState(): State {
