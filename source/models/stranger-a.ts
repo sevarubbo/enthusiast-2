@@ -16,6 +16,7 @@ export interface StrangerA extends TypicalObject {
   type: "stranger_a";
   targetPoint?: Vector;
   health: ObjectHealthManager;
+  isHovered: boolean;
 }
 
 export function createStrangerA(
@@ -28,12 +29,28 @@ export function createStrangerA(
     y: o.y || 0,
     collisionCircle: { radius: 12 },
     health: createObjectHealthManager(10),
-
     movement: createObjectMovementManager({ maxSpeed: 0.1 }),
+    isHovered: false,
 
     update(delta, getState) {
       this.movement.update(delta, getState, this);
       this.health.update(delta, getState, this);
+
+      // Selectable
+      const worldPointerPosition =
+        getState().cameraManager.worldPointerPosition;
+
+      // Check for intersection with pointer
+      if (
+        Math.sqrt(
+          (this.x - worldPointerPosition.x) ** 2 +
+            (this.y - worldPointerPosition.y) ** 2,
+        ) < this.collisionCircle.radius
+      ) {
+        this.isHovered = true;
+      } else {
+        this.isHovered = false;
+      }
     },
   };
 }

@@ -107,14 +107,35 @@ function drawObject(
       return;
     }
 
-    default: {
+    case "stranger_a": {
+      if (object.isHovered) {
+        drawObjectAsCircle(ctx, state, {
+          radius: 14,
+          x: object.x,
+          y: object.y,
+          // semitransparent yellow
+          color: "rgba(255, 255, 0, 0.5)",
+        });
+      }
+
       drawObjectAsCircle(ctx, state, {
         radius: 10,
         x: object.x,
         y: object.y,
-        color: "#fff",
+        color: "#a31c54",
       });
+
+      return;
     }
+
+    // default: {
+    //   drawObjectAsCircle(ctx, state, {
+    //     radius: 10,
+    //     x: object.x,
+    //     y: object.y,
+    //     color: "#fff",
+    //   });
+    // }
   }
 }
 

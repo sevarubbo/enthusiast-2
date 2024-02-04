@@ -1,4 +1,4 @@
-import { getKeysPressed } from "../io";
+import { getKeysPressed, getPointerPosition } from "../io";
 import { vector } from "../vector";
 import type { Updatable } from ".";
 import type { Vector } from "../vector";
@@ -9,6 +9,7 @@ export interface CameraManager extends Updatable {
     position: Vector;
   };
   worldTargetPoint: Vector;
+  worldPointerPosition: Vector;
   fromScreen(coordinates: Vector): Vector;
   isWithinFrame(screenCoordinates: Vector): boolean;
   toScreen(coordinates: Vector): Vector;
@@ -16,12 +17,15 @@ export interface CameraManager extends Updatable {
 
 const SCROLL_SPEED = 5;
 
-export const createCameraManager = (o: Partial<Pick<CameraManager, "frame" | "worldTargetPoint">>): CameraManager => ({
+export const createCameraManager = (
+  o: Partial<Pick<CameraManager, "frame" | "worldTargetPoint">>,
+): CameraManager => ({
   frame: o.frame || {
     size: vector.create(0, 0),
     position: vector.create(0, 0),
   },
   worldTargetPoint: o.worldTargetPoint || vector.create(0, 0),
+  worldPointerPosition: vector.create(0, 0),
   toScreen(coordinates) {
     return vector.add(
       vector.subtract(coordinates, this.worldTargetPoint),
@@ -75,5 +79,9 @@ export const createCameraManager = (o: Partial<Pick<CameraManager, "frame" | "wo
     if (keysPressed.has("ArrowLeft")) {
       this.worldTargetPoint.x -= SCROLL_SPEED;
     }
+
+    const { pointerPosition } = getPointerPosition();
+
+    this.worldPointerPosition = this.fromScreen(pointerPosition);
   },
 });

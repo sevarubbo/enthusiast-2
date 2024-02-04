@@ -38,12 +38,16 @@ const MAX_DELTA = 10;
 
 // Game loop
 const gameLoop = (ctx: CanvasRenderingContext2D, now: number) => {
-  const delta = Math.min(now - lastNow, MAX_DELTA) * state.gameSpeedManager.gameSpeed;
+  const delta =
+    Math.min(now - lastNow, MAX_DELTA) * state.gameSpeedManager.gameSpeed;
 
   lastNow = now;
 
   state.gameSpeedManager.update(delta, () => state);
+
+  // TODO: Move this to draw
   state.cameraManager.update(delta, () => state);
+
   state.gameObjectsManager.update(delta, () => state);
 
   draw(state);
