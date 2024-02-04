@@ -5,7 +5,7 @@ import { vector } from "services/vector";
 import type { ObjectHealthManager, Collidable, Identifiable, Updatable, Movable } from "services/state";
 import type { Vector } from "services/vector";
 
-export interface EnemyC extends Identifiable, Updatable, Vector, Collidable, Movable {
+export interface EnemyC extends Identifiable, Updatable, Collidable, Movable {
   type: "enemyC";
   color: "gray" | "white";
   radius: 12;

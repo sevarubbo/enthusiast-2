@@ -32,6 +32,6 @@ export interface Healthy {
   health: ObjectHealthManager;
 }
 
-export interface Movable {
+export interface Movable extends Vector {
   movement: ObjectMovementManager;
 }

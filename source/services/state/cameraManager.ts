@@ -14,7 +14,7 @@ export interface CameraManager extends Updatable {
   toScreen(coordinates: Vector): Vector;
 }
 
-const SCROLL_SPEED = 2;
+const SCROLL_SPEED = 5;
 
 export const createCameraManager = (o: Partial<Pick<CameraManager, "frame" | "worldTargetPoint">>): CameraManager => ({
   frame: o.frame || {

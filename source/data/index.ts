@@ -54,7 +54,7 @@ const createEnemySpawner = (): Updatable => {
   };
 };
 
-const WORLD_SIZE = vector.create(600, 500);
+const WORLD_SIZE = vector.create(1200, 1200);
 
 export function createDefaultState(): State {
   const enemySpawner = createEnemySpawner();
@@ -70,7 +70,7 @@ export function createDefaultState(): State {
     gameSpeedManager: createGameSpeedManager(),
     cameraManager: createCameraManager({
       frame: {
-        position: vector.create(200, 200),
+        position: vector.create(200, 150),
         size: vector.create(700, 700),
       },
       worldTargetPoint: vector.scale(WORLD_SIZE, 1 / 2),

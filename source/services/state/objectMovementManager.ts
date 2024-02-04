@@ -1,6 +1,6 @@
 import { vector } from "../vector";
 import type { Vector } from "../vector";
-import type { State } from "./types";
+import type { Movable, State } from "./types";
 
 export interface ObjectMovementManager {
   maxSpeed: number;
@@ -13,7 +13,7 @@ export interface ObjectMovementManager {
   stop(): void;
   setSpeedVector(v: Vector): void;
 
-  update(delta: number, getState: () => State, object: Vector): void;
+  update(delta: number, getState: () => State, object: Movable): void;
 }
 
 type Props<OB extends object, RP extends keyof OB, OP extends keyof OB> = Pick<OB, RP> & Partial<Pick<OB, OP>>;
