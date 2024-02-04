@@ -1,13 +1,21 @@
 import { createDefaultState } from "./data";
 import { createCanvasDrawer } from "./graphics";
 import { createCanvas } from "./services/canvas";
-import { setKeyPressed, setKeyUp, setPointerPosition } from "./services/io";
+import {
+  setIsPointerDown,
+  setKeyPressed,
+  setKeyUp,
+  setPointerPosition,
+} from "./services/io";
 import { vector } from "./services/vector";
 import type { KeyboardKey } from "./services/io";
 
-const { canvas, onCanvasMouseMove } = createCanvas();
+const { canvas, onCanvasMouseMove, onPointerDown, onPointerUp } =
+  createCanvas();
 
 onCanvasMouseMove((position) => setPointerPosition(position));
+onPointerDown(() => setIsPointerDown(true));
+onPointerUp(() => setIsPointerDown(false));
 
 // Draw on canvas
 

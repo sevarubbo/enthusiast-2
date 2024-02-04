@@ -20,10 +20,25 @@ export function createCanvas() {
     });
   };
 
-  return { canvas, onCanvasMouseMove };
+  const onPointerDown = (callback: () => void) => {
+    canvas.addEventListener("mousedown", () => {
+      callback();
+    });
+  };
+
+  const onPointerUp = (callback: () => void) => {
+    canvas.addEventListener("mouseup", () => {
+      callback();
+    });
+  };
+
+  return { canvas, onCanvasMouseMove, onPointerDown, onPointerUp };
 }
 
-export function drawCircle(ctx: CanvasRenderingContext2D, o: { position: Vector; radius: number; color: string }) {
+export function drawCircle(
+  ctx: CanvasRenderingContext2D,
+  o: { position: Vector; radius: number; color: string },
+) {
   ctx.beginPath();
   ctx.arc(o.position.x, o.position.y, o.radius, 0, Math.PI * 2, false);
   ctx.fillStyle = o.color;

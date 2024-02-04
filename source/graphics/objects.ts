@@ -108,7 +108,14 @@ function drawObject(
     }
 
     case "stranger_a": {
-      if (object.isHovered) {
+      if (object.isSelected) {
+        drawObjectAsCircle(ctx, state, {
+          radius: 14,
+          x: object.x,
+          y: object.y,
+          color: "#fff",
+        });
+      } else if (object.isHovered) {
         drawObjectAsCircle(ctx, state, {
           radius: 14,
           x: object.x,

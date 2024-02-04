@@ -1,4 +1,4 @@
-import { getKeysPressed, getPointerPosition } from "../io";
+import { getIsPointerDown, getKeysPressed, getPointerPosition } from "../io";
 import { vector } from "../vector";
 import type { Updatable } from ".";
 import type { Vector } from "../vector";
@@ -10,6 +10,7 @@ export interface CameraManager extends Updatable {
   };
   worldTargetPoint: Vector;
   worldPointerPosition: Vector;
+  isPointerDown: boolean;
   fromScreen(coordinates: Vector): Vector;
   isWithinFrame(screenCoordinates: Vector): boolean;
   toScreen(coordinates: Vector): Vector;
@@ -26,6 +27,7 @@ export const createCameraManager = (
   },
   worldTargetPoint: o.worldTargetPoint || vector.create(0, 0),
   worldPointerPosition: vector.create(0, 0),
+  isPointerDown: false,
   toScreen(coordinates) {
     return vector.add(
       vector.subtract(coordinates, this.worldTargetPoint),
@@ -83,5 +85,7 @@ export const createCameraManager = (
     const { pointerPosition } = getPointerPosition();
 
     this.worldPointerPosition = this.fromScreen(pointerPosition);
+
+    this.isPointerDown = getIsPointerDown();
   },
 });

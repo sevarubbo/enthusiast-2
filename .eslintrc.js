@@ -13,5 +13,7 @@ module.exports = {
       "error",
       { max: 300, skipBlankLines: true, skipComments: true },
     ],
+
+    "@typescript-eslint/indent": "off",
   },
 };

@@ -10,13 +10,27 @@ export function getPointerPosition() {
   return { pointerPosition };
 }
 
-export type KeyboardKey = (
-    | "0" | "1" | "2" | "3" | "=" | "-"
-    | "ArrowUp"
-    | "ArrowDown"
-    | "ArrowLeft"
-    | "ArrowRight"
-    );
+let isPointerDown = false;
+
+export function getIsPointerDown() {
+  return isPointerDown;
+}
+
+export function setIsPointerDown(value: boolean) {
+  isPointerDown = value;
+}
+
+export type KeyboardKey =
+  | "0"
+  | "1"
+  | "2"
+  | "3"
+  | "="
+  | "-"
+  | "ArrowUp"
+  | "ArrowDown"
+  | "ArrowLeft"
+  | "ArrowRight";
 
 let currentKeyPressed: KeyboardKey | null = null;
 
