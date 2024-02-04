@@ -4,21 +4,42 @@ import { vector } from "services/vector";
 import type { State } from "services/state";
 import type { StateObject } from "types";
 
-function drawObjectAsCircle(ctx: CanvasRenderingContext2D, state: State, object: StateObject) {
+function drawObjectAsCircle(
+  ctx: CanvasRenderingContext2D,
+  state: State,
+  object: { radius: number; x: number; y: number; color: string },
+) {
   return drawCircle(ctx, {
     position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-    ...object,
+    radius: object.radius,
+    color: object.color,
   });
 }
 
-function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateObject) {
+function drawObject(
+  ctx: CanvasRenderingContext2D,
+  state: State,
+  object: StateObject,
+) {
   if ("health" in object && object.health.current < object.health.max) {
     const healthBarPosition = vector.add(
       state.cameraManager.toScreen(object),
-      vector.create(0, -object.radius - 10),
+
+      (() => {
+        if ("radius" in object) {
+          return vector.create(0, -object.radius - 10);
+        }
+
+        return vector.create(0, -15);
+      })(),
     );
 
-    drawHealthBar(ctx, healthBarPosition, object.health.current, object.health.max);
+    drawHealthBar(
+      ctx,
+      healthBarPosition,
+      object.health.current,
+      object.health.max,
+    );
   }
 
   switch (object.type) {
@@ -46,10 +67,15 @@ function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateOb
         ...object,
       });
 
-      const directionPointPosition = vector.scale(vector.fromAngle(object.angle), 10);
+      const directionPointPosition = vector.scale(
+        vector.fromAngle(object.angle),
+        10,
+      );
 
       drawCircle(ctx, {
-        position: state.cameraManager.toScreen(vector.add(object, directionPointPosition)),
+        position: state.cameraManager.toScreen(
+          vector.add(object, directionPointPosition),
+        ),
         color: "#fff",
         radius: 5,
       });
@@ -80,6 +106,15 @@ function drawObject(ctx: CanvasRenderingContext2D, state: State, object: StateOb
 
       return;
     }
+
+    default: {
+      drawObjectAsCircle(ctx, state, {
+        radius: 10,
+        x: object.x,
+        y: object.y,
+        color: "#fff",
+      });
+    }
   }
 }
 
@@ -91,7 +126,9 @@ export function drawObjects(
   for (const objectId in objects) {
     const object = objects[objectId];
 
-    if (state.cameraManager.isWithinFrame(state.cameraManager.toScreen(object))) {
+    if (
+      state.cameraManager.isWithinFrame(state.cameraManager.toScreen(object))
+    ) {
       drawObject(ctx, state, object);
     }
   }

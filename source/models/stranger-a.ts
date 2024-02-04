@@ -13,9 +13,7 @@ import { type Vector } from "services/vector";
 type TypicalObject = Identifiable & Updatable & Collidable & Movable;
 
 export interface StrangerA extends TypicalObject {
-  type: "enemyC";
-  color: "green";
-  radius: 12;
+  type: "stranger_a";
   targetPoint?: Vector;
   health: ObjectHealthManager;
 }
@@ -25,11 +23,9 @@ export function createStrangerA(
 ): StrangerA {
   return {
     id: createId(),
-    type: "enemyC",
+    type: "stranger_a",
     x: o.x || 0,
     y: o.y || 0,
-    color: "green",
-    radius: 12,
     collisionCircle: { radius: 12 },
     health: createObjectHealthManager(10),
 
