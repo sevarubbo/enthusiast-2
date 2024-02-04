@@ -12,13 +12,14 @@ export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   color: "yellow";
   radius: typeof RADIUS;
   belongsTo: string;
-  speed: 0.2;
+  speed: number;
   direction: Vector;
   attack: number;
 }
 
 export function createBullet(
-  o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo"> & Partial<Pick<Bullet, "attack">>,
+  o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo"> &
+    Partial<Pick<Bullet, "attack" | "speed">>,
 ): Bullet {
   return {
     id: createId(),
@@ -45,20 +46,22 @@ export function createBullet(
       for (const id in gameObjectsManager.objects) {
         const object = gameObjectsManager.objects[id];
 
-        if ((object === this) || !("collisionCircle" in object)) {
+        if (object === this || !("collisionCircle" in object)) {
           continue;
         }
 
-        const collides = circle.circlesCollide({
-          x: this.x,
-          y: this.y,
-          radius: this.collisionCircle.radius,
-        },
-        {
-          x: object.x,
-          y: object.y,
-          radius: object.collisionCircle.radius,
-        });
+        const collides = circle.circlesCollide(
+          {
+            x: this.x,
+            y: this.y,
+            radius: this.collisionCircle.radius,
+          },
+          {
+            x: object.x,
+            y: object.y,
+            radius: object.collisionCircle.radius,
+          },
+        );
 
         if (collides) {
           gameObjectsManager.despawnObject(this);

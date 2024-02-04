@@ -1,27 +1,41 @@
 import { normalRandom } from "../../helpers";
-import { getFirstObjectLineCollision } from "../../services/state/helpers";
 import { createBullet } from "../bullet";
+import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
 import type { Tower } from ".";
 import type { Enemy, EnemyB } from "models";
 import type { Matrix } from "services/matrix";
 import type { State, Updatable } from "services/state";
 
-type ObjectUpdateFunction<T extends Updatable> = (self: T, ...args: Parameters<T["update"]>) => void;
+type ObjectUpdateFunction<T extends Updatable> = (
+  self: T,
+  ...args: Parameters<T["update"]>
+) => void;
 
-const canShootEnemy = (self: Tower, getState: () => State, enemy: Enemy | EnemyB): boolean => {
-  const shootingSegment: Matrix = [vector.create(self.x, self.y), vector.create(enemy.x, enemy.y)];
-  const willCollideWithFriendlyObject = !!(getFirstObjectLineCollision(getState, shootingSegment, object => {
-    if (object === self) {
-      return false;
-    }
+const canShootEnemy = (
+  self: Tower,
+  getState: () => State,
+  enemy: Enemy | EnemyB,
+): boolean => {
+  const shootingSegment: Matrix = [
+    vector.create(self.x, self.y),
+    vector.create(enemy.x, enemy.y),
+  ];
+  const willCollideWithFriendlyObject = !!getFirstObjectLineCollision(
+    getState,
+    shootingSegment,
+    (object) => {
+      if (object === self) {
+        return false;
+      }
 
-    if (["bullet", "enemy", "enemyB"].includes(object.type)) {
-      return false;
-    }
+      if (["bullet", "enemy", "enemyB"].includes(object.type)) {
+        return false;
+      }
 
-    return true;
-  }));
+      return true;
+    },
+  );
 
   return !willCollideWithFriendlyObject;
 };
@@ -58,28 +72,64 @@ const shoot: ObjectUpdateFunction<Tower> = (self, delta, getState) => {
   self.shotInterval.fire();
 
   const BULLET_OFFSET = 30;
-  const bulletPosition = vector.add(self, vector.scale(vector.fromAngle(self.angle), BULLET_OFFSET));
+  const bulletPosition = vector.add(
+    self,
+    vector.scale(vector.fromAngle(self.angle), BULLET_OFFSET),
+  );
   const bullet = createBullet({
     ...bulletPosition,
     direction: vector.fromAngle(self.angle),
     belongsTo: self.id,
     attack: self.bulletStrength,
+    speed: 0.4,
   });
 
   getState().gameObjectsManager.spawnObject(bullet);
 };
 
-export const towerUpdate: ObjectUpdateFunction<Tower> = (self, delta, getState) => {
+const rotateToAngle: ObjectUpdateFunction<Tower> = (self, delta) => {
+  if (self.targetAngle === undefined) {
+    return;
+  }
+
+  const angleDiff = self.targetAngle - self.angle;
+  const angleDiffAbs = Math.abs(angleDiff);
+
+  if (angleDiffAbs < 0.01) {
+    self.angle = self.targetAngle;
+
+    return;
+  }
+
+  const rotationDirection = angleDiff > 0 ? 1 : -1;
+  const rotation =
+    Math.min(self.rotateSpeed * delta, angleDiffAbs) * rotationDirection;
+
+  self.angle += rotation;
+};
+
+export const towerUpdate: ObjectUpdateFunction<Tower> = (
+  self,
+  delta,
+  getState,
+) => {
   self.shotInterval.update(delta, getState);
+  rotateToAngle(self, delta, getState);
+
   const { gameObjectsManager } = getState();
 
   if (!self.targetEnemyId) {
     findTargetEnemy(self, delta, getState);
   }
 
-  const targetEnemy = self.targetEnemyId ? gameObjectsManager.objects[self.targetEnemyId] : undefined;
+  const targetEnemy = self.targetEnemyId
+    ? gameObjectsManager.objects[self.targetEnemyId]
+    : undefined;
 
-  if (!targetEnemy || (targetEnemy.type !== "enemy" && targetEnemy.type !== "enemyB")) {
+  if (
+    !targetEnemy ||
+    (targetEnemy.type !== "enemy" && targetEnemy.type !== "enemyB")
+  ) {
     self.targetEnemyId = undefined;
 
     return;
@@ -94,8 +144,12 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (self, delta, getState) 
   const error = -self.aimError + normalRandom() * 2 * self.aimError;
 
   // Shoot
-  if (self.targetEnemyId && self.shotInterval.ready) {
-    self.angle = vector.getAngleBetweenTwoPoints(self, targetEnemy) + error * Math.PI;
-    shoot(self, delta, getState);
+  if (self.targetEnemyId) {
+    if (self.shotInterval.ready && self.angle === self.targetAngle) {
+      shoot(self, delta, getState);
+    }
+
+    self.targetAngle =
+      vector.getAngleBetweenTwoPoints(self, targetEnemy) + error * Math.PI;
   }
 };
