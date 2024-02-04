@@ -22,7 +22,7 @@ export interface Enemy extends Identifiable, Updatable, Collidable, Movable {
 }
 
 export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
-  const RANDOM_POINT_OFFSET = 40;
+  const RANDOM_POINT_OFFSET = 50;
 
   return {
     id: createId(),
@@ -60,17 +60,6 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
           worldBox,
         );
       }
-
-      // // Walk to random points
-      // this.movement.start(vector.direction(this, this.targetPoint));
-
-      // const distanceToTargetPoint = vector.distance(this, this.targetPoint);
-
-      // if (distanceToTargetPoint < this.movement.realSpeed) {
-      //   this.targetPoint = null;
-
-      //   return;
-      // }
 
       const newPosition = this.movement.nextPosition;
 

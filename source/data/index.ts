@@ -76,6 +76,9 @@ export function createDefaultState(): State {
     vector.create((WORLD_SIZE.x * 3) / 4, WORLD_SIZE.y / 4),
   );
   const house = createHouse(vector.scale(WORLD_SIZE, 1 / 6));
+  const HOUSE_2 = createHouse(
+    vector.create(WORLD_SIZE.x / 2, WORLD_SIZE.y / 1.5),
+  );
 
   return {
     world: {
@@ -104,7 +107,7 @@ export function createDefaultState(): State {
         tower2,
         tower3,
         house,
-
+        HOUSE_2,
         STRANGER_A,
       ],
       update(delta, getState) {
