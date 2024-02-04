@@ -10,7 +10,7 @@ export interface GameObjectsManager extends Updatable {
 }
 
 export const createGameObjectsManager = (
-  options: Partial<Pick<GameObjectsManager, "objects" | "update">> & { objectsArray?: StateObject[] },
+  options: Partial<Pick<GameObjectsManager, "update">> & { objectsArray?: StateObject[] },
 ): GameObjectsManager => {
   let newObjects = {};
 
@@ -22,7 +22,7 @@ export const createGameObjectsManager = (
   }
 
   return ({
-    objects: { ...(options.objects || {}), ...newObjects },
+    objects: newObjects,
 
     spawnObject(object) {
       this.objects[object.id] = object;
