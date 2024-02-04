@@ -34,4 +34,5 @@ export interface Healthy {
 
 export interface Movable extends Vector {
   movement: ObjectMovementManager;
+  targetPoint: Vector | null;
 }

@@ -46,3 +46,15 @@ export function drawCircle(
   ctx.fill();
   ctx.closePath();
 }
+
+export const drawCircleOutline = (
+  ctx: CanvasRenderingContext2D,
+  o: { position: Vector; radius: number; color: string; lineWidth: number },
+) => {
+  ctx.beginPath();
+  ctx.arc(o.position.x, o.position.y, o.radius, 0, Math.PI * 2, false);
+  ctx.strokeStyle = o.color;
+  ctx.lineWidth = o.lineWidth;
+  ctx.stroke();
+  ctx.closePath();
+};

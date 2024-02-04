@@ -1,5 +1,5 @@
 import { drawHealthBar } from "./healthbar";
-import { drawCircle } from "services/canvas";
+import { drawCircle, drawCircleOutline } from "services/canvas";
 import { vector } from "services/vector";
 import type { State } from "services/state";
 import type { StateObject } from "types";
@@ -42,17 +42,17 @@ function drawObject(
     );
   }
 
+  // Draw next point
+  if ("targetPoint" in object && object.targetPoint) {
+    drawCircle(ctx, {
+      position: state.cameraManager.toScreen(object.targetPoint),
+      color: "#aaa",
+      radius: 2,
+    });
+  }
+
   switch (object.type) {
     case "enemy": {
-      // Draw next point
-      if (object.targetPoint) {
-        drawCircle(ctx, {
-          position: state.cameraManager.toScreen(object.targetPoint),
-          color: "#aaa",
-          radius: 2,
-        });
-      }
-
       drawCircle(ctx, {
         position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
         ...object,
@@ -109,19 +109,18 @@ function drawObject(
 
     case "stranger_a": {
       if (object.isSelected) {
-        drawObjectAsCircle(ctx, state, {
-          radius: 14,
-          x: object.x,
-          y: object.y,
-          color: "#fff",
+        drawCircleOutline(ctx, {
+          radius: 16,
+          position: state.cameraManager.toScreen(object),
+          color: "rgba(255, 255, 255, 0.5)",
+          lineWidth: 3,
         });
       } else if (object.isHovered) {
-        drawObjectAsCircle(ctx, state, {
-          radius: 14,
-          x: object.x,
-          y: object.y,
-          // semitransparent yellow
-          color: "rgba(255, 255, 0, 0.5)",
+        drawCircleOutline(ctx, {
+          radius: 16,
+          position: state.cameraManager.toScreen(object),
+          color: "rgba(255, 255, 255, 0.3)",
+          lineWidth: 2,
         });
       }
 

@@ -12,7 +12,7 @@ export interface ObjectMovementManager {
   start(direction: Vector): void;
   stop(): void;
   setSpeedVector(v: Vector): void;
-  moveToTargetPoint(object: Movable, v: Vector): { didReach: boolean };
+  moveToTargetPoint(object: Movable, v: Vector | null): void;
 
   update(delta: number, getState: () => State, object: Movable): void;
 }
@@ -49,26 +49,31 @@ export const createObjectMovementManager = (
       this.direction = vector.normalize(this.speedVector);
     },
 
-    moveToTargetPoint(
-      object: Movable,
-      targetPoint: Vector,
-    ): { didReach: boolean } {
+    moveToTargetPoint(object: Movable, targetPoint: Vector | null) {
+      if (!targetPoint) {
+        return;
+      }
+
       const d = vector.distance(object, targetPoint);
 
       if (d < this.realSpeed) {
         object.x = targetPoint.x;
         object.y = targetPoint.y;
+        object.targetPoint = null;
+
         this.stop();
 
-        return { didReach: true };
+        return;
       }
 
       this.start(vector.direction(object, targetPoint));
 
-      return { didReach: false };
+      return;
     },
 
     update(delta, getState, object) {
+      this.moveToTargetPoint(object, object.targetPoint);
+
       this.realSpeed = this.speed * delta;
       this.speedVector = vector.scale(this.direction, this.realSpeed);
       this.nextPosition = vector.add(object, this.speedVector);

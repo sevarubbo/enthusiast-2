@@ -8,13 +8,11 @@ import {
   type Updatable,
   createObjectMovementManager,
 } from "services/state";
-import { type Vector } from "services/vector";
 
 type TypicalObject = Identifiable & Updatable & Collidable & Movable;
 
 export interface StrangerA extends TypicalObject {
   type: "stranger_a";
-  targetPoint?: Vector;
   health: ObjectHealthManager;
   isHovered: boolean;
   isSelected: boolean;
@@ -33,21 +31,11 @@ export function createStrangerA(
     movement: createObjectMovementManager({ maxSpeed: 0.1 }),
     isHovered: false,
     isSelected: false,
+    targetPoint: null,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.movement.update(delta, getState, this);
-
-      if (this.targetPoint) {
-        const { didReach } = this.movement.moveToTargetPoint(
-          this,
-          this.targetPoint,
-        );
-
-        if (didReach) {
-          this.targetPoint = undefined;
-        }
-      }
 
       // Selectable object logic
       const { worldPointerPosition, isPointerDown } = getState().cameraManager;
@@ -67,7 +55,7 @@ export function createStrangerA(
       } else {
         this.isHovered = false;
 
-        if (isPointerDown) {
+        if (this.isSelected && isPointerDown) {
           this.targetPoint = worldPointerPosition;
         }
       }

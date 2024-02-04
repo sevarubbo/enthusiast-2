@@ -1,15 +1,28 @@
 import { createId } from "helpers";
-import { createObjectMovementManager, createObjectHealthManager } from "services/state";
+import {
+  createObjectMovementManager,
+  createObjectHealthManager,
+} from "services/state";
 import { vector } from "services/vector";
 import type { Tower } from "./tower";
-import type { ObjectHealthManager, Collidable, Identifiable, Updatable, Movable } from "services/state";
+import type {
+  ObjectHealthManager,
+  Collidable,
+  Identifiable,
+  Updatable,
+  Movable,
+} from "services/state";
 import type { Vector } from "services/vector";
 
-export interface EnemyB extends Identifiable, Updatable, Vector, Collidable, Movable {
+export interface EnemyB
+  extends Identifiable,
+    Updatable,
+    Vector,
+    Collidable,
+    Movable {
   type: "enemyB";
   color: "pink";
   radius: 10;
-  targetPoint?: Vector;
   health: ObjectHealthManager;
 }
 
@@ -24,6 +37,7 @@ export function createEnemyB(o: Partial<Pick<EnemyB, "x" | "y">> = {}): EnemyB {
     collisionCircle: { radius: 7 },
     health: createObjectHealthManager(10),
     movement: createObjectMovementManager({ maxSpeed: 0.1 }),
+    targetPoint: null,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);

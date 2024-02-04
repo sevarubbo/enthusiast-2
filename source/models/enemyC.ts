@@ -1,15 +1,22 @@
 import { createId } from "../helpers";
 import { circle } from "../services/circle";
-import { createObjectHealthManager, createObjectMovementManager } from "services/state";
+import {
+  createObjectHealthManager,
+  createObjectMovementManager,
+} from "services/state";
 import { vector } from "services/vector";
-import type { ObjectHealthManager, Collidable, Identifiable, Updatable, Movable } from "services/state";
-import type { Vector } from "services/vector";
+import type {
+  ObjectHealthManager,
+  Collidable,
+  Identifiable,
+  Updatable,
+  Movable,
+} from "services/state";
 
 export interface EnemyC extends Identifiable, Updatable, Collidable, Movable {
   type: "enemyC";
   color: "gray" | "white";
   radius: 12;
-  targetPoint?: Vector;
   health: ObjectHealthManager;
 }
 
@@ -23,8 +30,12 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
     radius: 12,
     collisionCircle: { radius: 12 },
     health: createObjectHealthManager(10),
+    targetPoint: null,
 
-    movement: createObjectMovementManager({ maxSpeed: 0.1, direction: vector.fromAngle(Math.random() * 2 * Math.PI) }),
+    movement: createObjectMovementManager({
+      maxSpeed: 0.1,
+      direction: vector.fromAngle(Math.random() * 2 * Math.PI),
+    }),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
@@ -70,24 +81,33 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
           continue;
         }
 
-        const collides = circle.circlesCollide({
-          x: this.x,
-          y: this.y,
-          radius: this.collisionCircle.radius,
-        }, {
-          x: object.x,
-          y: object.y,
-          radius: object.collisionCircle.radius,
-        });
+        const collides = circle.circlesCollide(
+          {
+            x: this.x,
+            y: this.y,
+            radius: this.collisionCircle.radius,
+          },
+          {
+            x: object.x,
+            y: object.y,
+            radius: object.collisionCircle.radius,
+          },
+        );
 
         this.color = collides ? "gray" : "white";
 
         if (collides) {
           const collisionNorm = vector.normalize(vector.subtract(object, this));
-          const objectSpeedVector = "movement" in object ? object.movement.speedVector : vector.zero;
-          const relativeVelocity = { x: speedVector.x - objectSpeedVector.x, y: speedVector.y - objectSpeedVector.y };
+          const objectSpeedVector =
+            "movement" in object ? object.movement.speedVector : vector.zero;
+          const relativeVelocity = {
+            x: speedVector.x - objectSpeedVector.x,
+            y: speedVector.y - objectSpeedVector.y,
+          };
 
-          const collisionSpeed = relativeVelocity.x * collisionNorm.x + relativeVelocity.y * collisionNorm.y;
+          const collisionSpeed =
+            relativeVelocity.x * collisionNorm.x +
+            relativeVelocity.y * collisionNorm.y;
 
           if (collisionSpeed <= 0) {
             continue;
@@ -95,13 +115,18 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
 
           const adjustedPosition = vector.add(
             object,
-            vector.scale(collisionNorm, -(this.collisionCircle.radius + object.collisionCircle.radius)),
+            vector.scale(
+              collisionNorm,
+              -(this.collisionCircle.radius + object.collisionCircle.radius),
+            ),
           );
 
           this.x = adjustedPosition.x;
           this.y = adjustedPosition.y;
 
-          this.movement.setSpeedVector(vector.scale(collisionNorm, -collisionSpeed));
+          this.movement.setSpeedVector(
+            vector.scale(collisionNorm, -collisionSpeed),
+          );
         }
       }
     },
