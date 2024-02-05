@@ -1,7 +1,16 @@
-import type { Enemy, Tower, Bullet, House, EnemyB, EnemyC } from "./models";
-import type { StrangerA } from "models/stranger-a";
+import type {
+  Enemy,
+  Tower,
+  Bullet,
+  House,
+  EnemyB,
+  EnemyC,
+  StrangerA,
+  PlantA,
+} from "./models";
+import type { PlantEaterA } from "models/plant-eater-a";
 
-export type StateObject = (
+export type StateObject =
   | Enemy
   | EnemyB
   | EnemyC
@@ -9,4 +18,5 @@ export type StateObject = (
   | Tower
   | Bullet
   | StrangerA
-);
+  | PlantA
+  | PlantEaterA;

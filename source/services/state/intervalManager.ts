@@ -9,10 +9,13 @@ export interface IntervalManager extends Updatable {
   fireIfReady(callback: () => void): void;
 }
 
-export const createIntervalManager = (duration: number): IntervalManager => ({
+export const createIntervalManager = (
+  duration: number,
+  ready = true,
+): IntervalManager => ({
   duration,
-  timeSinceLastFire: Infinity,
-  ready: true,
+  timeSinceLastFire: ready ? Infinity : 0,
+  ready,
 
   fire() {
     if (!this.ready) {

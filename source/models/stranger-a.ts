@@ -29,7 +29,9 @@ export function createStrangerA(
     x: o.x || 0,
     y: o.y || 0,
     collisionCircle: { radius: 12 },
-    health: createObjectHealthManager(10),
+    health: createObjectHealthManager({
+      maxHealth: 10,
+    }),
     movement: createObjectMovementManager({ maxSpeed: 0.1 }),
     collision: createObjectCollisionManager(),
     isHovered: false,

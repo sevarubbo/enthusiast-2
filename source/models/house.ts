@@ -31,7 +31,9 @@ export function createHouse(o: Pick<House, "x" | "y">): House {
     color: "blue",
     radius: RADIUS,
     collisionCircle: { radius: RADIUS },
-    health: createObjectHealthManager(100),
+    health: createObjectHealthManager({
+      maxHealth: 100,
+    }),
     collision: createObjectCollisionManager(),
     ...o,
 

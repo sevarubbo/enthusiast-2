@@ -7,19 +7,7 @@ import type { StateObject } from "types";
 function drawObjectAsCircle(
   ctx: CanvasRenderingContext2D,
   state: State,
-  object: { radius: number; x: number; y: number; color: string },
-) {
-  return drawCircle(ctx, {
-    position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-    radius: object.radius,
-    color: object.color,
-  });
-}
-
-function drawObject(
-  ctx: CanvasRenderingContext2D,
-  state: State,
-  object: StateObject,
+  object: { radius: number; x: number; y: number; color: string } | StateObject,
 ) {
   if ("health" in object && object.health.current < object.health.max) {
     const healthBarPosition = vector.add(
@@ -42,6 +30,18 @@ function drawObject(
     );
   }
 
+  return drawCircle(ctx, {
+    position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
+    radius: "radius" in object ? object.radius : object.collisionCircle.radius,
+    color: "color" in object ? object.color : "#fff",
+  });
+}
+
+function drawObject(
+  ctx: CanvasRenderingContext2D,
+  state: State,
+  object: StateObject,
+) {
   // Draw next point
   if ("targetPoint" in object && object.targetPoint) {
     drawCircle(ctx, {
@@ -53,10 +53,7 @@ function drawObject(
 
   switch (object.type) {
     case "enemy": {
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-        ...object,
-      });
+      drawObjectAsCircle(ctx, state, object);
 
       return;
     }
@@ -129,6 +126,36 @@ function drawObject(
         x: object.x,
         y: object.y,
         color: "#a31c54",
+      });
+
+      return;
+    }
+
+    case "plant_a": {
+      drawObjectAsCircle(ctx, state, {
+        radius: object.collisionCircle.radius,
+        x: object.x,
+        y: object.y,
+        color: object.newGrowth ? "#0a0" : "#080",
+      });
+
+      return;
+    }
+
+    case "plant_eater_a": {
+      drawObjectAsCircle(ctx, state, {
+        ...object,
+        color: "#a00",
+      });
+
+      const directionPointPosition = vector.scale(object.movement.direction, 8);
+
+      drawCircle(ctx, {
+        position: state.cameraManager.toScreen(
+          vector.add(object, directionPointPosition),
+        ),
+        color: "#000",
+        radius: 5,
       });
 
       return;

@@ -3,8 +3,10 @@ import {
   createEnemyB,
   createEnemyC,
   createHouse,
+  createPlantA,
   createTower,
 } from "models";
+import { createPlantEaterA } from "models/plant-eater-a";
 import { createStrangerA } from "models/stranger-a";
 import { createCameraManager } from "services/state/cameraManager";
 import { createGameObjectsManager } from "services/state/gameObjectsManager";
@@ -56,6 +58,34 @@ const createEnemySpawner = (): Updatable => {
         })();
 
         gameObjectsManager.spawnObject(createEnemy(enemySpawnPosition));
+
+        // If there are no plants, spawn a plant
+        const plants = Object.values(gameObjectsManager.objects).filter(
+          (oo) => oo.type === "plant_a",
+        );
+
+        if (plants.length === 0) {
+          gameObjectsManager.spawnObject(
+            createPlantA({
+              x: Math.random() * world.size.x,
+              y: Math.random() * world.size.y,
+            }),
+          );
+        }
+
+        // Same for plant eaters
+        const plantEaters = Object.values(gameObjectsManager.objects).filter(
+          (oo) => oo.type === "plant_eater_a",
+        );
+
+        if (plantEaters.length === 0) {
+          gameObjectsManager.spawnObject(
+            createPlantEaterA({
+              x: Math.random() * world.size.x,
+              y: Math.random() * world.size.y,
+            }),
+          );
+        }
       }
     },
   };
@@ -111,6 +141,26 @@ export function createDefaultState(): State {
         house,
         HOUSE_2,
         STRANGER_A,
+
+        createPlantA({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
+        }),
+
+        createPlantA({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
+        }),
+
+        createPlantEaterA({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
+        }),
+
+        createPlantEaterA({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
+        }),
       ],
       update(delta, getState) {
         enemySpawner.update(delta, getState);

@@ -3,19 +3,29 @@ import { createBullet } from "../bullet";
 import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
 import type { Tower } from ".";
-import type { Enemy, EnemyB } from "models";
+import type { Enemy, EnemyB, PlantA } from "models";
 import type { Matrix } from "services/matrix";
 import type { State, Updatable } from "services/state";
+import type { StateObject } from "types";
 
 type ObjectUpdateFunction<T extends Updatable> = (
   self: T,
   ...args: Parameters<T["update"]>
 ) => void;
 
+const isEnemy = (object: StateObject): object is Enemy | EnemyB | PlantA => {
+  return (
+    object.type === "enemy" ||
+    object.type === "enemyB" ||
+    object.type === "plant_eater_a"
+    // object.type === "plant_a"
+  );
+};
+
 const canShootEnemy = (
   self: Tower,
   getState: () => State,
-  enemy: Enemy | EnemyB,
+  enemy: StateObject,
 ): boolean => {
   const shootingSegment: Matrix = [
     vector.create(self.x, self.y),
@@ -29,7 +39,7 @@ const canShootEnemy = (
         return false;
       }
 
-      if (["bullet", "enemy", "enemyB"].includes(object.type)) {
+      if (isEnemy(object)) {
         return false;
       }
 
@@ -45,13 +55,13 @@ const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, getState) => {
 
   // Find the closest enemy
   let closestDistance = Infinity;
-  let closestEnemy: Enemy | EnemyB | null = null;
+  let closestEnemy: Enemy | EnemyB | PlantA | null = null;
 
   for (const id in gameObjectsManager.objects) {
     const object = gameObjectsManager.getObject(id);
     const distance = vector.distance(self, object);
 
-    if (object.type !== "enemy" && object.type !== "enemyB") {
+    if (!isEnemy(object)) {
       continue;
     }
 
@@ -126,10 +136,7 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
     ? gameObjectsManager.objects[self.targetEnemyId]
     : undefined;
 
-  if (
-    !targetEnemy ||
-    (targetEnemy.type !== "enemy" && targetEnemy.type !== "enemyB")
-  ) {
+  if (!targetEnemy || !isEnemy(targetEnemy)) {
     self.targetEnemyId = undefined;
 
     return;
