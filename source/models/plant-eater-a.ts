@@ -18,12 +18,14 @@ export interface PlantEaterA
     Movable {
   type: "plant_eater_a";
   numberOfPlantsEaten: number;
+  color: string;
 }
 
 export function createPlantEaterA(
   o: Partial<Pick<PlantEaterA, "x" | "y">> = {},
 ): PlantEaterA {
   return {
+    color: "#a00",
     id: createId(),
     type: "plant_eater_a",
     x: o.x || 0,

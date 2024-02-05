@@ -7,6 +7,7 @@ import {
   createTower,
 } from "models";
 import { createPlantEaterA } from "models/plant-eater-a";
+import { createShootingEnemyA } from "models/shooting-enemy-a";
 import { createStrangerA } from "models/stranger-a";
 import { createCameraManager } from "services/state/cameraManager";
 import { createGameObjectsManager } from "services/state/gameObjectsManager";
@@ -91,11 +92,11 @@ const createEnemySpawner = (): Updatable => {
   };
 };
 
-const WORLD_SIZE = vector.create(1200, 1200);
+const WORLD_SIZE = vector.create(1600, 1600);
 
 const STRANGER_A = createStrangerA({
-  x: WORLD_SIZE.x - 100,
-  y: WORLD_SIZE.y - 100,
+  x: WORLD_SIZE.x - 200,
+  y: WORLD_SIZE.y - 500,
 });
 
 export function createDefaultState(): State {
@@ -117,8 +118,8 @@ export function createDefaultState(): State {
     gameSpeedManager: createGameSpeedManager(),
     cameraManager: createCameraManager({
       frame: {
-        position: vector.create(200, 150),
-        size: vector.create(700, 700),
+        position: vector.create(200, 50),
+        size: vector.create(window.innerWidth - 250, window.innerHeight - 100),
       },
       worldTargetPoint: vector.create(STRANGER_A.x, STRANGER_A.y),
     }),
@@ -160,6 +161,11 @@ export function createDefaultState(): State {
         createPlantEaterA({
           x: Math.random() * WORLD_SIZE.x,
           y: Math.random() * WORLD_SIZE.y,
+        }),
+
+        createShootingEnemyA({
+          x: WORLD_SIZE.x - 200,
+          y: WORLD_SIZE.y - 5,
         }),
       ],
       update(delta, getState) {

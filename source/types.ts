@@ -9,6 +9,7 @@ import type {
   PlantA,
 } from "./models";
 import type { PlantEaterA } from "models/plant-eater-a";
+import type { ShootingEnemyA } from "models/shooting-enemy-a";
 
 export type StateObject =
   | Enemy
@@ -19,4 +20,5 @@ export type StateObject =
   | Bullet
   | StrangerA
   | PlantA
-  | PlantEaterA;
+  | PlantEaterA
+  | ShootingEnemyA;

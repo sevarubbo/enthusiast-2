@@ -4,6 +4,47 @@ import { vector } from "services/vector";
 import type { State } from "services/state";
 import type { StateObject } from "types";
 
+const drawDefaultObjectView = (
+  ctx: CanvasRenderingContext2D,
+  state: State,
+  object: StateObject,
+) => {
+  drawCircle(ctx, {
+    position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
+    radius: object.collisionCircle.radius,
+    color: "color" in object ? object.color : "#fff",
+  });
+
+  if ("health" in object && object.health.current < object.health.max) {
+    const healthBarPosition = vector.add(
+      state.cameraManager.toScreen(object),
+      vector.create(0, -object.collisionCircle.radius - 10),
+    );
+
+    drawHealthBar(
+      ctx,
+      healthBarPosition,
+      object.health.current,
+      object.health.max,
+    );
+  }
+
+  if ("shootingAngle" in object) {
+    const directionPointPosition = vector.scale(
+      vector.fromAngle(object.shootingAngle),
+      10,
+    );
+
+    drawCircle(ctx, {
+      position: state.cameraManager.toScreen(
+        vector.add(object, directionPointPosition),
+      ),
+      color: "#fff",
+      radius: 4,
+    });
+  }
+};
+
 function drawObjectAsCircle(
   ctx: CanvasRenderingContext2D,
   state: State,
@@ -186,7 +227,6 @@ function drawObject(
     case "plant_eater_a": {
       drawObjectAsCircle(ctx, state, {
         ...object,
-        color: "#a00",
       });
 
       const directionPointPosition = vector.scale(object.movement.direction, 8);
@@ -202,14 +242,9 @@ function drawObject(
       return;
     }
 
-    // default: {
-    //   drawObjectAsCircle(ctx, state, {
-    //     radius: 10,
-    //     x: object.x,
-    //     y: object.y,
-    //     color: "#fff",
-    //   });
-    // }
+    default: {
+      drawDefaultObjectView(ctx, state, object);
+    }
   }
 }
 

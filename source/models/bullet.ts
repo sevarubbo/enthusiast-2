@@ -50,7 +50,7 @@ export function createBullet(
 
       const otherObject = this.collision.collidesWithObjects[0];
 
-      if (otherObject) {
+      if (otherObject && otherObject.id !== this.belongsTo) {
         gameObjectsManager.despawnObject(this);
 
         if ("health" in otherObject) {

@@ -1,4 +1,5 @@
 import type { Updatable } from "./types";
+import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
 export interface GameObjectsManager extends Updatable {
@@ -6,7 +7,10 @@ export interface GameObjectsManager extends Updatable {
   spawnObject(object: StateObject): void;
   despawnObject(object: StateObject): void;
   getObject(id: string): StateObject;
-
+  findClosestObject(
+    point: Vector,
+    filter: (object: StateObject) => boolean,
+  ): StateObject | null;
   findObjectsByType<T extends StateObject>(type: T["type"]): T[];
 }
 
@@ -50,6 +54,28 @@ export const createGameObjectsManager = (
       }
 
       return res;
+    },
+
+    findClosestObject(point: Vector, filter: (object: StateObject) => boolean) {
+      let closestObject: StateObject | null = null;
+      let closestDistance = Infinity;
+
+      for (const id in this.objects) {
+        const object = this.objects[id];
+
+        if (object && filter(object)) {
+          const distance = Math.sqrt(
+            (point.x - object.x) ** 2 + (point.y - object.y) ** 2,
+          );
+
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestObject = object;
+          }
+        }
+      }
+
+      return closestObject;
     },
 
     getObject(id) {

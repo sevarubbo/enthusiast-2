@@ -52,23 +52,36 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
       ctx.fillStyle = "#111";
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      // Draw world pane
-      drawRectangle(ctx, {
-        position: state.cameraManager.toScreen({ x: 0, y: 0 }),
-        size: state.world.size,
-      });
-
       // Draw camera frame
       drawRectangle(ctx, {
         position: state.cameraManager.frame.position,
         size: state.cameraManager.frame.size,
       });
 
+      // Draw UI
+      drawUI(ctx, state);
+
+      // Make camera frame clipping
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(
+        state.cameraManager.frame.position.x,
+        state.cameraManager.frame.position.y,
+        state.cameraManager.frame.size.x,
+        state.cameraManager.frame.size.y,
+      );
+      ctx.clip();
+
+      // Draw world pane
+      drawRectangle(ctx, {
+        position: state.cameraManager.toScreen({ x: 0, y: 0 }),
+        size: state.world.size,
+      });
+
       // Draw objects
       drawObjects(ctx, state, state.gameObjectsManager.objects);
 
-      // Draw UI
-      drawUI(ctx, state);
+      ctx.restore(); // Restore the previous clipping state
     },
   } as const;
 }
