@@ -1,4 +1,6 @@
+import { createBullet } from "./bullet";
 import { createId } from "helpers";
+import { getKeysPressed } from "services/io";
 import {
   createObjectHealthManager,
   type Collidable,
@@ -9,7 +11,9 @@ import {
   createObjectCollisionManager,
   type Healthy,
   type ObjectCollisionManager,
+  createIntervalManager,
 } from "services/state";
+import { vector } from "services/vector";
 
 type TypicalObject = Identifiable & Updatable & Collidable & Movable & Healthy;
 
@@ -18,6 +22,8 @@ export interface StrangerA extends TypicalObject {
   collision: ObjectCollisionManager;
   isHovered: boolean;
   isSelected: boolean;
+  shootingAngle: number;
+  shootingInterval: ReturnType<typeof createIntervalManager>;
 }
 
 export function createStrangerA(
@@ -32,16 +38,19 @@ export function createStrangerA(
     health: createObjectHealthManager({
       maxHealth: 10,
     }),
-    movement: createObjectMovementManager({ maxSpeed: 0.1 }),
+    movement: createObjectMovementManager({ maxSpeed: 0.2 }),
     collision: createObjectCollisionManager(),
     isHovered: false,
     isSelected: false,
     targetPoint: null,
+    shootingAngle: 0,
+    shootingInterval: createIntervalManager(1000 / 12),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.movement.update(delta, getState, this);
       this.collision.update(delta, getState, this);
+      this.shootingInterval.update(delta, getState);
 
       // START: Selectable object logic
       const { worldPointerPosition, isPointerDown } = getState().cameraManager;
@@ -61,9 +70,9 @@ export function createStrangerA(
       } else {
         this.isHovered = false;
 
-        if (this.isSelected && isPointerDown) {
-          this.targetPoint = worldPointerPosition;
-        }
+        // if (this.isSelected && isPointerDown) {
+        //   this.targetPoint = worldPointerPosition;
+        // }
       }
       // END
 
@@ -100,36 +109,71 @@ export function createStrangerA(
       }
       // END
 
-      // // START: Check collisions with other objects
-      // const { gameObjectsManager } = getState();
+      // START: Check collisions with other objects
+      const otherObject = this.collision.collidesWithObjects[0];
 
-      // for (const id in gameObjectsManager.objects) {
-      //   const object = gameObjectsManager.objects[id];
+      if (otherObject) {
+        this.targetPoint = null;
+        this.movement.stop();
+      }
 
-      //   if (object === this) {
-      //     continue;
-      //   }
+      this.shootingAngle = Math.atan2(
+        worldPointerPosition.y - this.y,
+        worldPointerPosition.x - this.x,
+      );
 
-      //   const collides =
-      //     Math.sqrt((this.x - object.x) ** 2 + (this.y - object.y) ** 2) <
-      //     this.collisionCircle.radius + object.collisionCircle.radius;
+      const { keysPressed } = getKeysPressed();
 
-      //   if (collides) {
-      //     this.movement.stop();
-      //     this.targetPoint = null;
+      if (
+        keysPressed.has("w") ||
+        keysPressed.has("a") ||
+        keysPressed.has("s") ||
+        keysPressed.has("d")
+      ) {
+        this.movement.start(
+          vector.fromAngle(
+            Math.atan2(
+              (keysPressed.has("s") ? 1 : 0) - (keysPressed.has("w") ? 1 : 0),
+              (keysPressed.has("d") ? 1 : 0) - (keysPressed.has("a") ? 1 : 0),
+            ) +
+              this.shootingAngle +
+              Math.PI / 2,
+          ),
+        );
 
-      //     const direction = Math.atan2(this.y - object.y, this.x - object.x);
+        getState().cameraManager.worldTargetPoint = vector.create(
+          this.x,
+          this.y,
+        );
+      } else {
+        this.movement.stop();
+      }
 
-      //     this.x += Math.cos(direction);
-      //     this.y += Math.sin(direction);
-      //   }
-      // }
-      // // END
+      if (isPointerDown) {
+        this.shootingInterval.fireIfReady(() => {
+          const BULLET_OFFSET = this.collisionCircle.radius + 5;
+          const bulletPosition = vector.add(
+            this,
+            vector.scale(vector.fromAngle(this.shootingAngle), BULLET_OFFSET),
+          );
 
-      // if (this.collision.collidesWithObjects[0]) {
-      //   this.movement.stop();
-      //   this.targetPoint = null;
-      // }
+          const bulletDirection = vector.fromAngle(this.shootingAngle);
+
+          // randomize bullet direction
+          bulletDirection.x += Math.random() * 0.1 - 0.05;
+          bulletDirection.y += Math.random() * 0.1 - 0.05;
+
+          const bullet = createBullet({
+            ...bulletPosition,
+            direction: bulletDirection,
+            belongsTo: this.id,
+            attack: 2,
+            speed: 0.8,
+          });
+
+          getState().gameObjectsManager.spawnObject(bullet);
+        });
+      }
     },
   };
 }

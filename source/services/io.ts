@@ -30,7 +30,11 @@ export type KeyboardKey =
   | "ArrowUp"
   | "ArrowDown"
   | "ArrowLeft"
-  | "ArrowRight";
+  | "ArrowRight"
+  | "w"
+  | "a"
+  | "s"
+  | "d";
 
 let currentKeyPressed: KeyboardKey | null = null;
 

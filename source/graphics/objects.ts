@@ -77,6 +77,20 @@ function drawObject(
         radius: 5,
       });
 
+      if (object.health.current < object.health.max) {
+        const healthBarPosition = vector.add(
+          state.cameraManager.toScreen(object),
+          vector.create(0, -object.radius - 10),
+        );
+
+        drawHealthBar(
+          ctx,
+          healthBarPosition,
+          object.health.current,
+          object.health.max,
+        );
+      }
+
       return;
     }
 
@@ -126,6 +140,19 @@ function drawObject(
         x: object.x,
         y: object.y,
         color: "#a31c54",
+      });
+
+      const directionPointPosition = vector.scale(
+        vector.fromAngle(object.shootingAngle),
+        10,
+      );
+
+      drawCircle(ctx, {
+        position: state.cameraManager.toScreen(
+          vector.add(object, directionPointPosition),
+        ),
+        color: "#fff",
+        radius: 2,
       });
 
       return;

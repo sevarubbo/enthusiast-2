@@ -52,7 +52,7 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     health: createObjectHealthManager({
       maxHealth: 20,
     }),
-    collision: createObjectCollisionManager(false),
+    collision: createObjectCollisionManager(),
     aimError: 0.02,
     bulletStrength: BULLET_STRENGTH,
     rotateSpeed: 2 / 1000,
