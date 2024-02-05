@@ -152,8 +152,22 @@ function drawObject(
           vector.add(object, directionPointPosition),
         ),
         color: "#fff",
-        radius: 2,
+        radius: 4,
       });
+
+      if (object.health.current < object.health.max) {
+        const healthBarPosition = vector.add(
+          state.cameraManager.toScreen(object),
+          vector.create(0, -object.collisionCircle.radius - 10),
+        );
+
+        drawHealthBar(
+          ctx,
+          healthBarPosition,
+          object.health.current,
+          object.health.max,
+        );
+      }
 
       return;
     }

@@ -37,6 +37,7 @@ export function createStrangerA(
     collisionCircle: { radius: 12 },
     health: createObjectHealthManager({
       maxHealth: 10,
+      selfHealing: true,
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.2 }),
     collision: createObjectCollisionManager(),

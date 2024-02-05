@@ -17,7 +17,8 @@ const isEnemy = (object: StateObject): object is Enemy | EnemyB | PlantA => {
   return (
     object.type === "enemy" ||
     object.type === "enemyB" ||
-    object.type === "plant_eater_a"
+    object.type === "plant_eater_a" ||
+    object.type === "stranger_a"
     // object.type === "plant_a"
   );
 };
