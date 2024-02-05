@@ -2,25 +2,47 @@ import { drawObjects } from "./objects";
 import type { Vector } from "../services/vector";
 import type { State } from "services/state";
 
-function drawRectangle(ctx: CanvasRenderingContext2D, o: { position: Vector; size: Vector }) {
+function drawRectangle(
+  ctx: CanvasRenderingContext2D,
+  o: { position: Vector; size: Vector },
+) {
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#333";
 
   ctx.strokeRect(o.position.x, o.position.y, o.size.x, o.size.y);
 }
 
-function drawUI(
-  ctx: CanvasRenderingContext2D,
-  state: State,
-) {
+const fpsData = {
+  lastFrameTime: performance.now(),
+  lastUpdated: performance.now(),
+  lastFPS: 0,
+};
+
+function drawUI(ctx: CanvasRenderingContext2D, state: State) {
   ctx.fillStyle = "#fff";
-  ctx.font = "36px serif";
+  ctx.font = "24px serif";
 
   const n = Object.keys(state.gameObjectsManager.objects).length;
   const LEFT_OFFSET = 50;
 
   ctx.fillText(`${n}`, LEFT_OFFSET, 100);
-  ctx.fillText(`${state.gameSpeedManager.gameSpeed.toFixed(2)}`, LEFT_OFFSET, 150);
+  ctx.fillText(
+    `${state.gameSpeedManager.gameSpeed.toFixed(2)}`,
+    LEFT_OFFSET,
+    150,
+  );
+
+  let fps = fpsData.lastFPS;
+
+  if (performance.now() - fpsData.lastUpdated > 500) {
+    fps = 1000 / (performance.now() - fpsData.lastFrameTime);
+    fpsData.lastFPS = fps;
+    fpsData.lastUpdated = performance.now();
+  }
+
+  fpsData.lastFrameTime = performance.now();
+
+  ctx.fillText(`fps: ${fps.toFixed(0)}`, LEFT_OFFSET, 200);
 }
 
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {

@@ -4,16 +4,18 @@ import {
   type Collidable,
   type Identifiable,
   type Movable,
-  type ObjectHealthManager,
   type Updatable,
   createObjectMovementManager,
+  createObjectCollisionManager,
+  type Healthy,
+  type ObjectCollisionManager,
 } from "services/state";
 
-type TypicalObject = Identifiable & Updatable & Collidable & Movable;
+type TypicalObject = Identifiable & Updatable & Collidable & Movable & Healthy;
 
 export interface StrangerA extends TypicalObject {
   type: "stranger_a";
-  health: ObjectHealthManager;
+  collision: ObjectCollisionManager;
   isHovered: boolean;
   isSelected: boolean;
 }
@@ -29,6 +31,7 @@ export function createStrangerA(
     collisionCircle: { radius: 12 },
     health: createObjectHealthManager(10),
     movement: createObjectMovementManager({ maxSpeed: 0.1 }),
+    collision: createObjectCollisionManager(),
     isHovered: false,
     isSelected: false,
     targetPoint: null,
@@ -36,6 +39,7 @@ export function createStrangerA(
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.movement.update(delta, getState, this);
+      this.collision.update(delta, getState, this);
 
       // START: Selectable object logic
       const { worldPointerPosition, isPointerDown } = getState().cameraManager;
@@ -94,31 +98,36 @@ export function createStrangerA(
       }
       // END
 
-      // START: Check collisions with other objects
-      const { gameObjectsManager } = getState();
+      // // START: Check collisions with other objects
+      // const { gameObjectsManager } = getState();
 
-      for (const id in gameObjectsManager.objects) {
-        const object = gameObjectsManager.objects[id];
+      // for (const id in gameObjectsManager.objects) {
+      //   const object = gameObjectsManager.objects[id];
 
-        if (object === this) {
-          continue;
-        }
+      //   if (object === this) {
+      //     continue;
+      //   }
 
-        const collides =
-          Math.sqrt((this.x - object.x) ** 2 + (this.y - object.y) ** 2) <
-          this.collisionCircle.radius + object.collisionCircle.radius;
+      //   const collides =
+      //     Math.sqrt((this.x - object.x) ** 2 + (this.y - object.y) ** 2) <
+      //     this.collisionCircle.radius + object.collisionCircle.radius;
 
-        if (collides) {
-          this.movement.stop();
-          this.targetPoint = null;
+      //   if (collides) {
+      //     this.movement.stop();
+      //     this.targetPoint = null;
 
-          const direction = Math.atan2(this.y - object.y, this.x - object.x);
+      //     const direction = Math.atan2(this.y - object.y, this.x - object.x);
 
-          this.x += Math.cos(direction);
-          this.y += Math.sin(direction);
-        }
-      }
-      // END
+      //     this.x += Math.cos(direction);
+      //     this.y += Math.sin(direction);
+      //   }
+      // }
+      // // END
+
+      // if (this.collision.collidesWithObjects[0]) {
+      //   this.movement.stop();
+      //   this.targetPoint = null;
+      // }
     },
   };
 }

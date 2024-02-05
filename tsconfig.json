@@ -3,11 +3,8 @@
     "strict": true,
     "baseUrl": "./source",
     "target": "ES2017",
-    "moduleResolution":  "node"
+    "moduleResolution": "node",
+    "noUncheckedIndexedAccess": true,
   },
-  "include": [
-    "source",
-    "**/*.ts",
-    ".eslintrc.js"
-  ]
+  "include": ["source", "**/*.ts", ".eslintrc.js"],
 }

@@ -154,6 +154,7 @@ export function drawObjects(
     const object = objects[objectId];
 
     if (
+      object &&
       state.cameraManager.isWithinFrame(state.cameraManager.toScreen(object))
     ) {
       drawObject(ctx, state, object);

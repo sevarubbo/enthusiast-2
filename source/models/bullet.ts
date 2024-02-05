@@ -1,7 +1,11 @@
 import { createId } from "helpers";
-import { circle } from "services/circle";
 import { matrix } from "services/matrix";
-import type { Collidable, Identifiable, Updatable } from "services/state";
+import {
+  createObjectCollisionManager,
+  type Collidable,
+  type Identifiable,
+  type Updatable,
+} from "services/state";
 import type { Vector } from "services/vector";
 
 const RADIUS = 2;
@@ -29,9 +33,11 @@ export function createBullet(
     collisionCircle: { radius: RADIUS },
     speed: 0.2,
     attack: ATTACK,
+    collision: createObjectCollisionManager(),
     ...o,
 
     update(delta, getState) {
+      this.collision.update(delta, getState, this);
       const { world, gameObjectsManager } = getState();
 
       this.x += this.direction.x * this.speed * delta;
@@ -42,33 +48,13 @@ export function createBullet(
         gameObjectsManager.despawnObject(this);
       }
 
-      // Collision
-      for (const id in gameObjectsManager.objects) {
-        const object = gameObjectsManager.objects[id];
+      const otherObject = this.collision.collidesWithObjects[0];
 
-        if (object === this || !("collisionCircle" in object)) {
-          continue;
-        }
+      if (otherObject) {
+        gameObjectsManager.despawnObject(this);
 
-        const collides = circle.circlesCollide(
-          {
-            x: this.x,
-            y: this.y,
-            radius: this.collisionCircle.radius,
-          },
-          {
-            x: object.x,
-            y: object.y,
-            radius: object.collisionCircle.radius,
-          },
-        );
-
-        if (collides) {
-          gameObjectsManager.despawnObject(this);
-
-          if ("health" in object) {
-            object.health.decrease(this.attack);
-          }
+        if ("health" in otherObject) {
+          otherObject.health.decrease(this.attack);
         }
       }
     },

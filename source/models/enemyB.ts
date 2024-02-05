@@ -2,16 +2,15 @@ import { createId } from "helpers";
 import {
   createObjectMovementManager,
   createObjectHealthManager,
+  createObjectCollisionManager,
+  type ObjectHealthManager,
+  type Collidable,
+  type Identifiable,
+  type Updatable,
+  type Movable,
 } from "services/state";
 import { vector } from "services/vector";
 import type { Tower } from "./tower";
-import type {
-  ObjectHealthManager,
-  Collidable,
-  Identifiable,
-  Updatable,
-  Movable,
-} from "services/state";
 import type { Vector } from "services/vector";
 
 export interface EnemyB
@@ -37,35 +36,40 @@ export function createEnemyB(o: Partial<Pick<EnemyB, "x" | "y">> = {}): EnemyB {
     collisionCircle: { radius: 7 },
     health: createObjectHealthManager(10),
     movement: createObjectMovementManager({ maxSpeed: 0.1 }),
+    collision: createObjectCollisionManager(),
     targetPoint: null,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.movement.update(delta, getState, this);
+      this.collision.update(delta, getState, this);
 
       const { gameObjectsManager } = getState();
 
       // Find first tower
       const towers = gameObjectsManager.findObjectsByType<Tower>("tower");
-      const firstTower = towers.length ? towers[0] : null;
+      let closestTower = towers.length ? towers[0] : null;
 
-      if (!firstTower) {
+      // Find closest tower
+      for (const tower of towers) {
+        if (
+          vector.distance(this, tower) <
+          vector.distance(this, closestTower as Tower)
+        ) {
+          closestTower = tower;
+        }
+      }
+
+      if (!closestTower) {
         return;
       }
 
-      this.targetPoint = firstTower;
-
-      const d = vector.distance(this, this.targetPoint);
-
-      if (d < this.movement.realSpeed) {
-        this.x = this.targetPoint.x;
-        this.y = this.targetPoint.y;
+      if (this.collision.collidesWithObjects.length) {
+        this.targetPoint = null;
         this.movement.stop();
-
-        return;
+      } else {
+        this.targetPoint = closestTower;
       }
-
-      this.movement.direction = vector.direction(this, this.targetPoint);
     },
   };
 }

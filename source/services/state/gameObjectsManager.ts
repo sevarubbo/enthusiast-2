@@ -5,6 +5,7 @@ export interface GameObjectsManager extends Updatable {
   objects: Record<string, StateObject>;
   spawnObject(object: StateObject): void;
   despawnObject(object: StateObject): void;
+  getObject(id: string): StateObject;
 
   findObjectsByType<T extends StateObject>(type: T["type"]): T[];
 }
@@ -43,12 +44,22 @@ export const createGameObjectsManager = (
       for (const id in this.objects) {
         const object = this.objects[id];
 
-        if (object.type === type) {
+        if (object && object.type === type) {
           res.push(object as T);
         }
       }
 
       return res;
+    },
+
+    getObject(id) {
+      const object = this.objects[id];
+
+      if (!object) {
+        throw new Error(`Object with id ${id} not found`);
+      }
+
+      return object;
     },
 
     update(delta, getState) {
@@ -58,7 +69,7 @@ export const createGameObjectsManager = (
         for (const objectId in this.objects) {
           const object = this.objects[objectId];
 
-          if ("update" in object) {
+          if (object && "update" in object) {
             object.update(delta, () => state);
           }
         }

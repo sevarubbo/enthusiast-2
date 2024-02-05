@@ -1,6 +1,7 @@
 import type { CameraManager } from "./cameraManager";
 import type { GameObjectsManager } from "./gameObjectsManager";
 import type { GameSpeedManager } from "./gameSpeedManager";
+import type { ObjectCollisionManager } from "./objectCollisionManager";
 import type { ObjectHealthManager } from "./objectHealthManager";
 import type { ObjectMovementManager } from "./objectMovementManager";
 import type { Vector } from "services/vector";
@@ -22,10 +23,11 @@ export interface Identifiable {
   id: string;
 }
 
-export interface Collidable {
+export interface Collidable extends Vector {
   collisionCircle: {
     radius: number;
   };
+  collision: ObjectCollisionManager;
 }
 
 export interface Healthy {

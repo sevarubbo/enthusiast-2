@@ -1,6 +1,6 @@
 import { createId } from "../helpers";
-import { circle } from "../services/circle";
 import {
+  createObjectCollisionManager,
   createObjectHealthManager,
   createObjectMovementManager,
 } from "services/state";
@@ -30,6 +30,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
     radius: 12,
     collisionCircle: { radius: 12 },
     health: createObjectHealthManager(10),
+    collision: createObjectCollisionManager(),
     targetPoint: null,
 
     movement: createObjectMovementManager({
@@ -40,8 +41,9 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.movement.update(delta, getState, this);
+      this.collision.update(delta, getState, this);
 
-      const { world, gameObjectsManager } = getState();
+      const { world } = getState();
 
       // Check collisions with world edges
       const { radius } = this.collisionCircle;
@@ -74,60 +76,33 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
       }
 
       // Collision with other objects
-      for (const id in gameObjectsManager.objects) {
-        const object = gameObjectsManager.objects[id];
+      const otherObject = this.collision.collidesWithObjects[0];
 
-        if (object === this) {
-          continue;
-        }
-
-        const collides = circle.circlesCollide(
-          {
-            x: this.x,
-            y: this.y,
-            radius: this.collisionCircle.radius,
-          },
-          {
-            x: object.x,
-            y: object.y,
-            radius: object.collisionCircle.radius,
-          },
+      if (otherObject && otherObject.type !== "bullet") {
+        this.color = "gray";
+        const collisionNorm = vector.normalize(
+          vector.subtract(otherObject, this),
         );
 
-        this.color = collides ? "gray" : "white";
+        const objectSpeedVector =
+          "movement" in otherObject
+            ? otherObject.movement.speedVector
+            : vector.zero;
 
-        if (collides) {
-          const collisionNorm = vector.normalize(vector.subtract(object, this));
-          const objectSpeedVector =
-            "movement" in object ? object.movement.speedVector : vector.zero;
-          const relativeVelocity = {
-            x: speedVector.x - objectSpeedVector.x,
-            y: speedVector.y - objectSpeedVector.y,
-          };
+        const relativeVelocity = {
+          x: speedVector.x - objectSpeedVector.x,
+          y: speedVector.y - objectSpeedVector.y,
+        };
 
-          const collisionSpeed =
-            relativeVelocity.x * collisionNorm.x +
-            relativeVelocity.y * collisionNorm.y;
+        const collisionSpeed =
+          relativeVelocity.x * collisionNorm.x +
+          relativeVelocity.y * collisionNorm.y;
 
-          if (collisionSpeed <= 0) {
-            continue;
-          }
-
-          const adjustedPosition = vector.add(
-            object,
-            vector.scale(
-              collisionNorm,
-              -(this.collisionCircle.radius + object.collisionCircle.radius),
-            ),
-          );
-
-          this.x = adjustedPosition.x;
-          this.y = adjustedPosition.y;
-
-          this.movement.setSpeedVector(
-            vector.scale(collisionNorm, -collisionSpeed),
-          );
-        }
+        this.movement.setSpeedVector(
+          vector.scale(collisionNorm, -collisionSpeed),
+        );
+      } else {
+        this.color = "white";
       }
     },
   };

@@ -1,11 +1,10 @@
 import { createId } from "../helpers";
-import { circle } from "../services/circle";
 import { matrix } from "../services/matrix";
 import {
+  createObjectCollisionManager,
   createObjectHealthManager,
   createObjectMovementManager,
 } from "services/state";
-import { vector } from "services/vector";
 import type {
   ObjectHealthManager,
   Collidable,
@@ -34,13 +33,15 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
     collisionCircle: { radius: 7 },
     health: createObjectHealthManager(10),
     movement: createObjectMovementManager({ maxSpeed: 0.01 }),
+    collision: createObjectCollisionManager(),
     targetPoint: null,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.movement.update(delta, getState, this);
+      this.collision.update(delta, getState, this);
 
-      const { world, gameObjectsManager } = getState();
+      const { world } = getState();
 
       // Find target point
       if (!this.targetPoint) {
@@ -61,42 +62,9 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
         );
       }
 
-      const newPosition = this.movement.nextPosition;
-
-      // Find collisions
-      for (const id in gameObjectsManager.objects) {
-        const object = gameObjectsManager.objects[id];
-
-        if (object === this) {
-          continue;
-        }
-
-        if ("collisionCircle" in object) {
-          if (
-            circle.circlesCollide(
-              {
-                x: newPosition.x,
-                y: newPosition.y,
-                radius: this.collisionCircle.radius,
-              },
-              {
-                x: object.x,
-                y: object.y,
-                radius: object.collisionCircle.radius,
-              },
-            )
-          ) {
-            const newDirection = vector.direction(object, this);
-
-            this.x += newDirection.x * this.movement.realSpeed;
-            this.y += newDirection.y * this.movement.realSpeed;
-
-            // Move in opposite direction from collision object
-            this.movement.start(newDirection);
-
-            break;
-          }
-        }
+      if (this.collision.collidesWithObjects.length) {
+        this.targetPoint = null;
+        this.movement.stop();
       }
     },
   };

@@ -13,7 +13,7 @@ export function getFirstObjectLineCollision(
   for (const otherObjectId in gameObjectsManager.objects) {
     const otherObject = gameObjectsManager.objects[otherObjectId];
 
-    if (!condition(otherObject)) {
+    if (!otherObject || !condition(otherObject)) {
       continue;
     }
 

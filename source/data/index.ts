@@ -27,7 +27,7 @@ const createEnemySpawner = (): Updatable => {
       let enemyCount = 0;
 
       for (const id in gameObjectsManager.objects) {
-        const object = gameObjectsManager.objects[id];
+        const object = gameObjectsManager.getObject(id);
 
         enemyCount += object.type === "enemy" ? 1 : 0;
       }
@@ -95,6 +95,8 @@ export function createDefaultState(): State {
     gameObjectsManager: createGameObjectsManager({
       objectsArray: [
         createEnemyB(vector.create(0, WORLD_SIZE.y)),
+        createEnemyB(vector.create(WORLD_SIZE.x, 0)),
+        createEnemyB(vector.create(WORLD_SIZE.x, WORLD_SIZE.y)),
         ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => {
           const pos = {
             x: Math.random() * WORLD_SIZE.x,

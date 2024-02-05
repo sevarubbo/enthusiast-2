@@ -9,6 +9,8 @@ module.exports = {
     },
   },
   rules: {
+    "import/no-duplicates": ["error"],
+
     "max-lines": [
       "error",
       { max: 300, skipBlankLines: true, skipComments: true },

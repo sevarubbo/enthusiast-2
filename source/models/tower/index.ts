@@ -2,6 +2,7 @@ import { towerUpdate } from "./update";
 import { createId } from "helpers";
 import {
   createIntervalManager,
+  createObjectCollisionManager,
   createObjectHealthManager,
 } from "services/state";
 import type {
@@ -49,12 +50,14 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
       radius: 20,
     },
     health: createObjectHealthManager(20),
+    collision: createObjectCollisionManager(),
     aimError: 0.02,
     bulletStrength: BULLET_STRENGTH,
     rotateSpeed: 2 / 1000,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
+      this.collision.update(delta, getState, this);
       towerUpdate(this, delta, getState);
     },
   };

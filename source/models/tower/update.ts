@@ -48,7 +48,7 @@ const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, getState) => {
   let closestEnemy: Enemy | EnemyB | null = null;
 
   for (const id in gameObjectsManager.objects) {
-    const object = gameObjectsManager.objects[id];
+    const object = gameObjectsManager.getObject(id);
     const distance = vector.distance(self, object);
 
     if (object.type !== "enemy" && object.type !== "enemyB") {
