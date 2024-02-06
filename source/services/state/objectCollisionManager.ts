@@ -13,6 +13,11 @@ export const createObjectCollisionManager = (
   update(delta, getState, object) {
     const state = getState();
 
+    // Remove destroyed objects from the list
+    this.collidesWithObjects = this.collidesWithObjects.filter(
+      (o) => o.id in state.gameObjectsManager.objects,
+    );
+
     if (checkForCollisions) {
       for (const id in state.gameObjectsManager.objects) {
         const otherObject = state.gameObjectsManager.objects[id];

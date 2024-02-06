@@ -30,7 +30,7 @@ export interface Collidable extends Vector {
   collision: ObjectCollisionManager;
 }
 
-export interface Healthy {
+export interface Healthy extends Identifiable {
   health: ObjectHealthManager;
 }
 

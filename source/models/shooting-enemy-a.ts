@@ -106,12 +106,15 @@ export function createShootingEnemyA(
             y: Math.random() * getState().world.size.y,
           }),
         );
-        getState().gameObjectsManager.spawnObject(
-          createShootingEnemyA({
-            x: Math.random() * getState().world.size.x,
-            y: Math.random() * getState().world.size.y,
-          }),
-        );
+
+        if (Math.random() < 0.5) {
+          getState().gameObjectsManager.spawnObject(
+            createShootingEnemyA({
+              x: Math.random() * getState().world.size.x,
+              y: Math.random() * getState().world.size.y,
+            }),
+          );
+        }
       }
     },
   };

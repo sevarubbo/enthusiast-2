@@ -8,6 +8,8 @@ import {
   createObjectHealthManager,
   createObjectMovementManager,
 } from "services/state";
+import type { Bullet } from "./bullet";
+import type { PlantA } from "./plant-a";
 import type { Movable } from "services/state";
 
 export interface PlantEaterA
@@ -19,6 +21,7 @@ export interface PlantEaterA
   type: "plant_eater_a";
   numberOfPlantsEaten: number;
   color: string;
+  targetEnemy: (Healthy & Collidable) | undefined;
 }
 
 export function createPlantEaterA(
@@ -41,6 +44,7 @@ export function createPlantEaterA(
     }),
     targetPoint: null,
     numberOfPlantsEaten: 0,
+    targetEnemy: undefined,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
@@ -51,33 +55,57 @@ export function createPlantEaterA(
       const { gameObjectsManager } = getState();
       const plants = Object.values(gameObjectsManager.objects).filter(
         (oo) => oo.type === "plant_a",
-      );
+      ) as PlantA[];
 
-      let closestPlant = null;
-      let closestDistance = Infinity;
+      const collisions = this.collision.collidesWithObjects;
+      const bullet = collisions.find((oo) => oo.type === "bullet") as
+        | Bullet
+        | undefined;
 
-      for (const plant of plants) {
-        const distance = Math.sqrt(
-          (this.x - plant.x) ** 2 + (this.y - plant.y) ** 2,
-        );
+      if (bullet) {
+        const whoSHot = gameObjectsManager.objects[bullet.belongsTo] as
+          | (Healthy & Collidable)
+          | undefined;
 
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestPlant = plant;
-        }
+        this.targetEnemy = whoSHot;
       }
 
-      if (closestPlant) {
+      if (
+        this.targetEnemy &&
+        !gameObjectsManager.objects[this.targetEnemy.id]
+      ) {
+        this.targetEnemy = undefined;
+      }
+
+      if (!this.targetEnemy) {
+        let closestPlant = null;
+        let closestDistance = Infinity;
+
+        for (const plant of plants) {
+          const distance = Math.sqrt(
+            (this.x - plant.x) ** 2 + (this.y - plant.y) ** 2,
+          );
+
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestPlant = plant;
+          }
+        }
+
+        this.targetEnemy = closestPlant || undefined;
+      }
+
+      if (this.targetEnemy) {
         this.targetPoint = {
-          x: closestPlant.x,
-          y: closestPlant.y,
+          x: this.targetEnemy.x,
+          y: this.targetEnemy.y,
         };
       } else {
         this.targetPoint = null;
         this.movement.stop();
       }
 
-      if (this.targetPoint && closestPlant) {
+      if (this.targetPoint && this.targetEnemy) {
         const distance = Math.sqrt(
           (this.x - this.targetPoint.x) ** 2 +
             (this.y - this.targetPoint.y) ** 2,
@@ -85,18 +113,21 @@ export function createPlantEaterA(
 
         if (
           distance <=
-          this.collisionCircle.radius + closestPlant.collisionCircle.radius
+          this.collisionCircle.radius + this.targetEnemy.collisionCircle.radius
         ) {
-          gameObjectsManager.despawnObject(closestPlant);
-          this.targetPoint = null;
+          this.targetEnemy.health.current -= 0.2;
 
-          this.numberOfPlantsEaten += 1;
+          if (this.targetEnemy.health.current <= 0) {
+            this.numberOfPlantsEaten += 1;
 
-          if (this.numberOfPlantsEaten >= 20) {
-            gameObjectsManager.spawnObject(
-              createPlantEaterA({ x: this.x, y: this.y }),
-            );
-            this.numberOfPlantsEaten = 0;
+            if (this.numberOfPlantsEaten >= 20) {
+              gameObjectsManager.spawnObject(
+                createPlantEaterA({ x: this.x, y: this.y }),
+              );
+              this.numberOfPlantsEaten = 0;
+            }
+
+            this.targetPoint = null;
           }
         }
       }

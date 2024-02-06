@@ -147,12 +147,6 @@ function drawObject(
       return;
     }
 
-    case "enemyB": {
-      drawObjectAsCircle(ctx, state, object);
-
-      return;
-    }
-
     case "enemyC": {
       drawObjectAsCircle(ctx, state, object);
 
