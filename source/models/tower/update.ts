@@ -95,6 +95,30 @@ const shoot: ObjectUpdateFunction<Tower> = (self, delta, getState) => {
   });
 
   getState().gameObjectsManager.spawnObject(bullet);
+
+  // PLAY SOUND from a file
+  const sound = new Audio("./sounds/TL_AS_One_Shot_Bass_Log_A.wav");
+
+  // Set the volume depending on camera position
+  const { cameraManager, world } = getState();
+  const distance = vector.distance(self, cameraManager.worldTargetPoint);
+  const volume = Math.max(0, 1 - (2 * distance) / world.size.x);
+
+  sound.volume = volume;
+
+  // Set the pan depending on camera position
+  const pan = Math.max(
+    -1,
+    Math.min(1, (self.x - cameraManager.worldTargetPoint.x) / 1000),
+  );
+  // USing StereoPannerNode
+  const ctx = new AudioContext();
+  const panner = new StereoPannerNode(ctx, { pan });
+  const source = ctx.createMediaElementSource(sound);
+
+  source.connect(panner).connect(ctx.destination);
+
+  void sound.play();
 };
 
 const rotateToAngle: ObjectUpdateFunction<Tower> = (self, delta) => {
@@ -123,7 +147,6 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
   delta,
   getState,
 ) => {
-  self.shotInterval.update(delta, getState);
   rotateToAngle(self, delta, getState);
 
   const { gameObjectsManager } = getState();
@@ -150,12 +173,13 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
 
   const error = -self.aimError + normalRandom() * 2 * self.aimError;
 
-  // Shoot
   if (self.targetEnemyId) {
+    // Shoot
     if (self.shotInterval.ready && self.angle === self.targetAngle) {
       shoot(self, delta, getState);
     }
 
+    // Adjust angle
     self.targetAngle =
       vector.getAngleBetweenTwoPoints(self, targetEnemy) + error * Math.PI;
   }

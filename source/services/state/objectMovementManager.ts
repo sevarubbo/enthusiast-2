@@ -12,7 +12,7 @@ export interface ObjectMovementManager {
   start(direction: Vector): void;
   stop(): void;
   setSpeedVector(v: Vector): void;
-  moveToTargetPoint(object: Movable, v: Vector | null): void;
+  moveToTargetPoint(object: Movable, v: Vector | null | undefined): void;
 
   update(delta: number, getState: () => State, object: Movable): void;
 }

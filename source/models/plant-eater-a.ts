@@ -7,6 +7,7 @@ import {
   type Updatable,
   createObjectHealthManager,
   createObjectMovementManager,
+  createIntervalManager,
 } from "services/state";
 import type { Bullet } from "./bullet";
 import type { PlantA } from "./plant-a";
@@ -23,6 +24,7 @@ export interface PlantEaterA
   color: string;
   targetEnemy: (Healthy & Collidable) | undefined;
   attack: number;
+  lookAroundInterval: ReturnType<typeof createIntervalManager>;
 }
 
 export function createPlantEaterA(
@@ -47,11 +49,13 @@ export function createPlantEaterA(
     numberOfPlantsEaten: 0,
     targetEnemy: undefined,
     attack: 0.03,
+    lookAroundInterval: createIntervalManager(10000),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.collision.update(delta, getState, this);
       this.movement.update(delta, getState, this);
+      this.lookAroundInterval.update(delta, getState);
 
       // Find the closest plant
       const { gameObjectsManager } = getState();
@@ -72,6 +76,7 @@ export function createPlantEaterA(
         this.targetEnemy = whoSHot;
       }
 
+      // Check if the target enemy is still alive
       if (
         this.targetEnemy &&
         !gameObjectsManager.objects[this.targetEnemy.id]
@@ -79,7 +84,8 @@ export function createPlantEaterA(
         this.targetEnemy = undefined;
       }
 
-      if (!this.targetEnemy) {
+      if (!this.targetEnemy || this.lookAroundInterval.ready) {
+        this.lookAroundInterval.fireIfReady();
         let closestPlant = null;
         let closestDistance = Infinity;
 

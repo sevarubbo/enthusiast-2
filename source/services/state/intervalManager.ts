@@ -6,7 +6,7 @@ export interface IntervalManager extends Updatable {
   ready: boolean;
   /** @deprecated */
   fire(): void;
-  fireIfReady(callback: () => void): void;
+  fireIfReady(callback?: () => void): void;
 }
 
 export const createIntervalManager = (
@@ -27,8 +27,11 @@ export const createIntervalManager = (
 
   fireIfReady(callback) {
     if (this.ready) {
-      callback();
       this.timeSinceLastFire = 0;
+
+      if (callback) {
+        callback();
+      }
     }
   },
 

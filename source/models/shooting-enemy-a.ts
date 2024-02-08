@@ -99,8 +99,14 @@ export function createShootingEnemyA(
         this.movement.stop();
       }
 
+      // After death
       if (this.health.current <= 0) {
-        if (Math.random() < 0.8) {
+        if (
+          Math.random() < 0.8 ||
+          // Always spawn at least one enemy
+          getState().gameObjectsManager.findObjectsByType("shooting_enemy_a")
+            .length === 0
+        ) {
           getState().gameObjectsManager.spawnObject(
             createShootingEnemyA({
               x: Math.random() * getState().world.size.x,

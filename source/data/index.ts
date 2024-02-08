@@ -17,7 +17,7 @@ import type { Vector } from "services/vector";
 
 const createEnemySpawner = (): Updatable => {
   let timeSinceLastSpawn = 0;
-  const MAX_ENEMY_COUNT = 100;
+  // const MAX_ENEMY_COUNT = 100;
   const SPAWN_FREQUENCY = 1 / 2000;
 
   return {
@@ -26,17 +26,17 @@ const createEnemySpawner = (): Updatable => {
 
       timeSinceLastSpawn += delta;
 
-      let enemyCount = 0;
+      // let enemyCount = 0;
 
-      for (const id in gameObjectsManager.objects) {
-        const object = gameObjectsManager.getObject(id);
+      // for (const id in gameObjectsManager.objects) {
+      //   const object = gameObjectsManager.getObject(id);
 
-        enemyCount += object.type === "enemy" ? 1 : 0;
-      }
+      //   enemyCount += object.type === "enemy" ? 1 : 0;
+      // }
 
-      if (enemyCount >= MAX_ENEMY_COUNT) {
-        return;
-      }
+      // if (enemyCount >= MAX_ENEMY_COUNT) {
+      //   return;
+      // }
 
       if (timeSinceLastSpawn > 1 / SPAWN_FREQUENCY) {
         timeSinceLastSpawn = 0;

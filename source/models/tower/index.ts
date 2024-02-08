@@ -61,6 +61,8 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.collision.update(delta, getState, this);
+      this.shotInterval.update(delta, getState);
+
       towerUpdate(this, delta, getState);
     },
   };
