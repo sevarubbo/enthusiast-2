@@ -22,6 +22,7 @@ export interface PlantEaterA
   numberOfPlantsEaten: number;
   color: string;
   targetEnemy: (Healthy & Collidable) | undefined;
+  attack: number;
 }
 
 export function createPlantEaterA(
@@ -45,6 +46,7 @@ export function createPlantEaterA(
     targetPoint: null,
     numberOfPlantsEaten: 0,
     targetEnemy: undefined,
+    attack: 0.03,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
@@ -115,7 +117,7 @@ export function createPlantEaterA(
           distance <=
           this.collisionCircle.radius + this.targetEnemy.collisionCircle.radius
         ) {
-          this.targetEnemy.health.current -= 0.2;
+          this.targetEnemy.health.current -= delta * this.attack;
 
           if (this.targetEnemy.health.current <= 0) {
             this.numberOfPlantsEaten += 1;

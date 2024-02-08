@@ -100,12 +100,14 @@ export function createShootingEnemyA(
       }
 
       if (this.health.current <= 0) {
-        getState().gameObjectsManager.spawnObject(
-          createShootingEnemyA({
-            x: Math.random() * getState().world.size.x,
-            y: Math.random() * getState().world.size.y,
-          }),
-        );
+        if (Math.random() < 0.8) {
+          getState().gameObjectsManager.spawnObject(
+            createShootingEnemyA({
+              x: Math.random() * getState().world.size.x,
+              y: Math.random() * getState().world.size.y,
+            }),
+          );
+        }
 
         if (Math.random() < 0.5) {
           getState().gameObjectsManager.spawnObject(
