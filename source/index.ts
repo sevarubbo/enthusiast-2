@@ -8,7 +8,7 @@ import {
   setPointerPosition,
 } from "./services/io";
 import { vector } from "./services/vector";
-import { loadAudioFiles } from "services/audio";
+import { loadAudioFiles, setGlobalVolume } from "services/audio";
 import type { KeyboardKey } from "./services/io";
 
 const { canvas, onCanvasMouseMove, onPointerDown, onPointerUp } =
@@ -90,3 +90,24 @@ Object.defineProperty(window, "Game", {
     vector,
   },
 });
+
+// Volume control
+const volumeControl = document.createElement("input");
+
+volumeControl.type = "range";
+volumeControl.min = "0";
+volumeControl.max = "1";
+volumeControl.step = "0.01";
+volumeControl.value = "0.5";
+
+volumeControl.addEventListener("input", (e) => {
+  const value = Number((e.target as HTMLInputElement).value);
+
+  setGlobalVolume(value);
+});
+
+volumeControl.style.position = "fixed";
+volumeControl.style.top = "230px";
+volumeControl.style.left = "10px";
+
+document.body.appendChild(volumeControl);

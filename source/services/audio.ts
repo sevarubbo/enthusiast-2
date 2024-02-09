@@ -31,6 +31,12 @@ export type SoundName = (typeof audioFiles)[number]["name"];
 // Array to store loaded audio data
 let loadedAudioData: AudioData[] = [];
 
+let globalVolume = 0.5;
+
+export const setGlobalVolume = (volume: number) => {
+  globalVolume = volume;
+};
+
 // Load audio files and store them in an object
 export async function loadAudioFiles(): Promise<void> {
   loadedAudioData = [];
@@ -89,7 +95,7 @@ export const getSoundPosition = (
   pan = Math.max(-1, Math.min(1, pan));
 
   return {
-    volume: 200 / (distance + 200),
+    volume: globalVolume * (200 / (distance + 200)),
     pan,
   };
 };
