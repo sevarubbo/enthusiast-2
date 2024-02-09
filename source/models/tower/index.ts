@@ -51,7 +51,7 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
       radius: 20,
     },
     health: createObjectHealthManager({
-      maxHealth: 200,
+      maxHealth: 300,
       selfHealing: true,
     }),
     collision: createObjectCollisionManager(false),

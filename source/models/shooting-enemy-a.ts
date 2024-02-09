@@ -46,10 +46,17 @@ export function createShootingEnemyA(
       this.shootingInterval.update(delta, getState);
 
       // Find closest stranger
-      const closestStranger = getState().gameObjectsManager.findClosestObject(
+      let closestStranger = getState().gameObjectsManager.findClosestObject(
         this,
         (oo) => oo.type === "stranger_a",
       );
+
+      if (!closestStranger) {
+        closestStranger = getState().gameObjectsManager.findClosestObject(
+          this,
+          (oo) => oo.type === "plant_eater_a",
+        );
+      }
 
       if (closestStranger) {
         // Get to shooting range
