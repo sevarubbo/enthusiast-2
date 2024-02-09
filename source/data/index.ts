@@ -134,6 +134,9 @@ export function createDefaultState(): State {
         tower,
         tower2,
         tower3,
+
+        createTower(getRandomPosition()),
+
         house,
         HOUSE_2,
         STRANGER_A,

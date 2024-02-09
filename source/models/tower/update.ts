@@ -4,7 +4,6 @@ import { getSoundPosition, playSound } from "services/audio";
 import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
 import type { Tower } from ".";
-import type { Enemy, PlantA } from "models";
 import type { Matrix } from "services/matrix";
 import type { State, Updatable } from "services/state";
 import type { StateObject } from "types";
@@ -14,7 +13,7 @@ type ObjectUpdateFunction<T extends Updatable> = (
   ...args: Parameters<T["update"]>
 ) => void;
 
-const isEnemy = (object: StateObject): object is Enemy | PlantA => {
+const isEnemy = (object: StateObject) => {
   return (
     object.type === "enemy" ||
     object.type === "shooting_enemy_a" ||
@@ -60,7 +59,7 @@ const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, getState) => {
 
   // Find the closest enemy
   let closestDistance = Infinity;
-  let closestEnemy: Enemy | PlantA | null = null;
+  let closestEnemy: StateObject | null = null;
 
   for (const id in gameObjectsManager.objects) {
     const object = gameObjectsManager.getObject(id);
@@ -165,8 +164,22 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
       shoot(self, delta, getState);
     }
 
+    const targetMovementAdjustment = 32;
+
     // Adjust angle
     self.targetAngle =
-      vector.getAngleBetweenTwoPoints(self, targetEnemy) + error * Math.PI;
+      vector.getAngleBetweenTwoPoints(
+        self,
+        "movement" in targetEnemy
+          ? vector.add(
+              targetEnemy,
+              vector.scale(
+                targetEnemy.movement.speedVector,
+                targetMovementAdjustment,
+              ),
+            )
+          : targetEnemy,
+      ) +
+      error * Math.PI;
   }
 };
