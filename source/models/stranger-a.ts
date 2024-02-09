@@ -1,5 +1,6 @@
 import { createBullet } from "./bullet";
 import { createId } from "helpers";
+import { getSoundPosition, playSound } from "services/audio";
 import { getKeysPressed } from "services/io";
 import {
   createObjectHealthManager,
@@ -173,6 +174,11 @@ export function createStrangerA(
           });
 
           getState().gameObjectsManager.spawnObject(bullet);
+
+          // Set the volume depending on camera position
+          const { cameraManager } = getState();
+
+          playSound("basic shot", getSoundPosition(this, cameraManager));
         });
       }
     },

@@ -26,6 +26,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
     collisionCircle: { radius: 5 },
     health: createObjectHealthManager({
       maxHealth: 1,
+      deathSound: null,
     }),
     collision: createObjectCollisionManager(false),
     sproutInterval: createIntervalManager(700, false),

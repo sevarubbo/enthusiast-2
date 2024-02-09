@@ -8,6 +8,7 @@ import {
   setPointerPosition,
 } from "./services/io";
 import { vector } from "./services/vector";
+import { loadAudioFiles } from "services/audio";
 import type { KeyboardKey } from "./services/io";
 
 const { canvas, onCanvasMouseMove, onPointerDown, onPointerUp } =
@@ -41,19 +42,31 @@ const state = createDefaultState();
 
 const { draw } = createCanvasDrawer(canvasContext);
 
-let lastNow: number;
-const MAX_DELTA = 10;
+const targetFPS = 60; // Target FPS for rendering
+const frameTime = 1000 / targetFPS; // Desired frame time in milliseconds
+
+let lastFrameTime = performance.now();
+let accumulatedTime = 0;
 
 // Game loop
-const gameLoop = (ctx: CanvasRenderingContext2D, now: number) => {
-  const delta =
-    Math.min(now - lastNow, MAX_DELTA) * state.gameSpeedManager.gameSpeed;
+const gameLoop = (ctx: CanvasRenderingContext2D, currentTime: number) => {
+  const deltaTime = currentTime - lastFrameTime;
 
-  lastNow = now;
+  lastFrameTime = currentTime;
+  accumulatedTime += deltaTime;
+
+  if (accumulatedTime < frameTime) {
+    requestAnimationFrame((newNow) => gameLoop(ctx, newNow));
+
+    return;
+  }
+
+  const delta = deltaTime * state.gameSpeedManager.gameSpeed;
+
+  // console.log(delta);
 
   state.gameSpeedManager.update(delta, () => state);
 
-  // TODO: Move this to draw
   state.cameraManager.update(delta, () => state);
 
   state.gameObjectsManager.update(delta, () => state);
@@ -61,11 +74,14 @@ const gameLoop = (ctx: CanvasRenderingContext2D, now: number) => {
   draw(state);
 
   requestAnimationFrame((newNow) => gameLoop(ctx, newNow));
+  accumulatedTime -= frameTime;
 };
 
-requestAnimationFrame((now) => {
-  lastNow = now;
-  gameLoop(canvasContext, now);
+// Start game loop
+void loadAudioFiles().then(() => {
+  requestAnimationFrame((now) => {
+    gameLoop(canvasContext, now);
+  });
 });
 
 // Export some global stuff

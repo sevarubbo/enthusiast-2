@@ -5,6 +5,7 @@ import {
   createPlantA,
   createTower,
 } from "models";
+import { createDefenderA } from "models/defender-a";
 import { createPlantEaterA } from "models/plant-eater-a";
 import { createShootingEnemyA } from "models/shooting-enemy-a";
 import { createStrangerA } from "models/stranger-a";
@@ -93,22 +94,20 @@ const createEnemySpawner = (): Updatable => {
 
 const WORLD_SIZE = vector.create(1600, 1600);
 
-const STRANGER_A = createStrangerA({
-  x: WORLD_SIZE.x - 200,
-  y: WORLD_SIZE.y - 500,
+const getRandomPosition = () => ({
+  x: Math.random() * WORLD_SIZE.x,
+  y: Math.random() * WORLD_SIZE.y,
 });
+
+const STRANGER_A = createStrangerA(getRandomPosition());
 
 export function createDefaultState(): State {
   const enemySpawner = createEnemySpawner();
-  const tower = createTower(vector.scale(WORLD_SIZE, 1 / 3));
-  const tower2 = createTower(vector.scale(WORLD_SIZE, 2 / 3));
-  const tower3 = createTower(
-    vector.create((WORLD_SIZE.x * 3) / 4, WORLD_SIZE.y / 4),
-  );
-  const house = createHouse(vector.scale(WORLD_SIZE, 1 / 6));
-  const HOUSE_2 = createHouse(
-    vector.create(WORLD_SIZE.x / 2, WORLD_SIZE.y / 1.5),
-  );
+  const tower = createTower(getRandomPosition());
+  const tower2 = createTower(getRandomPosition());
+  const tower3 = createTower(getRandomPosition());
+  const house = createHouse(getRandomPosition());
+  const HOUSE_2 = createHouse(getRandomPosition());
 
   return {
     world: {
@@ -167,6 +166,11 @@ export function createDefaultState(): State {
         createShootingEnemyA({
           x: WORLD_SIZE.x - 200,
           y: WORLD_SIZE.y - 5,
+        }),
+
+        createDefenderA({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
         }),
       ],
       update(delta, getState) {

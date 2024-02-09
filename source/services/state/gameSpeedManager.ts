@@ -1,30 +1,33 @@
-import { getKeyPressed } from "../io";
-import type { Updatable } from "./index";
+import { getKeysPressed } from "../io";
+import type { Updatable } from ".";
 
 export interface GameSpeedManager extends Updatable {
   gameSpeed: number;
 }
 
+const DEFAULT_GAME_SPEED = 2;
 const MAX_GAME_SPEED = 10;
-const GAME_SPEED_CHANGE_STEP = 0.1;
+const GAME_SPEED_CHANGE_STEP = 0.05;
 
 export const createGameSpeedManager = (): GameSpeedManager => ({
-  gameSpeed: 1,
+  gameSpeed: DEFAULT_GAME_SPEED,
   update() {
-    const currentKeyPressed = getKeyPressed();
+    const { keysPressed } = getKeysPressed();
 
-    if (currentKeyPressed === "=") {
+    if (keysPressed.has("=")) {
       this.gameSpeed += GAME_SPEED_CHANGE_STEP;
 
       if (this.gameSpeed > MAX_GAME_SPEED) {
         this.gameSpeed = MAX_GAME_SPEED;
       }
-    } else if (currentKeyPressed === "-") {
+    } else if (keysPressed.has("-")) {
       this.gameSpeed -= GAME_SPEED_CHANGE_STEP;
 
       if (this.gameSpeed < 0) {
         this.gameSpeed = 0;
       }
+    } else if (keysPressed.has("0")) {
+      this.gameSpeed = DEFAULT_GAME_SPEED;
     }
   },
 });

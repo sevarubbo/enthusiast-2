@@ -1,5 +1,6 @@
 import { createBullet } from "./bullet";
 import { createId } from "helpers";
+import { getSoundPosition, playSound } from "services/audio";
 import {
   createObjectHealthManager,
   type Collidable,
@@ -14,7 +15,6 @@ import { vector } from "services/vector";
 
 export interface ShootingEnemyA extends Movable, Collidable, Healthy {
   type: "shooting_enemy_a";
-  shootingAngle: number;
   shootingInterval: IntervalManager;
   shootingRange: number;
   color: string;
@@ -36,7 +36,6 @@ export function createShootingEnemyA(
     movement: createObjectMovementManager({ maxSpeed: 0.04 }),
     collision: createObjectCollisionManager(),
     targetPoint: null,
-    shootingAngle: 0,
     shootingInterval: createIntervalManager(1000 / 1),
     shootingRange: 300,
 
@@ -60,7 +59,7 @@ export function createShootingEnemyA(
         );
 
         // Aim at the stranger
-        this.shootingAngle = Math.atan2(
+        this.movement.angle = Math.atan2(
           closestStranger.y - this.y,
           closestStranger.x - this.x,
         );
@@ -69,7 +68,7 @@ export function createShootingEnemyA(
           const bulletPosition = vector.add(
             this,
             vector.scale(
-              vector.fromAngle(this.shootingAngle),
+              vector.fromAngle(this.movement.angle),
               this.collisionCircle.radius,
             ),
           );
@@ -79,10 +78,15 @@ export function createShootingEnemyA(
             getState().gameObjectsManager.spawnObject(
               createBullet({
                 ...bulletPosition,
-                direction: vector.fromAngle(this.shootingAngle),
+                direction: vector.fromAngle(this.movement.angle),
                 belongsTo: this.id,
                 speed: 0.4,
               }),
+            );
+
+            playSound(
+              "basic shot",
+              getSoundPosition(this, getState().cameraManager),
             );
           });
 
@@ -102,7 +106,7 @@ export function createShootingEnemyA(
       // After death
       if (this.health.current <= 0) {
         if (
-          Math.random() < 0.8 ||
+          Math.random() < 0.7 ||
           // Always spawn at least one enemy
           getState().gameObjectsManager.findObjectsByType("shooting_enemy_a")
             .length === 0
@@ -115,7 +119,7 @@ export function createShootingEnemyA(
           );
         }
 
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.4) {
           getState().gameObjectsManager.spawnObject(
             createShootingEnemyA({
               x: Math.random() * getState().world.size.x,

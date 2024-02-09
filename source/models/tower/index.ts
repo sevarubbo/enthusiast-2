@@ -34,6 +34,7 @@ export interface Tower
   targetEnemyId?: string;
   aimError: number;
   bulletStrength: typeof BULLET_STRENGTH;
+  shootingRange: number;
 }
 
 export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
@@ -57,6 +58,7 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     aimError: 0.02,
     bulletStrength: BULLET_STRENGTH,
     rotateSpeed: 2 / 1000,
+    shootingRange: 300,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);

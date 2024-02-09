@@ -13,7 +13,9 @@ export const vector = {
     return { x, y };
   },
   distance(vector1: Vector, vector2: Vector) {
-    return Math.sqrt((vector2.x - vector1.x) ** 2 + (vector2.y - vector1.y) ** 2);
+    return Math.sqrt(
+      (vector2.x - vector1.x) ** 2 + (vector2.y - vector1.y) ** 2,
+    );
   },
   distanceSquared(vector1: Vector, vector2: Vector) {
     return (vector2.x - vector1.x) ** 2 + (vector2.y - vector1.y) ** 2;
@@ -47,6 +49,9 @@ export const vector = {
   },
   fromAngle(angle: number) {
     return vector.create(Math.cos(angle), Math.sin(angle));
+  },
+  toAngle(v: Vector) {
+    return Math.atan2(v.y, v.x);
   },
   getAngleBetweenTwoPoints(p1: Vector, p2: Vector): number {
     return Math.atan2(p2.y - p1.y, p2.x - p1.x);

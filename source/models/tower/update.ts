@@ -1,5 +1,6 @@
 import { normalRandom } from "../../helpers";
 import { createBullet } from "../bullet";
+import { getSoundPosition, playSound } from "services/audio";
 import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
 import type { Tower } from ".";
@@ -16,9 +17,9 @@ type ObjectUpdateFunction<T extends Updatable> = (
 const isEnemy = (object: StateObject): object is Enemy | PlantA => {
   return (
     object.type === "enemy" ||
+    object.type === "shooting_enemy_a" ||
     object.type === "plant_eater_a" ||
     object.type === "stranger_a"
-    // object.type === "plant_a"
   );
 };
 
@@ -27,6 +28,10 @@ const canShootEnemy = (
   getState: () => State,
   enemy: StateObject,
 ): boolean => {
+  if (vector.distance(self, enemy) > self.shootingRange) {
+    return false;
+  }
+
   const shootingSegment: Matrix = [
     vector.create(self.x, self.y),
     vector.create(enemy.x, enemy.y),
@@ -96,29 +101,10 @@ const shoot: ObjectUpdateFunction<Tower> = (self, delta, getState) => {
 
   getState().gameObjectsManager.spawnObject(bullet);
 
-  // PLAY SOUND from a file
-  const sound = new Audio("./sounds/TL_AS_One_Shot_Bass_Log_A.wav");
-
   // Set the volume depending on camera position
-  const { cameraManager, world } = getState();
-  const distance = vector.distance(self, cameraManager.worldTargetPoint);
-  const volume = Math.max(0, 1 - (2 * distance) / world.size.x);
+  const { cameraManager } = getState();
 
-  sound.volume = volume;
-
-  // Set the pan depending on camera position
-  const pan = Math.max(
-    -1,
-    Math.min(1, (self.x - cameraManager.worldTargetPoint.x) / 1000),
-  );
-  // USing StereoPannerNode
-  const ctx = new AudioContext();
-  const panner = new StereoPannerNode(ctx, { pan });
-  const source = ctx.createMediaElementSource(sound);
-
-  source.connect(panner).connect(ctx.destination);
-
-  void sound.play();
+  playSound("basic shot", getSoundPosition(self, cameraManager));
 };
 
 const rotateToAngle: ObjectUpdateFunction<Tower> = (self, delta) => {

@@ -1,4 +1,5 @@
 import { createId } from "helpers";
+import { getSoundPosition, playSound } from "services/audio";
 import { matrix } from "services/matrix";
 import {
   createObjectCollisionManager,
@@ -38,7 +39,7 @@ export function createBullet(
 
     update(delta, getState) {
       this.collision.update(delta, getState, this);
-      const { world, gameObjectsManager } = getState();
+      const { world, gameObjectsManager, cameraManager } = getState();
 
       this.x += this.direction.x * this.speed * delta;
       this.y += this.direction.y * this.speed * delta;
@@ -55,6 +56,8 @@ export function createBullet(
 
         if ("health" in otherObject) {
           otherObject.health.decrease(this.attack);
+
+          playSound("basic hit", getSoundPosition(this, cameraManager));
         }
       }
     },

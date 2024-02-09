@@ -13,6 +13,7 @@ export interface ObjectMovementManager {
   stop(): void;
   setSpeedVector(v: Vector): void;
   moveToTargetPoint(object: Movable, v: Vector | null | undefined): void;
+  angle: number;
 
   update(delta: number, getState: () => State, object: Movable): void;
 }
@@ -32,6 +33,7 @@ export const createObjectMovementManager = (
     speed: o.maxSpeed,
     realSpeed: 0,
     direction: o.direction || vector.create(0, 0),
+    angle: 0,
     nextPosition: vector.create(0, 0),
     speedVector: vector.create(0, 0),
 
@@ -80,5 +82,7 @@ export const createObjectMovementManager = (
 
       object.x = this.nextPosition.x;
       object.y = this.nextPosition.y;
+
+      this.angle = vector.toAngle(this.direction);
     },
   }) as const;

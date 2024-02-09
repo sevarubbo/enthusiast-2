@@ -43,6 +43,21 @@ const drawDefaultObjectView = (
       radius: 4,
     });
   }
+
+  if ("movement" in object) {
+    const directionPointPosition = vector.scale(
+      vector.fromAngle(object.movement.angle),
+      10,
+    );
+
+    drawCircle(ctx, {
+      position: state.cameraManager.toScreen(
+        vector.add(object, directionPointPosition),
+      ),
+      color: "#fff",
+      radius: 4,
+    });
+  }
 };
 
 function drawObjectAsCircle(

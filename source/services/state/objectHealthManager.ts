@@ -1,6 +1,8 @@
 import { createIntervalManager } from "./intervalManager";
+import { getSoundPosition, playSound } from "services/audio";
 import type { IntervalManager } from "./intervalManager";
 import type { State } from "./types";
+import type { SoundName } from "services/audio";
 import type { StateObject } from "types";
 
 export interface ObjectHealthManager {
@@ -14,6 +16,7 @@ export interface ObjectHealthManager {
 export const createObjectHealthManager = (o: {
   maxHealth: number;
   selfHealing?: boolean;
+  deathSound?: SoundName | null;
 }): ObjectHealthManager => ({
   max: o.maxHealth,
   current: o.maxHealth,
@@ -32,6 +35,13 @@ export const createObjectHealthManager = (o: {
     // Dying
     if (this.current <= 0) {
       getState().gameObjectsManager.despawnObject(object);
+
+      if (o.deathSound !== null) {
+        playSound(
+          o.deathSound || "basic death",
+          getSoundPosition(object, getState().cameraManager),
+        );
+      }
     }
   },
 });
