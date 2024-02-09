@@ -12,6 +12,7 @@ import { createStrangerA } from "models/stranger-a";
 import { createCameraManager } from "services/state/cameraManager";
 import { createGameObjectsManager } from "services/state/gameObjectsManager";
 import { createGameSpeedManager } from "services/state/gameSpeedManager";
+import { createStatsManager } from "services/statsManager";
 import { vector } from "services/vector";
 import type { State, Updatable } from "services/state";
 import type { Vector } from "services/vector";
@@ -92,7 +93,7 @@ const createEnemySpawner = (): Updatable => {
   };
 };
 
-const WORLD_SIZE = vector.create(1600, 1600);
+const WORLD_SIZE = vector.create(2400, 2400);
 
 const getRandomPosition = () => ({
   x: Math.random() * WORLD_SIZE.x,
@@ -110,6 +111,7 @@ export function createDefaultState(): State {
   const HOUSE_2 = createHouse(getRandomPosition());
 
   return {
+    statsManager: createStatsManager(),
     world: {
       size: WORLD_SIZE,
     },
@@ -123,7 +125,7 @@ export function createDefaultState(): State {
     }),
     gameObjectsManager: createGameObjectsManager({
       objectsArray: [
-        ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => {
+        ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(() => {
           const pos = {
             x: Math.random() * WORLD_SIZE.x,
             y: Math.random() * WORLD_SIZE.y,
@@ -135,6 +137,8 @@ export function createDefaultState(): State {
         tower2,
         tower3,
 
+        createTower(getRandomPosition()),
+        createTower(getRandomPosition()),
         createTower(getRandomPosition()),
 
         house,
@@ -176,6 +180,7 @@ export function createDefaultState(): State {
           y: Math.random() * WORLD_SIZE.y,
         }),
       ],
+
       update(delta, getState) {
         enemySpawner.update(delta, getState);
       },

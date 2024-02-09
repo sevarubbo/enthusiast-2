@@ -4,12 +4,14 @@ import type { GameSpeedManager } from "./gameSpeedManager";
 import type { ObjectCollisionManager } from "./objectCollisionManager";
 import type { ObjectHealthManager } from "./objectHealthManager";
 import type { ObjectMovementManager } from "./objectMovementManager";
+import type { StatsManager } from "services/statsManager";
 import type { Vector } from "services/vector";
 
 export interface State {
   cameraManager: CameraManager;
   gameSpeedManager: GameSpeedManager;
   gameObjectsManager: GameObjectsManager;
+  statsManager: StatsManager;
   world: {
     size: Vector;
   };

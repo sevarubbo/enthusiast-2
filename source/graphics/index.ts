@@ -22,7 +22,7 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
   ctx.fillStyle = "#fff";
   ctx.font = "24px serif";
 
-  const n = Object.keys(state.gameObjectsManager.objects).length;
+  const n = state.statsManager.enemiesDied;
   const LEFT_OFFSET = 50;
 
   ctx.fillText(`${n}`, LEFT_OFFSET, 100);

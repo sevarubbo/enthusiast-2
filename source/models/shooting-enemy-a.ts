@@ -105,6 +105,8 @@ export function createShootingEnemyA(
 
       // After death
       if (this.health.current <= 0) {
+        getState().statsManager.incrementEnemiesDied();
+
         if (
           Math.random() < 0.7 ||
           // Always spawn at least one enemy
