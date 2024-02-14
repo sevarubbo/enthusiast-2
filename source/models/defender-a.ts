@@ -40,7 +40,7 @@ export function createDefenderA(
     movement: createObjectMovementManager({ maxSpeed: 0.08 }),
     collision: createObjectCollisionManager(),
     targetPoint: null,
-    shootingInterval: createIntervalManager(1000 / 3),
+    shootingInterval: createIntervalManager(1000 / 12),
     shootingRange: 300,
     targetEnemyId: undefined,
     shield: createObjectShieldManager(),
@@ -130,6 +130,7 @@ export function createDefenderA(
                 y: this.y,
                 direction: vector.fromAngle(this.movement.angle),
                 belongsTo: this.id,
+                speed: 0.3,
               }),
             );
 

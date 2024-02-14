@@ -1,4 +1,5 @@
 import { createBullet } from "./bullet";
+import { createShieldItem } from "./shield-item";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
@@ -23,24 +24,26 @@ export interface ShootingEnemyA extends Movable, Collidable, Healthy {
 }
 
 export function createShootingEnemyA(
-  o: Partial<Pick<ShootingEnemyA, "x" | "y">> = {},
+  o: Partial<Pick<ShootingEnemyA, "x" | "y"> & { scale: number }> = {},
 ): ShootingEnemyA {
+  const scale = Math.random() * 0.7 + 0.8;
+
   return {
     color: "#f00",
     id: createId(),
     type: "shooting_enemy_a",
     x: o.x || 0,
     y: o.y || 0,
-    collisionCircle: { radius: 12 },
+    collisionCircle: { radius: scale * 12 },
     health: createObjectHealthManager({
-      maxHealth: 10,
+      maxHealth: 8 + scale * 8,
       selfHealing: true,
     }),
-    movement: createObjectMovementManager({ maxSpeed: 0.04 }),
+    movement: createObjectMovementManager({ maxSpeed: 0.05 / scale }),
     collision: createObjectCollisionManager(),
     targetPoint: null,
-    shootingInterval: createIntervalManager(1000 / 1),
-    shootingRange: 300,
+    shootingInterval: createIntervalManager(500 + scale * 500),
+    shootingRange: 300 * scale,
     shield: createObjectShieldManager(),
 
     update(delta, getState) {
@@ -91,7 +94,7 @@ export function createShootingEnemyA(
                 ...bulletPosition,
                 direction: vector.fromAngle(this.movement.angle),
                 belongsTo: this.id,
-                speed: 0.4,
+                speed: 0.8,
               }),
             );
 
@@ -122,38 +125,41 @@ export function createShootingEnemyA(
         const stranger =
           getState().gameObjectsManager.findObjectsByType("stranger_a")[0];
 
-        if (
-          Math.random() < 0.5 ||
-          // Always spawn at least one enemy
-          getState().gameObjectsManager.findObjectsByType("shooting_enemy_a")
-            .length === 0
-        ) {
+        if (Math.random() < 0.7) {
           const randomPosition = getState().world.getRandomPoint();
 
           if (
-            stranger &&
-            vector.distance(randomPosition, stranger) < this.shootingRange * 2
+            !(
+              stranger &&
+              vector.distance(randomPosition, stranger) < this.shootingRange * 3
+            ) ||
+            getState().gameObjectsManager.findObjectsByType("shooting_enemy_a")
+              .length > 1
           ) {
-            return;
+            getState().gameObjectsManager.spawnObject(
+              createShootingEnemyA(randomPosition),
+            );
           }
-
-          getState().gameObjectsManager.spawnObject(
-            createShootingEnemyA(randomPosition),
-          );
         }
 
         if (Math.random() < 0.5) {
           const randomPosition = getState().world.getRandomPoint();
 
           if (
-            stranger &&
-            vector.distance(randomPosition, stranger) < this.shootingRange * 2
+            !(
+              stranger &&
+              vector.distance(randomPosition, stranger) < this.shootingRange * 3
+            )
           ) {
-            return;
+            getState().gameObjectsManager.spawnObject(
+              createShootingEnemyA(randomPosition),
+            );
           }
+        }
 
+        if (Math.random() < 0.1) {
           getState().gameObjectsManager.spawnObject(
-            createShootingEnemyA(randomPosition),
+            createShieldItem({ x: this.x, y: this.y }),
           );
         }
       }

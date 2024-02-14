@@ -21,7 +21,7 @@ import type { Vector } from "services/vector";
 const createEnemySpawner = (): Updatable => {
   let timeSinceLastSpawn = 0;
   // const MAX_ENEMY_COUNT = 100;
-  const SPAWN_FREQUENCY = 1 / 2000;
+  const SPAWN_FREQUENCY = 1 / 3000;
 
   return {
     update(delta, getState) {

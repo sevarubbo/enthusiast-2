@@ -134,14 +134,14 @@ function drawObject(
   state: State,
   object: StateObject,
 ) {
-  // Draw next point
-  if ("targetPoint" in object && object.targetPoint) {
-    drawCircle(ctx, {
-      position: state.cameraManager.toScreen(object.targetPoint),
-      color: "#aaa",
-      radius: 2,
-    });
-  }
+  // // Draw next point
+  // if ("targetPoint" in object && object.targetPoint) {
+  //   drawCircle(ctx, {
+  //     position: state.cameraManager.toScreen(object.targetPoint),
+  //     color: "#aaa",
+  //     radius: 2,
+  //   });
+  // }
 
   switch (object.type) {
     case "enemy": {
@@ -260,15 +260,20 @@ function drawObject(
         ...object,
       });
 
-      const directionPointPosition = vector.scale(object.movement.direction, 8);
+      const directionPointPosition = vector.scale(
+        object.movement.direction,
+        object.collisionCircle.radius / 1.5,
+      );
 
       drawCircle(ctx, {
         position: state.cameraManager.toScreen(
           vector.add(object, directionPointPosition),
         ),
         color: "#000",
-        radius: 5,
+        radius: object.collisionCircle.radius / 2,
       });
+
+      drawObjectShield(ctx, state, object);
 
       return;
     }

@@ -1,3 +1,4 @@
+import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import {
   createObjectCollisionManager,
@@ -25,6 +26,10 @@ export interface PlantEaterA
   targetEnemy: (Healthy & Collidable) | undefined;
   attack: number;
   lookAroundInterval: ReturnType<typeof createIntervalManager>;
+  shield: ReturnType<typeof createObjectShieldManager>;
+  growthInterval: ReturnType<typeof createIntervalManager>;
+  age: number;
+  maxAge: number;
 }
 
 export function createPlantEaterA(
@@ -48,14 +53,19 @@ export function createPlantEaterA(
     targetPoint: null,
     numberOfPlantsEaten: 0,
     targetEnemy: undefined,
-    attack: 0.03,
+    attack: 0.02,
     lookAroundInterval: createIntervalManager(10000),
+    growthInterval: createIntervalManager(10000),
+    age: 1,
+    maxAge: 10,
+    shield: createObjectShieldManager(),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.collision.update(delta, getState, this);
       this.movement.update(delta, getState, this);
       this.lookAroundInterval.update(delta, getState);
+      this.growthInterval.update(delta, getState);
 
       // Find the closest plant
       const { gameObjectsManager } = getState();
@@ -139,6 +149,17 @@ export function createPlantEaterA(
           }
         }
       }
+
+      if (this.age < this.maxAge) {
+        this.growthInterval.fireIfReady(() => {
+          this.age += 1;
+        });
+      }
+
+      this.collisionCircle.radius = 2 + this.age;
+      this.health.max = this.age * 2;
+      this.attack = 0.001 + this.age / 100;
+      this.movement.maxSpeed = 0.005 + this.age / 50;
     },
   };
 }

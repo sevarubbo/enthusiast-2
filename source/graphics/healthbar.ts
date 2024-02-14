@@ -1,9 +1,14 @@
 import type { Vector } from "services/vector";
 
-export function drawHealthBar(ctx: CanvasRenderingContext2D, position: Vector, current: number, max: number) {
-  const width = Math.min(5 * max, 100);
+export function drawHealthBar(
+  ctx: CanvasRenderingContext2D,
+  position: Vector,
+  current: number,
+  max: number,
+) {
+  const width = Math.min(5 * max, 50);
   const height = 3;
-  const hpRatio = (current / max);
+  const hpRatio = current / max;
   const hpWidth = hpRatio * width;
 
   ctx.fillStyle = "green";

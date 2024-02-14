@@ -1,3 +1,4 @@
+import { createShieldItem } from "./shield-item";
 import { createId } from "helpers";
 import {
   type Identifiable,
@@ -25,7 +26,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
     y: o.y || 0,
     collisionCircle: { radius: 5 },
     health: createObjectHealthManager({
-      maxHealth: 1,
+      maxHealth: 3,
       deathSound: null,
     }),
     collision: createObjectCollisionManager(false),
@@ -119,6 +120,15 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           this.newGrowth = false;
         }
       });
+
+      // After death
+      if (this.health.current <= 0) {
+        if (Math.random() < 0.001) {
+          getState().gameObjectsManager.spawnObject(
+            createShieldItem({ x: this.x, y: this.y }),
+          );
+        }
+      }
     },
   };
 }

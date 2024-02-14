@@ -24,7 +24,7 @@ export interface Tower
     Collidable,
     Healthy {
   type: "tower";
-  color: "green";
+  color: string;
   radius: 20;
   shotInterval: IntervalManager;
   angle: number;
@@ -43,7 +43,7 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     type: "tower",
     x: o.x || 0,
     y: o.y || 0,
-    color: "green",
+    color: "#6566b8",
     radius: 20,
     shotInterval: createIntervalManager(1000 / SHOOTING_SPEED),
     angle: 0,
