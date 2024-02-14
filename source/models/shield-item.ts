@@ -15,11 +15,19 @@ export const createShieldItem = (
   type: "shield_item",
   color: "blue",
   collisionCircle: { radius: 8 },
-  collision: createObjectCollisionManager(false),
+  collision: createObjectCollisionManager(true),
   x: o.x,
   y: o.y,
 
-  update() {
-    // Do nothing
+  update(delta, getState) {
+    this.collision.update(delta, getState, this);
+    // If collides with player, give shield
+    const collidesWith = this.collision.collidesWithObjects[0];
+
+    if (collidesWith && "shield" in collidesWith) {
+      collidesWith.shield.active = true;
+      collidesWith.shield.hp = collidesWith.shield.maxHp;
+      getState().gameObjectsManager.despawnObject(this);
+    }
   },
 });

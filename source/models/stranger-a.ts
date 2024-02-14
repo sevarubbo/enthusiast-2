@@ -50,9 +50,7 @@ export function createStrangerA(
     shootingAngle: 0,
     shootingInterval: createIntervalManager(1000 / 12),
 
-    shield: createObjectShieldManager({
-      maxHp: 30,
-    }),
+    shield: createObjectShieldManager(),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
@@ -186,13 +184,6 @@ export function createStrangerA(
 
           playSound("basic shot", getSoundPosition(this, cameraManager));
         });
-      }
-
-      // Check for collision with shield item
-      if (otherObject?.type === "shield_item") {
-        getState().gameObjectsManager.despawnObject(otherObject);
-        this.shield.active = true;
-        this.shield.hp = this.shield.maxHp;
       }
     },
   };

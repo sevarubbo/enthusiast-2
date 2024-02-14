@@ -5,8 +5,36 @@ import {
   drawCircleProgress,
 } from "services/canvas";
 import { vector } from "services/vector";
+import type { createObjectShieldManager } from "../services/state/objectShieldManager";
 import type { State } from "services/state";
 import type { StateObject } from "types";
+
+const drawObjectShield = (
+  ctx: CanvasRenderingContext2D,
+  state: State,
+
+  // Object with shield
+  object: StateObject & {
+    shield: ReturnType<typeof createObjectShieldManager>;
+  },
+) => {
+  if (object.shield.active) {
+    drawCircleOutline(ctx, {
+      radius: 20,
+      position: state.cameraManager.toScreen(object),
+      color: "rgba(255, 255, 255, 0.5)",
+      lineWidth: 3,
+    });
+
+    drawCircleProgress(ctx, {
+      radius: 20,
+      position: state.cameraManager.toScreen(object),
+      color: "rgba(255, 255, 255, 0.5)",
+      lineWidth: 3,
+      progress: object.shield.hp / object.shield.maxHp,
+    });
+  }
+};
 
 const drawDefaultObjectView = (
   ctx: CanvasRenderingContext2D,
@@ -61,6 +89,10 @@ const drawDefaultObjectView = (
       color: "#fff",
       radius: 4,
     });
+  }
+
+  if ("shield" in object) {
+    drawObjectShield(ctx, state, object);
   }
 };
 
@@ -173,22 +205,7 @@ function drawObject(
     }
 
     case "stranger_a": {
-      if (object.shield.active) {
-        drawCircleOutline(ctx, {
-          radius: 20,
-          position: state.cameraManager.toScreen(object),
-          color: "rgba(255, 255, 255, 0.5)",
-          lineWidth: 3,
-        });
-
-        drawCircleProgress(ctx, {
-          radius: 20,
-          position: state.cameraManager.toScreen(object),
-          color: "rgba(255, 255, 255, 0.5)",
-          lineWidth: 3,
-          progress: object.shield.hp / object.shield.maxHp,
-        });
-      }
+      drawObjectShield(ctx, state, object);
 
       drawObjectAsCircle(ctx, state, {
         radius: 10,
@@ -252,6 +269,20 @@ function drawObject(
         color: "#000",
         radius: 5,
       });
+
+      return;
+    }
+
+    case "shield_item": {
+      // Draw text on top in the middle
+      ctx.font = "18px Arial";
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        "🛡",
+        state.cameraManager.toScreen(object).x,
+        state.cameraManager.toScreen(object).y,
+      );
 
       return;
     }

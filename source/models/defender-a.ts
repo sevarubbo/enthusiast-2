@@ -1,4 +1,5 @@
 import { createBullet, type Bullet } from "./bullet";
+import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
 import {
@@ -19,6 +20,7 @@ export interface DefenderA extends Movable, Collidable, Healthy {
   shootingRange: number;
   color: string;
   targetEnemyId: string | undefined;
+  shield: ReturnType<typeof createObjectShieldManager>;
 }
 
 export function createDefenderA(
@@ -41,6 +43,7 @@ export function createDefenderA(
     shootingInterval: createIntervalManager(1000 / 3),
     shootingRange: 300,
     targetEnemyId: undefined,
+    shield: createObjectShieldManager(),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);

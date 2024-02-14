@@ -24,6 +24,10 @@ const audioFiles = [
     name: "basic hit",
     url: "sounds/ESM_GF_fx_cobblestone_one_shots_footstep_boots_dry_interior_27.wav",
   },
+  {
+    name: "shield hit",
+    url: "sounds/ShieldHitMetal_BW.58996.wav",
+  },
 ] as const;
 
 export type SoundName = (typeof audioFiles)[number]["name"];

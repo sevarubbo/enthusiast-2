@@ -7,10 +7,10 @@ export interface ObjectShieldManager {
 }
 
 export const createObjectShieldManager = ({
-  maxHp = 100,
+  maxHp = 30,
   hp = maxHp,
   active = false,
-}: Partial<ObjectShieldManager>): ObjectShieldManager => ({
+}: Partial<ObjectShieldManager> = {}): ObjectShieldManager => ({
   active,
   hp,
   maxHp,

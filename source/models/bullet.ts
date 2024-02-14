@@ -52,11 +52,13 @@ export function createBullet(
       const otherObject = this.collision.collidesWithObjects[0];
 
       if (otherObject && otherObject.id !== this.belongsTo) {
-        gameObjectsManager.despawnObject(this);
-
         if ("health" in otherObject) {
+          gameObjectsManager.despawnObject(this);
+
           if ("shield" in otherObject && otherObject.shield.active) {
             otherObject.shield.absorbDamage(this.attack);
+
+            playSound("shield hit", getSoundPosition(this, cameraManager));
           } else {
             otherObject.health.decrease(this.attack);
 

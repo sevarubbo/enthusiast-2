@@ -1,4 +1,5 @@
 import { createBullet } from "./bullet";
+import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
 import {
@@ -18,6 +19,7 @@ export interface ShootingEnemyA extends Movable, Collidable, Healthy {
   shootingInterval: IntervalManager;
   shootingRange: number;
   color: string;
+  shield: ReturnType<typeof createObjectShieldManager>;
 }
 
 export function createShootingEnemyA(
@@ -38,6 +40,7 @@ export function createShootingEnemyA(
     targetPoint: null,
     shootingInterval: createIntervalManager(1000 / 1),
     shootingRange: 300,
+    shield: createObjectShieldManager(),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);

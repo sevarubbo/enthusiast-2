@@ -1,3 +1,5 @@
+import { createBullet } from "./bullet";
+import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createId } from "../helpers";
 import {
   createObjectCollisionManager,
@@ -105,6 +107,42 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
         );
       } else {
         this.color = "white";
+      }
+
+      // After death
+      if (this.health.current <= 0) {
+        // Create shooting bullets in all directions
+        const bulletsCount = 30;
+        const angleStep = (2 * Math.PI) / bulletsCount;
+
+        for (let i = 0; i < bulletsCount; i++) {
+          // Each bullet should be at distance from the center of the enemy
+          // equal to the radius of the enemy
+          const bulletPosition = vector.add(
+            this,
+            vector.scale(
+              vector.fromAngle(i * angleStep),
+              this.collisionCircle.radius,
+            ),
+          );
+
+          getState().gameObjectsManager.spawnObject(
+            createBullet({
+              ...bulletPosition,
+              direction: vector.fromAngle(i * angleStep),
+              belongsTo: this.id,
+              speed: Math.random() * 0.4 + 0.1,
+            }),
+          );
+        }
+
+        // Also turn into shooting enemy
+        getState().gameObjectsManager.spawnObject(
+          createShootingEnemyA({
+            x: this.x,
+            y: this.y,
+          }),
+        );
       }
     },
   };
