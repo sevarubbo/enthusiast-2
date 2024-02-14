@@ -1,4 +1,5 @@
 import { createId } from "../helpers";
+import { getSoundPosition, playSound } from "../services/audio";
 import { createObjectCollisionManager } from "../services/state";
 import type { Collidable, Updatable, Identifiable } from "../services/state";
 
@@ -14,7 +15,7 @@ export const createShieldItem = (
   id: createId(),
   type: "shield_item",
   color: "blue",
-  collisionCircle: { radius: 8 },
+  collisionCircle: { radius: 10 },
   collision: createObjectCollisionManager(true),
   x: o.x,
   y: o.y,
@@ -28,6 +29,10 @@ export const createShieldItem = (
       collidesWith.shield.active = true;
       collidesWith.shield.hp = collidesWith.shield.maxHp;
       getState().gameObjectsManager.despawnObject(this);
+      playSound(
+        "shield acquired",
+        getSoundPosition(this, getState().cameraManager),
+      );
     }
   },
 });

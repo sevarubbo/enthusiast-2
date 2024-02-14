@@ -28,6 +28,10 @@ const audioFiles = [
     name: "shield hit",
     url: "sounds/ShieldHitMetal_BW.58996.wav",
   },
+  {
+    name: "shield acquired",
+    url: "sounds/ESM_Magic_Game_Shield_Guard_Fantasy_Cast_Craft_Mobile_App_Special_Touch_Pickup.wav",
+  },
 ] as const;
 
 export type SoundName = (typeof audioFiles)[number]["name"];

@@ -1,5 +1,6 @@
 import { createBullet } from "./bullet";
 import { createShootingEnemyA } from "./shooting-enemy-a";
+import { createTower } from "./tower";
 import { createId } from "../helpers";
 import {
   createObjectCollisionManager,
@@ -122,7 +123,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
             this,
             vector.scale(
               vector.fromAngle(i * angleStep),
-              this.collisionCircle.radius,
+              this.collisionCircle.radius * 2,
             ),
           );
 
@@ -136,13 +137,16 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
           );
         }
 
-        // Also turn into shooting enemy
-        getState().gameObjectsManager.spawnObject(
-          createShootingEnemyA({
-            x: this.x,
-            y: this.y,
-          }),
-        );
+        // Also turn into shooting enemy or tower
+        if (Math.random() < 0.2) {
+          getState().gameObjectsManager.spawnObject(
+            createTower({ x: this.x, y: this.y }),
+          );
+        } else {
+          getState().gameObjectsManager.spawnObject(
+            createShootingEnemyA({ x: this.x, y: this.y }),
+          );
+        }
       }
     },
   };

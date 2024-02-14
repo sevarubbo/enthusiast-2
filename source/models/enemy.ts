@@ -1,3 +1,6 @@
+import { createEnemyC } from "./enemyC";
+import { createPlantA } from "./plant-a";
+import { createPlantEaterA } from "./plant-eater-a";
 import { createShieldItem } from "./shield-item";
 import { createId } from "../helpers";
 import { matrix } from "../services/matrix";
@@ -73,9 +76,26 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
       // After death
       if (this.health.current <= 0) {
         // Drop shield item
-        if (Math.random() < 0.3) {
+        if (Math.random() < 0.2) {
           getState().gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
+          );
+        } else if (Math.random() < 0.1) {
+          // Drop health item
+          getState().gameObjectsManager.spawnObject(
+            createEnemyC({ x: this.x, y: this.y }),
+          );
+          // eslint-disable-next-line no-dupe-else-if
+        } else if (Math.random() < 0.1) {
+          // Drop health item
+          getState().gameObjectsManager.spawnObject(
+            createPlantA({ x: this.x, y: this.y }),
+          );
+          // eslint-disable-next-line no-dupe-else-if
+        } else if (Math.random() < 0.1) {
+          // Drop health item
+          getState().gameObjectsManager.spawnObject(
+            createPlantEaterA({ x: this.x, y: this.y }),
           );
         }
       }

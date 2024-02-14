@@ -14,6 +14,8 @@ export interface State {
   statsManager: StatsManager;
   world: {
     size: Vector;
+
+    getRandomPoint(): Vector;
   };
 }
 

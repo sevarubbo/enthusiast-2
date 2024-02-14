@@ -34,6 +34,7 @@ export function createShootingEnemyA(
     collisionCircle: { radius: 12 },
     health: createObjectHealthManager({
       maxHealth: 10,
+      selfHealing: true,
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.04 }),
     collision: createObjectCollisionManager(),
@@ -117,26 +118,42 @@ export function createShootingEnemyA(
       if (this.health.current <= 0) {
         getState().statsManager.incrementEnemiesDied();
 
+        // Check if the position is not too close to the player
+        const stranger =
+          getState().gameObjectsManager.findObjectsByType("stranger_a")[0];
+
         if (
-          Math.random() < 0.7 ||
+          Math.random() < 0.5 ||
           // Always spawn at least one enemy
           getState().gameObjectsManager.findObjectsByType("shooting_enemy_a")
             .length === 0
         ) {
+          const randomPosition = getState().world.getRandomPoint();
+
+          if (
+            stranger &&
+            vector.distance(randomPosition, stranger) < this.shootingRange * 2
+          ) {
+            return;
+          }
+
           getState().gameObjectsManager.spawnObject(
-            createShootingEnemyA({
-              x: Math.random() * getState().world.size.x,
-              y: Math.random() * getState().world.size.y,
-            }),
+            createShootingEnemyA(randomPosition),
           );
         }
 
-        if (Math.random() < 0.4) {
+        if (Math.random() < 0.5) {
+          const randomPosition = getState().world.getRandomPoint();
+
+          if (
+            stranger &&
+            vector.distance(randomPosition, stranger) < this.shootingRange * 2
+          ) {
+            return;
+          }
+
           getState().gameObjectsManager.spawnObject(
-            createShootingEnemyA({
-              x: Math.random() * getState().world.size.x,
-              y: Math.random() * getState().world.size.y,
-            }),
+            createShootingEnemyA(randomPosition),
           );
         }
       }

@@ -115,6 +115,10 @@ export function createDefaultState(): State {
     statsManager: createStatsManager(),
     world: {
       size: WORLD_SIZE,
+      getRandomPoint: () => ({
+        x: Math.random() * WORLD_SIZE.x,
+        y: Math.random() * WORLD_SIZE.y,
+      }),
     },
     gameSpeedManager: createGameSpeedManager(),
     cameraManager: createCameraManager({
@@ -171,10 +175,8 @@ export function createDefaultState(): State {
           y: Math.random() * WORLD_SIZE.y,
         }),
 
-        createShootingEnemyA({
-          x: WORLD_SIZE.x - 200,
-          y: WORLD_SIZE.y - 5,
-        }),
+        createShootingEnemyA(getRandomPosition()),
+        createShootingEnemyA(getRandomPosition()),
 
         createDefenderA({
           x: Math.random() * WORLD_SIZE.x,
