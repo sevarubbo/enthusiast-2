@@ -58,3 +58,28 @@ export const drawCircleOutline = (
   ctx.stroke();
   ctx.closePath();
 };
+
+export const drawCircleProgress = (
+  ctx: CanvasRenderingContext2D,
+  o: {
+    position: Vector;
+    radius: number;
+    color: string;
+    lineWidth: number;
+    progress: number;
+  },
+) => {
+  ctx.beginPath();
+  ctx.arc(
+    o.position.x,
+    o.position.y,
+    o.radius,
+    0,
+    Math.PI * 2 * o.progress,
+    false,
+  );
+  ctx.strokeStyle = o.color;
+  ctx.lineWidth = o.lineWidth;
+  ctx.stroke();
+  ctx.closePath();
+};

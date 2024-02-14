@@ -1,3 +1,4 @@
+import { createShieldItem } from "../models/shield-item";
 import {
   createEnemy,
   createEnemyC,
@@ -176,6 +177,26 @@ export function createDefaultState(): State {
         }),
 
         createDefenderA({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
+        }),
+
+        createShieldItem({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
+        }),
+
+        createShieldItem({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
+        }),
+
+        createShieldItem({
+          x: Math.random() * WORLD_SIZE.x,
+          y: Math.random() * WORLD_SIZE.y,
+        }),
+
+        createShieldItem({
           x: Math.random() * WORLD_SIZE.x,
           y: Math.random() * WORLD_SIZE.y,
         }),

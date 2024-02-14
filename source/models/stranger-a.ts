@@ -1,4 +1,5 @@
 import { createBullet } from "./bullet";
+import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
 import { getKeysPressed } from "services/io";
@@ -25,6 +26,7 @@ export interface StrangerA extends TypicalObject {
   isSelected: boolean;
   shootingAngle: number;
   shootingInterval: ReturnType<typeof createIntervalManager>;
+  shield: ReturnType<typeof createObjectShieldManager>;
 }
 
 export function createStrangerA(
@@ -47,6 +49,10 @@ export function createStrangerA(
     targetPoint: null,
     shootingAngle: 0,
     shootingInterval: createIntervalManager(1000 / 12),
+
+    shield: createObjectShieldManager({
+      maxHp: 30,
+    }),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
@@ -180,6 +186,13 @@ export function createStrangerA(
 
           playSound("basic shot", getSoundPosition(this, cameraManager));
         });
+      }
+
+      // Check for collision with shield item
+      if (otherObject?.type === "shield_item") {
+        getState().gameObjectsManager.despawnObject(otherObject);
+        this.shield.active = true;
+        this.shield.hp = this.shield.maxHp;
       }
     },
   };

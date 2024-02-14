@@ -7,6 +7,7 @@ import type {
   StrangerA,
   PlantA,
 } from "./models";
+import type { ShieldItem } from "./models/shield-item";
 import type { DefenderA } from "models/defender-a";
 import type { PlantEaterA } from "models/plant-eater-a";
 import type { ShootingEnemyA } from "models/shooting-enemy-a";
@@ -21,4 +22,5 @@ export type StateObject =
   | PlantA
   | PlantEaterA
   | ShootingEnemyA
-  | DefenderA;
+  | DefenderA
+  | ShieldItem;

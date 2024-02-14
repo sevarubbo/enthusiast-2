@@ -1,3 +1,4 @@
+import { createShieldItem } from "./shield-item";
 import { createId } from "../helpers";
 import { matrix } from "../services/matrix";
 import {
@@ -67,6 +68,16 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
       if (this.collision.collidesWithObjects.length) {
         this.targetPoint = null;
         this.movement.stop();
+      }
+
+      // After death
+      if (this.health.current <= 0) {
+        // Drop shield item
+        if (Math.random() < 0.3) {
+          getState().gameObjectsManager.spawnObject(
+            createShieldItem({ x: this.x, y: this.y }),
+          );
+        }
       }
     },
   };

@@ -55,9 +55,13 @@ export function createBullet(
         gameObjectsManager.despawnObject(this);
 
         if ("health" in otherObject) {
-          otherObject.health.decrease(this.attack);
+          if ("shield" in otherObject && otherObject.shield.active) {
+            otherObject.shield.absorbDamage(this.attack);
+          } else {
+            otherObject.health.decrease(this.attack);
 
-          playSound("basic hit", getSoundPosition(this, cameraManager));
+            playSound("basic hit", getSoundPosition(this, cameraManager));
+          }
         }
       }
     },

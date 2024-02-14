@@ -1,5 +1,9 @@
 import { drawHealthBar } from "./healthbar";
-import { drawCircle, drawCircleOutline } from "services/canvas";
+import {
+  drawCircle,
+  drawCircleOutline,
+  drawCircleProgress,
+} from "services/canvas";
 import { vector } from "services/vector";
 import type { State } from "services/state";
 import type { StateObject } from "types";
@@ -169,19 +173,20 @@ function drawObject(
     }
 
     case "stranger_a": {
-      if (object.isSelected) {
+      if (object.shield.active) {
         drawCircleOutline(ctx, {
-          radius: 16,
+          radius: 20,
           position: state.cameraManager.toScreen(object),
           color: "rgba(255, 255, 255, 0.5)",
           lineWidth: 3,
         });
-      } else if (object.isHovered) {
-        drawCircleOutline(ctx, {
-          radius: 16,
+
+        drawCircleProgress(ctx, {
+          radius: 20,
           position: state.cameraManager.toScreen(object),
-          color: "rgba(255, 255, 255, 0.3)",
-          lineWidth: 2,
+          color: "rgba(255, 255, 255, 0.5)",
+          lineWidth: 3,
+          progress: object.shield.hp / object.shield.maxHp,
         });
       }
 
