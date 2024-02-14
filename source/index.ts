@@ -52,7 +52,6 @@ let accumulatedTime = 0;
 const gameLoop = (ctx: CanvasRenderingContext2D, currentTime: number) => {
   const deltaTime = currentTime - lastFrameTime;
 
-  lastFrameTime = currentTime;
   accumulatedTime += deltaTime;
 
   if (accumulatedTime < frameTime) {
@@ -61,6 +60,7 @@ const gameLoop = (ctx: CanvasRenderingContext2D, currentTime: number) => {
     return;
   }
 
+  lastFrameTime = currentTime;
   const delta = deltaTime * state.gameSpeedManager.gameSpeed;
 
   // console.log(delta);

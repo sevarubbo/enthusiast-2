@@ -5,7 +5,7 @@ export interface GameSpeedManager extends Updatable {
   gameSpeed: number;
 }
 
-const DEFAULT_GAME_SPEED = 2;
+const DEFAULT_GAME_SPEED = 1.2;
 const MAX_GAME_SPEED = 10;
 const GAME_SPEED_CHANGE_STEP = 0.05;
 
