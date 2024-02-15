@@ -12,7 +12,6 @@ import {
   createObjectMovementManager,
   createObjectCollisionManager,
   type Healthy,
-  type ObjectCollisionManager,
   createIntervalManager,
 } from "services/state";
 import { vector } from "services/vector";
@@ -21,7 +20,6 @@ type TypicalObject = Identifiable & Updatable & Collidable & Movable & Healthy;
 
 export interface StrangerA extends TypicalObject {
   type: "stranger_a";
-  collision: ObjectCollisionManager;
   isHovered: boolean;
   isSelected: boolean;
   shootingAngle: number;
@@ -54,6 +52,7 @@ export function createStrangerA(
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
+      this.collision.update(delta, getState, this);
       this.movement.update(delta, getState, this);
       this.collision.update(delta, getState, this);
       this.shootingInterval.update(delta, getState);
@@ -121,6 +120,8 @@ export function createStrangerA(
       if (otherObject) {
         this.targetPoint = null;
         this.movement.stop();
+
+        return;
       }
 
       this.shootingAngle = Math.atan2(

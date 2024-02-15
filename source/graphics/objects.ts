@@ -143,6 +143,16 @@ function drawObject(
   //   });
   // }
 
+  // // Draw object id
+  // ctx.font = "12px Arial";
+  // ctx.fillStyle = "#fff";
+  // ctx.textAlign = "center";
+  // ctx.fillText(
+  //   object.id,
+  //   state.cameraManager.toScreen(object).x,
+  //   state.cameraManager.toScreen(object).y - 50,
+  // );
+
   switch (object.type) {
     case "enemy": {
       drawObjectAsCircle(ctx, state, object);

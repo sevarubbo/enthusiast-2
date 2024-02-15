@@ -15,7 +15,7 @@ export const createShieldItem = (
   id: createId(),
   type: "shield_item",
   color: "blue",
-  collisionCircle: { radius: 10 },
+  collisionCircle: { radius: 15 },
   collision: createObjectCollisionManager(),
   x: o.x,
   y: o.y,

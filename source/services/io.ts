@@ -41,8 +41,6 @@ let currentKeyPressed: KeyboardKey | null = null;
 const currentKeysPressed: Set<KeyboardKey> = new Set<KeyboardKey>();
 
 export function setKeyPressed(key: KeyboardKey | null) {
-  // eslint-disable-next-line no-console
-  console.log("Key: ", key);
   currentKeyPressed = key;
 
   if (key) {

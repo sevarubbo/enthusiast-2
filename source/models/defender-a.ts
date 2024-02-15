@@ -47,6 +47,7 @@ export function createDefenderA(
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
+      this.collision.update(delta, getState, this);
       this.movement.update(delta, getState, this);
       this.collision.update(delta, getState, this);
       this.shootingInterval.update(delta, getState);

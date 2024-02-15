@@ -1,4 +1,5 @@
 import { createShieldItem } from "../models/shield-item";
+import { createQuadtree } from "../services/quadtree";
 import {
   createEnemy,
   createEnemyC,
@@ -110,8 +111,18 @@ export function createDefaultState(): State {
   const tower3 = createTower(getRandomPosition());
   const house = createHouse(getRandomPosition());
   const HOUSE_2 = createHouse(getRandomPosition());
+  const quadtree = createQuadtree(
+    {
+      x: 0,
+      y: 0,
+      width: WORLD_SIZE.x,
+      height: WORLD_SIZE.y,
+    },
+    10,
+  );
 
   return {
+    quadtree,
     statsManager: createStatsManager(),
     world: {
       size: WORLD_SIZE,
@@ -129,6 +140,7 @@ export function createDefaultState(): State {
       worldTargetPoint: vector.create(STRANGER_A.x, STRANGER_A.y),
     }),
     gameObjectsManager: createGameObjectsManager({
+      quadtree,
       objectsArray: [
         ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(() => {
           const pos = {

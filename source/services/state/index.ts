@@ -3,5 +3,5 @@ export * from "./cameraManager";
 export * from "./intervalManager";
 export * from "./objectHealthManager";
 export * from "./objectMovementManager";
-export * from "./objectCollisionManager";
+export * from "../../models/managers";
 export * from "./types";

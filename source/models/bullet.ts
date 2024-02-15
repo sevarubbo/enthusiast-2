@@ -38,7 +38,6 @@ export function createBullet(
     ...o,
 
     update(delta, getState) {
-      this.collision.update(delta, getState, this);
       const { world, gameObjectsManager, cameraManager } = getState();
 
       this.x += this.direction.x * this.speed * delta;
@@ -47,7 +46,11 @@ export function createBullet(
 
       if (!matrix.withinBox(this, worldBox)) {
         gameObjectsManager.despawnObject(this);
+
+        return;
       }
+
+      this.collision.update(delta, getState, this);
 
       const otherObject = this.collision.collidesWithObjects[0];
 

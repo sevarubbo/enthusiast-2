@@ -1,3 +1,4 @@
+import type { createQuadtree } from "../quadtree";
 import type { Updatable } from "./types";
 import type { Vector } from "services/vector";
 import type { StateObject } from "types";
@@ -17,6 +18,7 @@ export interface GameObjectsManager extends Updatable {
 export const createGameObjectsManager = (
   options: Partial<Pick<GameObjectsManager, "update">> & {
     objectsArray?: StateObject[];
+    quadtree: ReturnType<typeof createQuadtree>;
   },
 ): GameObjectsManager => {
   let newObjects = {};
@@ -39,6 +41,7 @@ export const createGameObjectsManager = (
     },
 
     despawnObject(object) {
+      options.quadtree.remove(object);
       delete this.objects[object.id];
     },
 
@@ -59,11 +62,18 @@ export const createGameObjectsManager = (
     findClosestObject(point: Vector, filter: (object: StateObject) => boolean) {
       let closestObject: StateObject | null = null;
       let closestDistance = Infinity;
+      const objects = options.quadtree.query(
+        {
+          x: point.x - 1000,
+          y: point.y - 1000,
+          width: 2000,
+          height: 2000,
+        },
+        Object.values(this.objects).filter(filter),
+      );
 
-      for (const id in this.objects) {
-        const object = this.objects[id];
-
-        if (object && filter(object)) {
+      for (const object of objects) {
+        if (filter(object)) {
           const distance = Math.sqrt(
             (point.x - object.x) ** 2 + (point.y - object.y) ** 2,
           );
@@ -92,6 +102,8 @@ export const createGameObjectsManager = (
       const state = getState();
 
       if (state.gameSpeedManager.gameSpeed > 0) {
+        options.quadtree.clear();
+
         for (const objectId in this.objects) {
           const object = this.objects[objectId];
 

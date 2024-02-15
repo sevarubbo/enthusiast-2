@@ -138,7 +138,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
         }
 
         // Also turn into shooting enemy or tower
-        if (Math.random() < 0.2) {
+        if (Math.random() < 0.1) {
           getState().gameObjectsManager.spawnObject(
             createTower({ x: this.x, y: this.y }),
           );

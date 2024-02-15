@@ -1,57 +1,8 @@
-import type { Collidable, State } from "./types";
-import type { StateObject } from "types";
-
-export interface ObjectCollisionManager {
-  collidesWithObjects: Array<StateObject & Collidable>;
-  update(delta: number, getState: () => State, object: Collidable): void;
-}
-
-export const createObjectCollisionManager = (): ObjectCollisionManager => ({
-  collidesWithObjects: [],
-  update(delta, getState, object) {
-    const state = getState();
-
-    // Remove destroyed objects from the list
-    this.collidesWithObjects = this.collidesWithObjects.filter(
-      (o) => o.id in state.gameObjectsManager.objects,
-    );
-
-    for (const id in state.gameObjectsManager.objects) {
-      const otherObject = state.gameObjectsManager.objects[id];
-
-      if (!otherObject || otherObject === object) {
-        continue;
-      }
-
-      const distance = Math.sqrt(
-        (object.x - otherObject.x) ** 2 + (object.y - otherObject.y) ** 2,
-      );
-
-      if (
-        distance <=
-        object.collisionCircle.radius + otherObject.collisionCircle.radius
-      ) {
-        this.collidesWithObjects.push(otherObject);
-
-        if ("movable" in object) {
-          const direction = Math.atan2(
-            object.y - otherObject.y,
-            object.x - otherObject.x,
-          );
-
-          object.x += Math.cos(direction);
-          object.y += Math.sin(direction);
-        }
-      } else {
-        this.collidesWithObjects = this.collidesWithObjects.filter(
-          (o) => o !== otherObject,
-        );
-      }
-    }
-  },
-});
-
 // Quadtree
+
+import type { StateObject } from "../types";
+import type { Vector } from "./vector";
+
 interface Point {
   x: number;
   y: number;
@@ -67,19 +18,38 @@ interface Rectangle {
 interface Quadtree {
   boundary: Rectangle;
   capacity: number;
-  points: Point[];
+  points: StateObject[];
   divided: boolean;
   quadrants: Quadtree[];
+  subdivide: () => void;
+  insert: (point: StateObject) => void;
+  remove: (point: Vector) => void;
+  query: (range: Rectangle, found?: StateObject[]) => StateObject[];
+  clear: () => void;
 }
 
-function createQuadtree(boundary: Rectangle, capacity: number): Quadtree {
-  return {
+export function createQuadtree(
+  boundary: Rectangle,
+  capacity: number,
+): Quadtree {
+  const quadtree: Quadtree = {
     boundary,
     capacity,
     points: [],
     divided: false,
     quadrants: [],
+    subdivide: () => subdivide(quadtree),
+    insert: (point: StateObject) => insert(quadtree, point),
+    remove: (point: Point) => remove(quadtree, point),
+    query: (range: Rectangle) => query(quadtree, range, []),
+    clear: () => {
+      quadtree.points = [];
+      quadtree.divided = false;
+      quadtree.quadrants = [];
+    },
   };
+
+  return quadtree;
 }
 
 function subdivide(quadtree: Quadtree): void {
@@ -112,7 +82,7 @@ function subdivide(quadtree: Quadtree): void {
   quadtree.divided = true;
 }
 
-export function insert(quadtree: Quadtree, point: Point): void {
+export function insert(quadtree: Quadtree, point: StateObject): void {
   if (!isPointInBoundary(quadtree.boundary, point)) {
     return;
   }
@@ -133,8 +103,8 @@ export function insert(quadtree: Quadtree, point: Point): void {
 export function query(
   quadtree: Quadtree,
   range: Rectangle,
-  found: Point[] = [],
-): Point[] {
+  found: StateObject[] = [],
+): StateObject[] {
   if (!isRectangleIntersecting(quadtree.boundary, range)) {
     return found;
   }
@@ -152,6 +122,31 @@ export function query(
   }
 
   return found;
+}
+
+function remove(quadtree: Quadtree, point: Point | StateObject): void {
+  // if (!isPointInBoundary(quadtree.boundary, point)) {
+  //   return;
+  // }
+
+  const index = quadtree.points.findIndex(
+    (p) =>
+      (p.x === point.x && p.y === point.y) ||
+      ("id" in point && p.id === point.id),
+  );
+
+  if (index !== -1) {
+    quadtree.points.splice(index, 1);
+  } else if (quadtree.divided) {
+    for (const quadrant of quadtree.quadrants) {
+      remove(quadrant, point);
+    }
+  }
+
+  if (quadtree.points.length === 0) {
+    quadtree.divided = false;
+    quadtree.quadrants = [];
+  }
 }
 
 function isPointInBoundary(boundary: Rectangle, point: Point): boolean {

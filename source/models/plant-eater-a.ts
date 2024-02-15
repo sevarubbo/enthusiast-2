@@ -79,11 +79,11 @@ export function createPlantEaterA(
         | undefined;
 
       if (bullet) {
-        const whoSHot = gameObjectsManager.objects[bullet.belongsTo] as
+        this.targetEnemy = gameObjectsManager.objects[bullet.belongsTo] as
           | (Healthy & Collidable)
           | undefined;
 
-        this.targetEnemy = whoSHot;
+        console.log(this.targetEnemy);
       }
 
       // Check if the target enemy is still alive
@@ -156,10 +156,10 @@ export function createPlantEaterA(
         });
       }
 
-      this.collisionCircle.radius = 2 + this.age;
-      this.health.max = this.age * 2;
+      this.collisionCircle.radius = 5 + this.age;
+      this.health.max = this.age * 3;
       this.attack = 0.001 + this.age / 100;
-      this.movement.maxSpeed = 0.005 + this.age / 50;
+      this.movement.maxSpeed = 0.002 + this.age / 40;
     },
   };
 }

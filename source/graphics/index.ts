@@ -4,10 +4,16 @@ import type { State } from "services/state";
 
 function drawRectangle(
   ctx: CanvasRenderingContext2D,
-  o: { position: Vector; size: Vector },
+  o: { position: Vector; size: Vector; dashed?: boolean },
 ) {
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#333";
+
+  if (!o.dashed) {
+    ctx.setLineDash([]);
+  } else {
+    ctx.setLineDash([5, 15]);
+  }
 
   ctx.strokeRect(o.position.x, o.position.y, o.size.x, o.size.y);
 }
@@ -43,6 +49,11 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
   fpsData.lastFrameTime = performance.now();
 
   ctx.fillText(`fps: ${fps.toFixed(0)}`, LEFT_OFFSET, 200);
+  ctx.fillText(
+    `oo: ${Object.keys(state.gameObjectsManager.objects).length}`,
+    LEFT_OFFSET,
+    300,
+  );
 }
 
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
@@ -60,6 +71,26 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
 
       // Draw UI
       drawUI(ctx, state);
+
+      const drawQuadrant = (q: typeof state.quadtree) => {
+        drawRectangle(ctx, {
+          dashed: true,
+          position: state.cameraManager.toScreen({
+            x: q.boundary.x,
+            y: q.boundary.y,
+          }),
+          size: {
+            x: q.boundary.width,
+            y: q.boundary.height,
+          },
+        });
+
+        q.quadrants.forEach((qq) => {
+          drawQuadrant(qq);
+        });
+      };
+
+      drawQuadrant(state.quadtree);
 
       // Make camera frame clipping
       ctx.save();

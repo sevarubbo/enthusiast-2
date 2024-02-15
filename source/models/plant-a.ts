@@ -30,7 +30,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
       deathSound: null,
     }),
     collision: createObjectCollisionManager(),
-    sproutInterval: createIntervalManager(700, false),
+    sproutInterval: createIntervalManager(2000, false),
     newGrowth: true,
     children: 0,
 
@@ -39,9 +39,11 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
       this.collision.update(delta, getState, this);
       this.sproutInterval.update(delta, getState);
 
-      const MAX_NUMBER_OF_CHILDREN = 5;
+      const MAX_NUMBER_OF_CHILDREN = 3;
 
       this.sproutInterval.fireIfReady(() => {
+        this.sproutInterval.duration = 2000 + Math.random() * 2000;
+
         if (!this.newGrowth) {
           this.health.current -= 0.1;
 
@@ -50,25 +52,26 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
 
         const { gameObjectsManager } = getState();
 
-        const plantsWithinRange = Object.values(
-          gameObjectsManager.objects,
-        ).filter(
-          (oo) =>
-            oo.type === "plant_a" &&
-            Math.sqrt((oo.x - this.x) ** 2 + (oo.y - this.y) ** 2) <
-              this.collisionCircle.radius * 3,
-        );
+        const plantsWithinRange = getState().quadtree.query({
+          x: this.x - this.collisionCircle.radius * 10,
+          y: this.y - this.collisionCircle.radius * 10,
+          width: this.collisionCircle.radius * 20,
+          height: this.collisionCircle.radius * 20,
+        });
 
-        if (plantsWithinRange.length < 4) {
+        if (
+          plantsWithinRange.length < 5 &&
+          Object.keys(getState().gameObjectsManager.objects).length < 1000
+        ) {
           const spawnLocation = {
             x:
               this.x +
-              Math.random() * this.collisionCircle.radius * 5 -
-              this.collisionCircle.radius * 2.5,
+              Math.random() * this.collisionCircle.radius * 20 -
+              this.collisionCircle.radius * 10,
             y:
               this.y +
-              Math.random() * this.collisionCircle.radius * 5 -
-              this.collisionCircle.radius * 2.5,
+              Math.random() * this.collisionCircle.radius * 20 -
+              this.collisionCircle.radius * 10,
           };
 
           let collides = false;
@@ -86,26 +89,9 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           // Check if spawnLocation collides with any other objects
 
           if (!collides) {
-            for (const id in gameObjectsManager.objects) {
-              const object = gameObjectsManager.getObject(id);
+            const collidesWith = this.collision.collidesWithObjects[0];
 
-              if ("collisionCircle" in object) {
-                const distance = Math.sqrt(
-                  (spawnLocation.x - object.x) ** 2 +
-                    (spawnLocation.y - object.y) ** 2,
-                );
-
-                if (
-                  distance <=
-                  (this.collisionCircle.radius +
-                    object.collisionCircle.radius) *
-                    1.1
-                ) {
-                  collides = true;
-                  break;
-                }
-              }
-            }
+            collides = !!collidesWith;
           }
 
           if (!collides) {
@@ -123,7 +109,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
 
       // After death
       if (this.health.current <= 0) {
-        if (Math.random() < 0.001) {
+        if (Math.random() < 0.002) {
           getState().gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
