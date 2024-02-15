@@ -19,7 +19,7 @@ export function createPlanet(o: Partial<Pick<Planet, "x" | "y">> = {}): Planet {
     x: o.x || 0,
     y: o.y || 0,
     collisionCircle: { radius: 50 },
-    collision: createObjectCollisionManager(false),
+    collision: createObjectCollisionManager(),
     movement: createObjectMovementManager({
       maxSpeed: 1,
     }),

@@ -29,7 +29,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
       maxHealth: 3,
       deathSound: null,
     }),
-    collision: createObjectCollisionManager(false),
+    collision: createObjectCollisionManager(),
     sproutInterval: createIntervalManager(700, false),
     newGrowth: true,
     children: 0,
