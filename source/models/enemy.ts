@@ -76,14 +76,14 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
       // After death
       if (this.health.current <= 0) {
         // Drop shield item
-        if (Math.random() < 0.1) {
+        if (Math.random() < 0.3) {
           getState().gameObjectsManager.spawnObject(
-            createShieldItem({ x: this.x, y: this.y }),
+            createEnemyC({ x: this.x, y: this.y }),
           );
           // eslint-disable-next-line no-dupe-else-if
         } else if (Math.random() < 0.1) {
           getState().gameObjectsManager.spawnObject(
-            createEnemyC({ x: this.x, y: this.y }),
+            createShieldItem({ x: this.x, y: this.y }),
           );
           // eslint-disable-next-line no-dupe-else-if
         } else if (Math.random() < 0.1) {

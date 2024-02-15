@@ -134,7 +134,7 @@ export function createShootingEnemyA(
               vector.distance(randomPosition, stranger) < this.shootingRange * 3
             ) ||
             getState().gameObjectsManager.findObjectsByType("shooting_enemy_a")
-              .length > 1
+              .length < 0
           ) {
             getState().gameObjectsManager.spawnObject(
               createShootingEnemyA(randomPosition),
