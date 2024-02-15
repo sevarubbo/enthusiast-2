@@ -17,6 +17,6 @@ module.exports = {
     ],
 
     "@typescript-eslint/indent": "off",
-    "@typescript-eslint/no-use-before-defined": "off",
+    "@typescript-eslint/no-use-before-define": "off",
   },
 };
