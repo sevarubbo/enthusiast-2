@@ -1,10 +1,6 @@
 import { vector } from "services/vector";
 import type { createQuadtree } from "../../services/quadtree";
-import type {
-  Collidable,
-  Identifiable,
-  ObjectManager,
-} from "services/state/types";
+import type { Collidable, ObjectManager } from "services/state/types";
 import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
@@ -13,24 +9,11 @@ export interface ObjectCollisionManager extends ObjectManager {
   lastObjectPosition: Vector;
 }
 
-const OLD_POINTS: Record<string, Vector & Identifiable> = {};
-
 const updateQuadtree = (
   quadtree: ReturnType<typeof createQuadtree>,
   object: StateObject,
 ) => {
-  const oldPoint = OLD_POINTS[object.id];
-
-  // if (oldPoint) {
-  //   quadtree.remove(oldPoint);
-  // }
-
   quadtree.insert(object);
-  // OLD_POINTS[object.id] = {
-  //   id: object.id,
-  //   x: object.x,
-  //   y: object.y,
-  // };
 };
 
 export const createObjectCollisionManager = (): ObjectCollisionManager => ({
@@ -55,7 +38,7 @@ export const createObjectCollisionManager = (): ObjectCollisionManager => ({
       },
     );
 
-    const allObjects = Object.values(getState().gameObjectsManager.objects);
+    // const allObjects = Object.values(getState().gameObjectsManager.objects);
 
     // Check for collisions
 

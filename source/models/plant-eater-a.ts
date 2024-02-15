@@ -82,8 +82,6 @@ export function createPlantEaterA(
         this.targetEnemy = gameObjectsManager.objects[bullet.belongsTo] as
           | (Healthy & Collidable)
           | undefined;
-
-        console.log(this.targetEnemy);
       }
 
       // Check if the target enemy is still alive
