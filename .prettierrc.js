@@ -6,4 +6,5 @@ module.exports = {
   semi: true,
   singleQuote: false,
   trailingComma: "all",
+  files: ["*.ts", "*.tsx"],
 };

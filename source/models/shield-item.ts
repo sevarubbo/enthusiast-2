@@ -25,19 +25,19 @@ export const createShieldItem = (
     // If collides with player, give shield
     const collidesWith = this.collision.collidesWithObjects[0];
 
-    if (
-      collidesWith &&
-      "shield" in collidesWith &&
-      (!collidesWith.shield.active ||
-        collidesWith.shield.hp < collidesWith.shield.maxHp)
-    ) {
-      collidesWith.shield.active = true;
-      collidesWith.shield.hp = collidesWith.shield.maxHp;
-      getState().gameObjectsManager.despawnObject(this);
-      playSound(
-        "shield acquired",
-        getSoundPosition(this, getState().cameraManager),
-      );
+    if (collidesWith && "shield" in collidesWith) {
+      if (
+        !collidesWith.shield.active ||
+        collidesWith.shield.hp < collidesWith.shield.maxHp
+      ) {
+        collidesWith.shield.active = true;
+        collidesWith.shield.hp = collidesWith.shield.maxHp;
+        getState().gameObjectsManager.despawnObject(this);
+        playSound(
+          "shield acquired",
+          getSoundPosition(this, getState().cameraManager),
+        );
+      }
     }
   },
 });
