@@ -127,7 +127,7 @@ export function createShootingEnemyA(
         const stranger =
           getState().gameObjectsManager.findObjectsByType("stranger_a")[0];
 
-        if (Math.random() < 0.9) {
+        if (Math.random() < 0.99) {
           const randomPosition = getState().world.getRandomPoint();
 
           if (
@@ -144,7 +144,7 @@ export function createShootingEnemyA(
           }
         }
 
-        if (Math.random() < 0.3) {
+        if (Math.random() < 0.6) {
           const randomPosition = getState().world.getRandomPoint();
 
           if (

@@ -230,43 +230,45 @@ function drawObject(
     }
 
     case "stranger_a": {
-      drawObjectShield(ctx, state, object);
+      drawQueue.schedule(2, () => {
+        drawObjectShield(ctx, state, object);
 
-      drawObjectAsCircle(ctx, state, {
-        radius: 10,
-        x: object.x,
-        y: object.y,
-        color: "#a31c54",
-      });
+        drawObjectAsCircle(ctx, state, {
+          radius: 10,
+          x: object.x,
+          y: object.y,
+          color: "#a31c54",
+        });
 
-      const directionPointPosition = vector.scale(
-        vector.fromAngle(object.shootingAngle),
-        10,
-      );
-
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen(
-          vector.add(object, directionPointPosition),
-        ),
-        color: "#fff",
-        radius: 4,
-      });
-
-      if (object.health.current < object.health.max) {
-        const healthBarPosition = vector.add(
-          state.cameraManager.toScreen(object),
-          vector.create(0, -object.collisionCircle.radius - 10),
+        const directionPointPosition = vector.scale(
+          vector.fromAngle(object.shootingAngle),
+          10,
         );
 
-        drawQueue.schedule(1, () => {
-          drawHealthBar(
-            ctx,
-            healthBarPosition,
-            object.health.current,
-            object.health.max,
-          );
+        drawCircle(ctx, {
+          position: state.cameraManager.toScreen(
+            vector.add(object, directionPointPosition),
+          ),
+          color: "#fff",
+          radius: 4,
         });
-      }
+
+        if (object.health.current < object.health.max) {
+          const healthBarPosition = vector.add(
+            state.cameraManager.toScreen(object),
+            vector.create(0, -object.collisionCircle.radius - 10),
+          );
+
+          drawQueue.schedule(1, () => {
+            drawHealthBar(
+              ctx,
+              healthBarPosition,
+              object.health.current,
+              object.health.max,
+            );
+          });
+        }
+      });
 
       return;
     }
@@ -276,7 +278,20 @@ function drawObject(
         radius: object.collisionCircle.radius,
         x: object.x,
         y: object.y,
-        color: object.newGrowth ? "#0a0" : "#080",
+        color: (() => {
+          // health gradient
+          const healthRatio = object.health.current / object.health.max;
+
+          if (healthRatio < 1 / 3) {
+            return "#bd4010";
+          }
+
+          if (healthRatio < 2 / 3) {
+            return "#deb309";
+          }
+
+          return "#79fd03";
+        })(),
       });
 
       return;

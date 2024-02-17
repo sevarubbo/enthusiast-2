@@ -36,10 +36,8 @@ export const createCollisionManager = () => {
 
           for (const nearbyObject of nearbyObjects) {
             if (nearbyObject !== object) {
-              const distance = Math.sqrt(
-                (object.x - nearbyObject.x) ** 2 +
-                  (object.y - nearbyObject.y) ** 2,
-              );
+              const vectorBetween = vector.subtract(nearbyObject, object);
+              const distance = vector.length(vectorBetween);
 
               if (
                 distance <

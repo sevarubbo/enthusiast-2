@@ -22,6 +22,10 @@ const isEnemy = (object: StateObject) => {
   );
 };
 
+const isNeutral = (object: StateObject) => {
+  return object.type === "plant_a";
+};
+
 const canShootEnemy = (
   self: Tower,
   getState: () => State,
@@ -44,6 +48,10 @@ const canShootEnemy = (
       }
 
       if (isEnemy(object)) {
+        return false;
+      }
+
+      if (isNeutral(object)) {
         return false;
       }
 

@@ -28,9 +28,16 @@ export interface PlantEaterA
   lookAroundInterval: ReturnType<typeof createIntervalManager>;
   shield: ReturnType<typeof createObjectShieldManager>;
   growthInterval: ReturnType<typeof createIntervalManager>;
+  biteInterval: ReturnType<typeof createIntervalManager>;
   age: number;
   maxAge: number;
+  attackRange: number;
 }
+
+const BASE_ATTACK = 1;
+const BASE_SPEED = 0.002;
+const MAX_AGE = 10;
+const MAX_REPRODUCTION_AGE = 8;
 
 export function createPlantEaterA(
   o: Partial<Pick<PlantEaterA, "x" | "y">> = {},
@@ -53,12 +60,14 @@ export function createPlantEaterA(
     targetPoint: null,
     numberOfPlantsEaten: 0,
     targetEnemy: undefined,
-    attack: 0.02,
+    attack: 100,
     lookAroundInterval: createIntervalManager(10000),
     growthInterval: createIntervalManager(10000),
+    biteInterval: createIntervalManager(500),
     age: 1,
-    maxAge: 10,
+    maxAge: MAX_AGE,
     shield: createObjectShieldManager(),
+    attackRange: 0,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
@@ -66,6 +75,7 @@ export function createPlantEaterA(
       this.movement.update(delta, getState, this);
       this.lookAroundInterval.update(delta, getState);
       this.growthInterval.update(delta, getState);
+      this.biteInterval.update(delta, getState);
 
       // Find the closest plant
       const { gameObjectsManager } = getState();
@@ -119,35 +129,53 @@ export function createPlantEaterA(
 
         if (
           distance <=
-          this.collisionCircle.radius + this.targetEnemy.collisionCircle.radius
+          this.collisionCircle.radius +
+            this.targetEnemy.collisionCircle.radius +
+            this.attackRange
         ) {
-          this.targetEnemy.health.current -= delta * this.attack;
+          this.targetPoint = null;
+          this.movement.stop();
+          const te = this.targetEnemy;
 
-          if (this.targetEnemy.health.current <= 0) {
-            this.numberOfPlantsEaten += 1;
+          this.biteInterval.fireIfReady(() => {
+            te.health.current -= this.attack;
 
-            if (this.numberOfPlantsEaten >= 20) {
-              gameObjectsManager.spawnObject(
-                createPlantEaterA({ x: this.x, y: this.y }),
-              );
-              this.numberOfPlantsEaten = 0;
+            if (te.health.current <= 0) {
+              this.numberOfPlantsEaten += 1;
+
+              if (
+                this.numberOfPlantsEaten >= 20 &&
+                this.health.current >= this.health.max &&
+                this.age <= MAX_REPRODUCTION_AGE
+              ) {
+                gameObjectsManager.spawnObject(
+                  createPlantEaterA({ x: this.x, y: this.y }),
+                );
+                this.numberOfPlantsEaten = 0;
+              }
+
+              this.targetPoint = null;
             }
-
-            this.targetPoint = null;
-          }
+          });
         }
       }
 
       if (this.age < this.maxAge) {
         this.growthInterval.fireIfReady(() => {
-          this.age += 1;
+          if (this.health.current >= this.health.max) {
+            this.age += 1;
+          }
         });
       }
 
       this.collisionCircle.radius = 5 + this.age;
       this.health.max = this.age * 3;
-      this.attack = 0.001 + this.age / 100;
-      this.movement.maxSpeed = 0.002 + this.age / 40;
+      this.attack = BASE_ATTACK + (BASE_ATTACK * this.age) / this.maxAge;
+      this.movement.maxSpeed =
+        ((BASE_SPEED + (BASE_SPEED * this.age) / this.maxAge) *
+          this.health.current) /
+        this.health.max;
+      this.attackRange = this.collisionCircle.radius / 2;
     },
   };
 }

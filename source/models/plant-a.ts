@@ -18,6 +18,8 @@ export interface PlantA extends Identifiable, Updatable, Collidable, Healthy {
   children: number;
 }
 
+const BASE_SPROUT_INTERVAL = 4000;
+
 export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
   return {
     id: createId(),
@@ -30,7 +32,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
       deathSound: null,
     }),
     collision: createObjectCollisionManager(),
-    sproutInterval: createIntervalManager(2000, false),
+    sproutInterval: createIntervalManager(BASE_SPROUT_INTERVAL, false),
     newGrowth: true,
     children: 0,
 
@@ -42,7 +44,8 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
       const MAX_NUMBER_OF_CHILDREN = 3;
 
       this.sproutInterval.fireIfReady(() => {
-        this.sproutInterval.duration = 2000 + Math.random() * 2000;
+        this.sproutInterval.duration =
+          BASE_SPROUT_INTERVAL + Math.random() * BASE_SPROUT_INTERVAL;
 
         if (!this.newGrowth) {
           this.health.current -= 0.05;
@@ -61,17 +64,17 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
 
         if (
           plantsWithinRange.length < 10 &&
-          Object.keys(getState().gameObjectsManager.objects).length < 3000
+          Object.keys(getState().gameObjectsManager.objects).length < 4000
         ) {
           const spawnLocation = {
             x:
               this.x +
-              Math.random() * this.collisionCircle.radius * 20 -
-              this.collisionCircle.radius * 10,
+              Math.random() * this.collisionCircle.radius * 30 -
+              this.collisionCircle.radius * 15,
             y:
               this.y +
-              Math.random() * this.collisionCircle.radius * 20 -
-              this.collisionCircle.radius * 10,
+              Math.random() * this.collisionCircle.radius * 30 -
+              this.collisionCircle.radius * 15,
           };
 
           let collides = false;
@@ -109,7 +112,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
 
       // After death
       if (this.health.current <= 0) {
-        if (Math.random() < 0.002) {
+        if (Math.random() < 0.003) {
           getState().gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
