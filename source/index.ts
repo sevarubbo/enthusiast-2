@@ -1,15 +1,15 @@
 import { createDefaultState } from "./data";
 import { createCanvasDrawer } from "./graphics";
 import { createCanvas } from "./services/canvas";
+import { vector } from "./services/vector";
+import { loadAudioFiles, setGlobalVolume } from "services/audio";
 import {
   setIsPointerDown,
   setKeyPressed,
   setKeyUp,
   setPointerPosition,
-} from "./services/io";
-import { vector } from "./services/vector";
-import { loadAudioFiles, setGlobalVolume } from "services/audio";
-import type { KeyboardKey } from "./services/io";
+} from "services/io";
+import type { KeyboardKey } from "services/io";
 
 const { canvas, onCanvasMouseMove, onPointerDown, onPointerUp } =
   createCanvas();
@@ -64,14 +64,12 @@ const gameLoop = (ctx: CanvasRenderingContext2D, currentTime: number) => {
   const delta = deltaTime * state.gameSpeedManager.gameSpeed;
 
   // console.log(delta);
+  draw(state);
 
   state.gameSpeedManager.update(delta, () => state);
-
   state.cameraManager.update(delta, () => state);
-
   state.gameObjectsManager.update(delta, () => state);
-
-  draw(state);
+  state.collisionManager.update(delta, () => state);
 
   requestAnimationFrame((newNow) => gameLoop(ctx, newNow));
   accumulatedTime -= frameTime;

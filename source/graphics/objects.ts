@@ -96,6 +96,19 @@ const drawDefaultObjectView = (
   }
 };
 
+export const drawQueue = {
+  queue: [] as Array<{ index: 1 | 2; fn: () => void }>,
+  clear: () => {
+    drawQueue.queue = [];
+  },
+  schedule: (index: 1 | 2, fn: () => void) => {
+    drawQueue.queue.push({
+      index,
+      fn,
+    });
+  },
+};
+
 function drawObjectAsCircle(
   ctx: CanvasRenderingContext2D,
   state: State,
@@ -114,12 +127,14 @@ function drawObjectAsCircle(
       })(),
     );
 
-    drawHealthBar(
-      ctx,
-      healthBarPosition,
-      object.health.current,
-      object.health.max,
-    );
+    drawQueue.schedule(1, () => {
+      drawHealthBar(
+        ctx,
+        healthBarPosition,
+        object.health.current,
+        object.health.max,
+      );
+    });
   }
 
   return drawCircle(ctx, {
@@ -243,12 +258,14 @@ function drawObject(
           vector.create(0, -object.collisionCircle.radius - 10),
         );
 
-        drawHealthBar(
-          ctx,
-          healthBarPosition,
-          object.health.current,
-          object.health.max,
-        );
+        drawQueue.schedule(1, () => {
+          drawHealthBar(
+            ctx,
+            healthBarPosition,
+            object.health.current,
+            object.health.max,
+          );
+        });
       }
 
       return;
@@ -271,7 +288,7 @@ function drawObject(
       });
 
       const directionPointPosition = vector.scale(
-        object.movement.direction,
+        vector.fromAngle(object.movement.angle),
         object.collisionCircle.radius / 1.5,
       );
 

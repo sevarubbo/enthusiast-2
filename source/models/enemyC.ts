@@ -83,29 +83,16 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
       // Collision with other objects
       const otherObject = this.collision.collidesWithObjects[0];
 
-      if (otherObject && otherObject.type !== "bullet") {
+      if (otherObject) {
         this.color = "gray";
-        const collisionNorm = vector.normalize(
-          vector.subtract(otherObject, this),
+
+        // Change direction, like a billiard ball
+        const direction = Math.atan2(
+          this.y + speedVector.y - otherObject.y,
+          this.x + speedVector.x - otherObject.x,
         );
 
-        const objectSpeedVector =
-          "movement" in otherObject
-            ? otherObject.movement.speedVector
-            : vector.zero;
-
-        const relativeVelocity = {
-          x: speedVector.x - objectSpeedVector.x,
-          y: speedVector.y - objectSpeedVector.y,
-        };
-
-        const collisionSpeed =
-          relativeVelocity.x * collisionNorm.x +
-          relativeVelocity.y * collisionNorm.y;
-
-        this.movement.setSpeedVector(
-          vector.scale(collisionNorm, -collisionSpeed),
-        );
+        this.movement.start(vector.fromAngle(direction));
       } else {
         this.color = "white";
       }

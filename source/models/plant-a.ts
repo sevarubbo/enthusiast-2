@@ -26,7 +26,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
     y: o.y || 0,
     collisionCircle: { radius: 5 },
     health: createObjectHealthManager({
-      maxHealth: 3,
+      maxHealth: 4,
       deathSound: null,
     }),
     collision: createObjectCollisionManager(),
@@ -45,7 +45,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
         this.sproutInterval.duration = 2000 + Math.random() * 2000;
 
         if (!this.newGrowth) {
-          this.health.current -= 0.1;
+          this.health.current -= 0.05;
 
           return;
         }
@@ -60,8 +60,8 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
         });
 
         if (
-          plantsWithinRange.length < 5 &&
-          Object.keys(getState().gameObjectsManager.objects).length < 1000
+          plantsWithinRange.length < 10 &&
+          Object.keys(getState().gameObjectsManager.objects).length < 2000
         ) {
           const spawnLocation = {
             x:

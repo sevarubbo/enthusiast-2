@@ -69,9 +69,6 @@ export function createPlantEaterA(
 
       // Find the closest plant
       const { gameObjectsManager } = getState();
-      const plants = Object.values(gameObjectsManager.objects).filter(
-        (oo) => oo.type === "plant_a",
-      ) as PlantA[];
 
       const collisions = this.collision.collidesWithObjects;
       const bullet = collisions.find((oo) => oo.type === "bullet") as
@@ -94,19 +91,12 @@ export function createPlantEaterA(
 
       if (!this.targetEnemy || this.lookAroundInterval.ready) {
         this.lookAroundInterval.fireIfReady();
-        let closestPlant = null;
-        let closestDistance = Infinity;
-
-        for (const plant of plants) {
-          const distance = Math.sqrt(
-            (this.x - plant.x) ** 2 + (this.y - plant.y) ** 2,
-          );
-
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestPlant = plant;
-          }
-        }
+        const closestPlant = gameObjectsManager.findClosestObject(
+          this,
+          (oo) => {
+            return oo.type === "plant_a";
+          },
+        ) as PlantA | null;
 
         this.targetEnemy = closestPlant || undefined;
       }

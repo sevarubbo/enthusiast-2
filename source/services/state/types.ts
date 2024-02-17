@@ -1,6 +1,7 @@
 import type { StateObject } from "../../types";
 import type { createQuadtree } from "../quadtree";
 import type { CameraManager } from "./cameraManager";
+import type { createCollisionManager } from "./collisionManager";
 import type { GameObjectsManager } from "./gameObjectsManager";
 import type { GameSpeedManager } from "./gameSpeedManager";
 import type { ObjectHealthManager } from "./objectHealthManager";
@@ -14,6 +15,7 @@ export interface State {
   cameraManager: CameraManager;
   gameSpeedManager: GameSpeedManager;
   gameObjectsManager: GameObjectsManager;
+  collisionManager: ReturnType<typeof createCollisionManager>;
   statsManager: StatsManager;
   world: {
     size: Vector;

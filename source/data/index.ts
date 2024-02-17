@@ -1,5 +1,6 @@
 import { createShieldItem } from "../models/shield-item";
 import { createQuadtree } from "../services/quadtree";
+import { createCollisionManager } from "../services/state/collisionManager";
 import {
   createEnemy,
   createEnemyC,
@@ -124,6 +125,7 @@ export function createDefaultState(): State {
   return {
     quadtree,
     statsManager: createStatsManager(),
+    collisionManager: createCollisionManager(),
     world: {
       size: WORLD_SIZE,
       getRandomPoint: () => ({

@@ -1,4 +1,4 @@
-import { drawObjects } from "./objects";
+import { drawObjects, drawQueue } from "./objects";
 import type { Vector } from "../services/vector";
 import type { State } from "services/state";
 
@@ -16,6 +16,8 @@ function drawRectangle(
   }
 
   ctx.strokeRect(o.position.x, o.position.y, o.size.x, o.size.y);
+
+  ctx.setLineDash([]);
 }
 
 const fpsData = {
@@ -72,6 +74,23 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
       // Draw UI
       drawUI(ctx, state);
 
+      // Make camera frame clipping
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(
+        state.cameraManager.frame.position.x,
+        state.cameraManager.frame.position.y,
+        state.cameraManager.frame.size.x,
+        state.cameraManager.frame.size.y,
+      );
+      ctx.clip();
+
+      // Draw world pane
+      drawRectangle(ctx, {
+        position: state.cameraManager.toScreen({ x: 0, y: 0 }),
+        size: state.world.size,
+      });
+
       const drawQuadrant = (q: typeof state.quadtree) => {
         drawRectangle(ctx, {
           dashed: true,
@@ -92,25 +111,19 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
 
       drawQuadrant(state.quadtree);
 
-      // Make camera frame clipping
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(
-        state.cameraManager.frame.position.x,
-        state.cameraManager.frame.position.y,
-        state.cameraManager.frame.size.x,
-        state.cameraManager.frame.size.y,
-      );
-      ctx.clip();
-
-      // Draw world pane
-      drawRectangle(ctx, {
-        position: state.cameraManager.toScreen({ x: 0, y: 0 }),
-        size: state.world.size,
-      });
-
       // Draw objects
       drawObjects(ctx, state, state.gameObjectsManager.objects);
+
+      // Draw queue
+      drawQueue.queue
+        .sort((a, b) => a.index - b.index)
+        .forEach(() => {
+          const fn = drawQueue.queue.shift();
+
+          if (fn) {
+            fn.fn();
+          }
+        });
 
       ctx.restore(); // Restore the previous clipping state
     },

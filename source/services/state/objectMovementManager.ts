@@ -1,4 +1,5 @@
 import { vector } from "../vector";
+import type { StateObject } from "../../types";
 import type { Vector } from "../vector";
 import type { Movable, State } from "./types";
 
@@ -15,7 +16,11 @@ export interface ObjectMovementManager {
   moveToTargetPoint(object: Movable, v: Vector | null | undefined): void;
   angle: number;
 
-  update(delta: number, getState: () => State, object: Movable): void;
+  update(
+    delta: number,
+    getState: () => State,
+    object: StateObject & Movable,
+  ): void;
 }
 
 type Props<OB extends object, RP extends keyof OB, OP extends keyof OB> = Pick<
@@ -33,7 +38,7 @@ export const createObjectMovementManager = (
     speed: o.maxSpeed,
     realSpeed: 0,
     direction: o.direction || vector.create(0, 0),
-    angle: 0,
+    angle: Math.random() * 2 * Math.PI,
     nextPosition: vector.create(0, 0),
     speedVector: vector.create(0, 0),
 

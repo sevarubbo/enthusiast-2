@@ -62,15 +62,8 @@ export const createGameObjectsManager = (
     findClosestObject(point: Vector, filter: (object: StateObject) => boolean) {
       let closestObject: StateObject | null = null;
       let closestDistance = Infinity;
-      const objects = options.quadtree.query(
-        {
-          x: point.x - 1000,
-          y: point.y - 1000,
-          width: 2000,
-          height: 2000,
-        },
-        Object.values(this.objects).filter(filter),
-      );
+      const RADIUS = 1000;
+      const objects = options.quadtree.queryRadius(point, RADIUS);
 
       for (const object of objects) {
         if (filter(object)) {
@@ -102,8 +95,6 @@ export const createGameObjectsManager = (
       const state = getState();
 
       if (state.gameSpeedManager.gameSpeed > 0) {
-        options.quadtree.clear();
-
         for (const objectId in this.objects) {
           const object = this.objects[objectId];
 

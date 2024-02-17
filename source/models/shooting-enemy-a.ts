@@ -49,12 +49,14 @@ export function createShootingEnemyA(
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.movement.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
       this.shootingInterval.update(delta, getState);
 
-      // Find closest stranger
+      // Find the closest stranger
       let closestStranger = getState().gameObjectsManager.findClosestObject(
-        this,
+        {
+          x: this.x,
+          y: this.y,
+        },
         (oo) => oo.type === "stranger_a",
       );
 
@@ -125,7 +127,7 @@ export function createShootingEnemyA(
         const stranger =
           getState().gameObjectsManager.findObjectsByType("stranger_a")[0];
 
-        if (Math.random() < 0.7) {
+        if (Math.random() < 0.9) {
           const randomPosition = getState().world.getRandomPoint();
 
           if (
@@ -142,7 +144,7 @@ export function createShootingEnemyA(
           }
         }
 
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.3) {
           const randomPosition = getState().world.getRandomPoint();
 
           if (

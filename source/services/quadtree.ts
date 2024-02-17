@@ -25,6 +25,7 @@ interface Quadtree {
   insert: (point: StateObject) => void;
   remove: (point: Vector) => void;
   query: (range: Rectangle, found?: StateObject[]) => StateObject[];
+  queryRadius: (point: Vector, radius: number) => StateObject[];
   clear: () => void;
 }
 
@@ -42,6 +43,8 @@ export function createQuadtree(
     insert: (point: StateObject) => insert(quadtree, point),
     remove: (point: Point) => remove(quadtree, point),
     query: (range: Rectangle) => query(quadtree, range, []),
+    queryRadius: (point: Point, radius: number) =>
+      queryRadius(quadtree, point, radius),
     clear: () => {
       quadtree.points = [];
       quadtree.divided = false;
@@ -123,6 +126,15 @@ export function query(
 
   return found;
 }
+
+const queryRadius = (quadtree: Quadtree, point: Point, radius: number) => {
+  return query(quadtree, {
+    x: point.x - radius,
+    y: point.y - radius,
+    width: radius * 2,
+    height: radius * 2,
+  });
+};
 
 function remove(quadtree: Quadtree, point: Point | StateObject): void {
   // if (!isPointInBoundary(quadtree.boundary, point)) {
