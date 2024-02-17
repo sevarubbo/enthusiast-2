@@ -61,7 +61,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
 
         if (
           plantsWithinRange.length < 10 &&
-          Object.keys(getState().gameObjectsManager.objects).length < 2000
+          Object.keys(getState().gameObjectsManager.objects).length < 3000
         ) {
           const spawnLocation = {
             x:
