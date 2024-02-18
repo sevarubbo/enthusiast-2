@@ -59,15 +59,10 @@ export function createShootingEnemyB(
           x: this.x,
           y: this.y,
         },
-        (oo) => oo.type === "stranger_a",
+        (oo) => oo.type === "stranger_a" || oo.type === "shooting_enemy_a",
       );
 
-      if (!targetEnemy) {
-        targetEnemy = getState().gameObjectsManager.findClosestObject(
-          this,
-          (oo) => oo.type === "plant_eater_a",
-        );
-      }
+      targetEnemy = targetEnemy === this ? null : targetEnemy;
 
       if (!targetEnemy) {
         this.targetPoint = null;
