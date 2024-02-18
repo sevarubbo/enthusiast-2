@@ -149,10 +149,7 @@ export function createStrangerA(
           ),
         );
 
-        getState().cameraManager.worldTargetPoint = vector.create(
-          this.x,
-          this.y,
-        );
+        getState().cameraManager.followPoint = vector.create(this.x, this.y);
       } else {
         this.movement.stop();
       }

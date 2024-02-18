@@ -70,4 +70,8 @@ export const vector = {
 
     return angle;
   },
+
+  lerp(v1: Vector, v2: Vector, t: number): Vector {
+    return vector.add(vector.scale(v1, 1 - t), vector.scale(v2, t));
+  },
 };

@@ -9,6 +9,7 @@ export interface CameraManager extends Updatable {
     position: Vector;
   };
   worldTargetPoint: Vector;
+  followPoint: Vector | null;
   worldPointerPosition: Vector;
   isPointerDown: boolean;
   fromScreen(coordinates: Vector): Vector;
@@ -21,6 +22,7 @@ const SCROLL_SPEED = 5;
 export const createCameraManager = (
   o: Partial<Pick<CameraManager, "frame" | "worldTargetPoint">>,
 ): CameraManager => ({
+  followPoint: null,
   frame: o.frame || {
     size: vector.create(0, 0),
     position: vector.create(0, 0),
@@ -63,7 +65,7 @@ export const createCameraManager = (
 
     return true;
   },
-  update() {
+  update(delta) {
     const { keysPressed } = getKeysPressed();
 
     if (keysPressed.has("ArrowUp")) {
@@ -87,5 +89,17 @@ export const createCameraManager = (
     this.worldPointerPosition = this.fromScreen(pointerPosition);
 
     this.isPointerDown = getIsPointerDown();
+
+    if (this.followPoint) {
+      // Move the camera to follow the point with certain easing
+      const distance = vector.distance(this.worldTargetPoint, this.followPoint);
+      const speed = (delta * distance) / 2000;
+
+      this.worldTargetPoint = vector.lerp(
+        this.worldTargetPoint,
+        this.followPoint,
+        speed,
+      );
+    }
   },
 });
