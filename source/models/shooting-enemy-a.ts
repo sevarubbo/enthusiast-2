@@ -128,37 +128,45 @@ export function createShootingEnemyA(
         const stranger =
           getState().gameObjectsManager.findObjectsByType("stranger_a")[0];
 
-        if (Math.random() < 0.99) {
-          const randomPosition = getState().world.getRandomPoint();
-
-          if (
-            !(
-              stranger &&
-              vector.distance(randomPosition, stranger) < this.shootingRange * 3
-            ) ||
-            getState().gameObjectsManager.findObjectsByType("shooting_enemy_a")
-              .length < 0
-          ) {
-            getState().gameObjectsManager.spawnObject(
-              createShootingEnemyA(randomPosition),
-            );
+        // Respawning
+        (() => {
+          if (!stranger) {
+            return;
           }
-        }
 
-        if (Math.random() < 0.6) {
-          const randomPosition = getState().world.getRandomPoint();
+          if (Math.random() < 0.99) {
+            const randomPosition = getState().world.getRandomPoint();
 
-          if (
-            !(
-              stranger &&
-              vector.distance(randomPosition, stranger) < this.shootingRange * 3
-            )
-          ) {
-            getState().gameObjectsManager.spawnObject(
-              createShootingEnemyA(randomPosition),
-            );
+            if (
+              !(
+                vector.distance(randomPosition, stranger) <
+                this.shootingRange * 3
+              ) ||
+              getState().gameObjectsManager.findObjectsByType(
+                "shooting_enemy_a",
+              ).length < 0
+            ) {
+              getState().gameObjectsManager.spawnObject(
+                createShootingEnemyA(randomPosition),
+              );
+            }
           }
-        }
+
+          if (Math.random() < 0.6) {
+            const randomPosition = getState().world.getRandomPoint();
+
+            if (
+              !(
+                vector.distance(randomPosition, stranger) <
+                this.shootingRange * 3
+              )
+            ) {
+              getState().gameObjectsManager.spawnObject(
+                createShootingEnemyA(randomPosition),
+              );
+            }
+          }
+        })();
 
         if (Math.random() < 0.5) {
           // create 5 enemies
