@@ -66,15 +66,16 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           plantsWithinRange.length < 10 &&
           Object.keys(getState().gameObjectsManager.objects).length < 4000
         ) {
+          const RADIUS = 25;
           const spawnLocation = {
             x:
               this.x +
-              Math.random() * this.collisionCircle.radius * 30 -
-              this.collisionCircle.radius * 15,
+              Math.random() * this.collisionCircle.radius * RADIUS -
+              (this.collisionCircle.radius * RADIUS) / 2,
             y:
               this.y +
-              Math.random() * this.collisionCircle.radius * 30 -
-              this.collisionCircle.radius * 15,
+              Math.random() * this.collisionCircle.radius * RADIUS -
+              (this.collisionCircle.radius * RADIUS) / 2,
           };
 
           let collides = false;

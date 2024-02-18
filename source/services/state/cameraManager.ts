@@ -93,13 +93,18 @@ export const createCameraManager = (
     if (this.followPoint) {
       // Move the camera to follow the point with certain easing
       const distance = vector.distance(this.worldTargetPoint, this.followPoint);
-      const speed = (delta * distance) / 2000;
 
-      this.worldTargetPoint = vector.lerp(
-        this.worldTargetPoint,
-        this.followPoint,
-        speed,
-      );
+      if (distance > 500) {
+        this.worldTargetPoint = this.followPoint;
+      } else {
+        const speed = (delta * distance) / 2000;
+
+        this.worldTargetPoint = vector.lerp(
+          this.worldTargetPoint,
+          this.followPoint,
+          speed,
+        );
+      }
     }
   },
 });

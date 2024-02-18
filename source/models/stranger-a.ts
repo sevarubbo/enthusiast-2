@@ -151,6 +151,7 @@ export function createStrangerA(
 
         getState().cameraManager.followPoint = vector.create(this.x, this.y);
       } else {
+        getState().cameraManager.followPoint = null;
         this.movement.stop();
       }
 
