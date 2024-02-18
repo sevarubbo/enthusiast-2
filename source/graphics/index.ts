@@ -61,6 +61,8 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
   return {
     draw: (state: State) => {
+      drawQueue.queue = [];
+
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.fillStyle = "#111";
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -117,12 +119,8 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
       // Draw queue
       drawQueue.queue
         .sort((a, b) => a.index - b.index)
-        .forEach(() => {
-          const fn = drawQueue.queue.shift();
-
-          if (fn) {
-            fn.fn();
-          }
+        .forEach((q) => {
+          q.fn(ctx);
         });
 
       ctx.restore(); // Restore the previous clipping state

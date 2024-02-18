@@ -1,4 +1,5 @@
 import { createBullet } from "./bullet";
+import { createExplosion } from "./helpers";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
@@ -185,6 +186,11 @@ export function createStrangerA(
 
           playSound("basic shot", getSoundPosition(this, cameraManager));
         });
+      }
+
+      // After death
+      if (this.health.current <= 0) {
+        createExplosion(this, getState, 60);
       }
     },
   };

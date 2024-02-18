@@ -1,4 +1,5 @@
 import { drawHealthBar } from "./healthbar";
+import { getPlantColor } from "./helpers";
 import {
   drawCircle,
   drawCircleOutline,
@@ -97,11 +98,14 @@ const drawDefaultObjectView = (
 };
 
 export const drawQueue = {
-  queue: [] as Array<{ index: 1 | 2; fn: () => void }>,
+  queue: [] as Array<{
+    index: 1 | 2;
+    fn: (ctx: CanvasRenderingContext2D) => void;
+  }>,
   clear: () => {
     drawQueue.queue = [];
   },
-  schedule: (index: 1 | 2, fn: () => void) => {
+  schedule: (index: 1 | 2, fn: (ctx: CanvasRenderingContext2D) => void) => {
     drawQueue.queue.push({
       index,
       fn,
@@ -127,9 +131,9 @@ function drawObjectAsCircle(
       })(),
     );
 
-    drawQueue.schedule(1, () => {
+    drawQueue.schedule(1, (ctx2) => {
       drawHealthBar(
-        ctx,
+        ctx2,
         healthBarPosition,
         object.health.current,
         object.health.max,
@@ -252,23 +256,23 @@ function drawObject(
           color: "#fff",
           radius: 4,
         });
-
-        if (object.health.current < object.health.max) {
-          const healthBarPosition = vector.add(
-            state.cameraManager.toScreen(object),
-            vector.create(0, -object.collisionCircle.radius - 10),
-          );
-
-          drawQueue.schedule(1, () => {
-            drawHealthBar(
-              ctx,
-              healthBarPosition,
-              object.health.current,
-              object.health.max,
-            );
-          });
-        }
       });
+
+      if (object.health.current < object.health.max) {
+        const healthBarPosition = vector.add(
+          state.cameraManager.toScreen(object),
+          vector.create(0, -object.collisionCircle.radius - 10),
+        );
+
+        drawQueue.schedule(1, (ctx2) => {
+          drawHealthBar(
+            ctx2,
+            healthBarPosition,
+            object.health.current,
+            object.health.max,
+          );
+        });
+      }
 
       return;
     }
@@ -278,20 +282,7 @@ function drawObject(
         radius: object.collisionCircle.radius,
         x: object.x,
         y: object.y,
-        color: (() => {
-          // health gradient
-          const healthRatio = object.health.current / object.health.max;
-
-          if (healthRatio < 1 / 3) {
-            return "#bd4010";
-          }
-
-          if (healthRatio < 2 / 3) {
-            return "#deb309";
-          }
-
-          return "#79fd03";
-        })(),
+        color: getPlantColor(object.health.current, object.health.max),
       });
 
       return;
