@@ -1,6 +1,4 @@
 import { createBullet } from "./bullet";
-import { createShootingEnemyB } from "./enemy-d";
-import { createShieldItem } from "./shield-item";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
@@ -16,23 +14,23 @@ import {
 } from "services/state";
 import { vector } from "services/vector";
 
-export interface ShootingEnemyA extends Movable, Collidable, Healthy {
-  type: "shooting_enemy_a";
+export interface EnemyD extends Movable, Collidable, Healthy {
+  type: "shooting_enemy_b";
   shootingInterval: IntervalManager;
   shootingRange: number;
   color: string;
   shield: ReturnType<typeof createObjectShieldManager>;
 }
 
-export function createShootingEnemyA(
-  o: Partial<Pick<ShootingEnemyA, "x" | "y"> & { scale: number }> = {},
-): ShootingEnemyA {
-  const scale = Math.random() * 0.7 + 0.8;
+export function createShootingEnemyB(
+  o: Partial<Pick<EnemyD, "x" | "y"> & { scale: number }> = {},
+): EnemyD {
+  const scale = 0.05;
 
   return {
-    color: "#f00",
+    color: "#a30",
     id: createId(),
-    type: "shooting_enemy_a",
+    type: "shooting_enemy_b",
     x: o.x || 0,
     y: o.y || 0,
     collisionCircle: { radius: scale * 12 },
@@ -40,7 +38,7 @@ export function createShootingEnemyA(
       maxHealth: 8 + scale * 8,
       selfHealing: true,
     }),
-    movement: createObjectMovementManager({ maxSpeed: 0.05 / scale }),
+    movement: createObjectMovementManager({ maxSpeed: 0.1 / scale }),
     collision: createObjectCollisionManager(),
     targetPoint: null,
     shootingInterval: createIntervalManager(500 + scale * 500),
@@ -122,58 +120,7 @@ export function createShootingEnemyA(
 
       // After death
       if (this.health.current <= 0) {
-        getState().statsManager.incrementEnemiesDied();
-
-        // Check if the position is not too close to the player
-        const stranger =
-          getState().gameObjectsManager.findObjectsByType("stranger_a")[0];
-
-        if (Math.random() < 0.99) {
-          const randomPosition = getState().world.getRandomPoint();
-
-          if (
-            !(
-              stranger &&
-              vector.distance(randomPosition, stranger) < this.shootingRange * 3
-            ) ||
-            getState().gameObjectsManager.findObjectsByType("shooting_enemy_a")
-              .length < 0
-          ) {
-            getState().gameObjectsManager.spawnObject(
-              createShootingEnemyA(randomPosition),
-            );
-          }
-        }
-
-        if (Math.random() < 0.6) {
-          const randomPosition = getState().world.getRandomPoint();
-
-          if (
-            !(
-              stranger &&
-              vector.distance(randomPosition, stranger) < this.shootingRange * 3
-            )
-          ) {
-            getState().gameObjectsManager.spawnObject(
-              createShootingEnemyA(randomPosition),
-            );
-          }
-        }
-
-        if (Math.random() < 0.5) {
-          // create 5 enemies
-          for (let i = 0; i < 5; i++) {
-            getState().gameObjectsManager.spawnObject(
-              createShootingEnemyB({ x: this.x, y: this.y }),
-            );
-          }
-        }
-
-        if (Math.random() < 0.1) {
-          getState().gameObjectsManager.spawnObject(
-            createShieldItem({ x: this.x, y: this.y }),
-          );
-        }
+        //
       }
     },
   };
