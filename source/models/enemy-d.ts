@@ -22,27 +22,30 @@ export interface EnemyD extends Movable, Collidable, Healthy {
   shield: ReturnType<typeof createObjectShieldManager>;
 }
 
+const BASE_HEALTH = 4;
+const BASE_SPEED = 0.006;
+
 export function createShootingEnemyB(
   o: Partial<Pick<EnemyD, "x" | "y"> & { scale: number }> = {},
 ): EnemyD {
   const scale = 0.05;
 
   return {
-    color: "#a30",
+    color: "#8c8c8c",
     id: createId(),
     type: "shooting_enemy_b",
     x: o.x || 0,
     y: o.y || 0,
-    collisionCircle: { radius: scale * 12 },
+    collisionCircle: { radius: scale * 100 },
     health: createObjectHealthManager({
-      maxHealth: 8 + scale * 8,
+      maxHealth: BASE_HEALTH + scale * BASE_HEALTH,
       selfHealing: true,
     }),
-    movement: createObjectMovementManager({ maxSpeed: 0.1 / scale }),
+    movement: createObjectMovementManager({ maxSpeed: BASE_SPEED / scale }),
     collision: createObjectCollisionManager(),
     targetPoint: null,
     shootingInterval: createIntervalManager(500 + scale * 500),
-    shootingRange: 300 * scale,
+    shootingRange: 2000 * scale,
     shield: createObjectShieldManager(),
 
     update(delta, getState) {
@@ -51,7 +54,7 @@ export function createShootingEnemyB(
       this.shootingInterval.update(delta, getState);
 
       // Find the closest stranger
-      let closestStranger = getState().gameObjectsManager.findClosestObject(
+      let targetEnemy = getState().gameObjectsManager.findClosestObject(
         {
           x: this.x,
           y: this.y,
@@ -59,27 +62,32 @@ export function createShootingEnemyB(
         (oo) => oo.type === "stranger_a",
       );
 
-      if (!closestStranger) {
-        closestStranger = getState().gameObjectsManager.findClosestObject(
+      if (!targetEnemy) {
+        targetEnemy = getState().gameObjectsManager.findClosestObject(
           this,
           (oo) => oo.type === "plant_eater_a",
         );
       }
 
-      if (closestStranger) {
+      if (!targetEnemy) {
+        this.targetPoint = null;
+        this.movement.stop();
+      } else {
         // Get to shooting range
-
         const distance = Math.sqrt(
-          (closestStranger.x - this.x) ** 2 + (closestStranger.y - this.y) ** 2,
+          (targetEnemy.x - this.x) ** 2 + (targetEnemy.y - this.y) ** 2,
         );
 
         // Aim at the stranger
         this.movement.angle = Math.atan2(
-          closestStranger.y - this.y,
-          closestStranger.x - this.x,
+          targetEnemy.y - this.y,
+          targetEnemy.x - this.x,
         );
 
         if (distance <= this.shootingRange) {
+          this.targetPoint = null;
+          this.movement.stop();
+
           const bulletPosition = vector.add(
             this,
             vector.scale(
@@ -104,18 +112,12 @@ export function createShootingEnemyB(
               getSoundPosition(this, getState().cameraManager),
             );
           });
-
-          this.targetPoint = null;
-          this.movement.stop();
         } else {
           this.targetPoint = {
-            x: closestStranger.x,
-            y: closestStranger.y,
+            x: targetEnemy.x,
+            y: targetEnemy.y,
           };
         }
-      } else {
-        this.targetPoint = null;
-        this.movement.stop();
       }
 
       // After death

@@ -80,7 +80,7 @@ const drawDefaultObjectView = (
   if ("movement" in object) {
     const directionPointPosition = vector.scale(
       vector.fromAngle(object.movement.angle),
-      10,
+      Math.min(object.collisionCircle.radius * 0.9, 20),
     );
 
     drawCircle(ctx, {
@@ -88,7 +88,7 @@ const drawDefaultObjectView = (
         vector.add(object, directionPointPosition),
       ),
       color: "#fff",
-      radius: 4,
+      radius: Math.min(object.collisionCircle.radius / 3, 4),
     });
   }
 

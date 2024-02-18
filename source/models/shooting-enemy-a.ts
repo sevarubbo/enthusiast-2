@@ -171,8 +171,13 @@ export function createShootingEnemyA(
         if (Math.random() < 0.5) {
           // create 5 enemies
           for (let i = 0; i < 5; i++) {
+            const position = vector.add(this, {
+              x: Math.random() * 50 - 25,
+              y: Math.random() * 50 - 25,
+            });
+
             getState().gameObjectsManager.spawnObject(
-              createShootingEnemyB({ x: this.x, y: this.y }),
+              createShootingEnemyB(position),
             );
           }
         }
