@@ -164,7 +164,7 @@ export function createShootingEnemyA(
           }
         })();
 
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.3) {
           // create 5 enemies
           for (let i = 0; i < 5; i++) {
             const position = vector.add(this, {
@@ -176,6 +176,11 @@ export function createShootingEnemyA(
               createShootingEnemyB(position),
             );
           }
+
+          playSound("egg hatch", {
+            ...getSoundPosition(this, getState().cameraManager),
+            volume: 3,
+          });
         }
 
         if (Math.random() < 0.1) {

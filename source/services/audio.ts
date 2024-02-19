@@ -32,6 +32,10 @@ const audioFiles = [
     name: "shield acquired",
     url: "sounds/ESM_Magic_Game_Shield_Guard_Fantasy_Cast_Craft_Mobile_App_Special_Touch_Pickup.wav",
   },
+  {
+    name: "egg hatch",
+    url: "sounds/LarvaEggHatch_BU01.514.wav",
+  },
 ] as const;
 
 export type SoundName = (typeof audioFiles)[number]["name"];

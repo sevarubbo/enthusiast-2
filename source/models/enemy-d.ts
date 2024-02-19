@@ -23,7 +23,7 @@ export interface EnemyD extends Movable, Collidable, Healthy {
 }
 
 const BASE_HEALTH = 4;
-const BASE_SPEED = 0.006;
+const BASE_SPEED = 0.009;
 
 export function createShootingEnemyB(
   o: Partial<Pick<EnemyD, "x" | "y"> & { scale: number }> = {},
@@ -36,7 +36,7 @@ export function createShootingEnemyB(
     type: "shooting_enemy_b",
     x: o.x || 0,
     y: o.y || 0,
-    collisionCircle: { radius: scale * 100 },
+    collisionCircle: { radius: scale * 110 },
     health: createObjectHealthManager({
       maxHealth: BASE_HEALTH + scale * BASE_HEALTH,
       selfHealing: true,
@@ -44,8 +44,8 @@ export function createShootingEnemyB(
     movement: createObjectMovementManager({ maxSpeed: BASE_SPEED / scale }),
     collision: createObjectCollisionManager(),
     targetPoint: null,
-    shootingInterval: createIntervalManager(500 + scale * 500),
-    shootingRange: 2000 * scale,
+    shootingInterval: createIntervalManager(400 + scale * 400),
+    shootingRange: 1000 * scale,
     shield: createObjectShieldManager(),
 
     update(delta, getState) {
