@@ -9,7 +9,7 @@ export const createGradientArray = (
   const colorStep = 1 / steps;
 
   for (let i = 0; i < steps; i++) {
-    const color = `rgb(
+    const color = `rgba(
       ${Math.round(
         (1 - colorStep * i) * parseInt(colorA.slice(1, 3), 16) +
           colorStep * i * parseInt(colorB.slice(1, 3), 16),
@@ -21,7 +21,8 @@ export const createGradientArray = (
       ${Math.round(
         (1 - colorStep * i) * parseInt(colorA.slice(5, 7), 16) +
           colorStep * i * parseInt(colorB.slice(5, 7), 16),
-      )}
+      )},
+      1
     )`;
 
     colors.push(color);

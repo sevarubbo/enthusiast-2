@@ -5,3 +5,4 @@ export * from "./objectHealthManager";
 export * from "./objectMovementManager";
 export * from "../../models/managers";
 export * from "./types";
+export * from "./gameObjectsManager";

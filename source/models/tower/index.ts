@@ -1,7 +1,7 @@
 import { towerUpdate } from "./update";
 import { createId } from "helpers";
+import { createWeaponA } from "models/weapon-a";
 import {
-  createIntervalManager,
   createObjectCollisionManager,
   createObjectHealthManager,
 } from "services/state";
@@ -10,12 +10,9 @@ import type {
   Healthy,
   Identifiable,
   Updatable,
-  IntervalManager,
+  Weapon,
 } from "services/state";
 import type { Vector } from "services/vector";
-
-const SHOOTING_SPEED = 3;
-const BULLET_STRENGTH = 3;
 
 export interface Tower
   extends Identifiable,
@@ -26,15 +23,14 @@ export interface Tower
   type: "tower";
   color: string;
   radius: 20;
-  shotInterval: IntervalManager;
   angle: number;
   targetAngle?: number;
   rotateSpeed: number;
 
   targetEnemyId?: string;
   aimError: number;
-  bulletStrength: typeof BULLET_STRENGTH;
   shootingRange: number;
+  weapon: Weapon;
 }
 
 export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
@@ -45,25 +41,27 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     y: o.y || 0,
     color: "#6566b8",
     radius: 20,
-    shotInterval: createIntervalManager(1000 / SHOOTING_SPEED),
     angle: 0,
     collisionCircle: {
       radius: 20,
     },
     health: createObjectHealthManager({
-      maxHealth: 300,
+      maxHealth: 200,
       selfHealing: true,
     }),
     collision: createObjectCollisionManager(),
     aimError: 0.02,
-    bulletStrength: BULLET_STRENGTH,
     rotateSpeed: 2 / 1000,
-    shootingRange: 300,
+    shootingRange: 350,
+    weapon: createWeaponA({
+      bulletSpeed: 0.9,
+      fireRate: 10,
+    }),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.collision.update(delta, getState, this);
-      this.shotInterval.update(delta, getState);
+      this.weapon.update(delta, getState, this);
 
       towerUpdate(this, delta, getState);
     },

@@ -10,34 +10,50 @@ import {
 import type { Vector } from "services/vector";
 
 const RADIUS = 2;
-const ATTACK = 3;
+const BASE_ATTACK = 5;
 
 export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   type: "bullet";
-  color: "yellow";
+  color: string;
   radius: typeof RADIUS;
   belongsTo: string;
   speed: number;
   direction: Vector;
   attack: number;
+  age: 0;
+  maxAge: number; //ms
 }
+
+const BASE_MAX_AGE = 1000;
 
 export function createBullet(
   o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo"> &
     Partial<Pick<Bullet, "attack" | "speed">>,
 ): Bullet {
+  const speed = o.speed || 0.3;
+
   return {
     id: createId(),
     type: "bullet",
-    color: "yellow",
+    color: "#f0f0f0",
     radius: RADIUS,
     collisionCircle: { radius: RADIUS },
-    speed: 0.2,
-    attack: ATTACK,
+    speed,
     collision: createObjectCollisionManager(),
+    age: 0,
+    maxAge: Math.random() * BASE_MAX_AGE + BASE_MAX_AGE,
     ...o,
+    attack: BASE_ATTACK * speed * (o.attack || 1),
 
     update(delta, getState) {
+      this.age += delta;
+
+      if (this.age > this.maxAge) {
+        getState().gameObjectsManager.despawnObject(this);
+
+        return;
+      }
+
       const { world, gameObjectsManager, cameraManager } = getState();
 
       this.x += this.direction.x * this.speed * delta;

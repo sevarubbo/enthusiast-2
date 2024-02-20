@@ -11,6 +11,7 @@ export interface GameObjectsManager extends Updatable {
   findClosestObject(
     point: Vector,
     filter: (object: StateObject) => boolean,
+    radius?: number,
   ): StateObject | null;
   findObjectsByType<T extends StateObject>(type: T["type"]): T[];
 }
@@ -41,7 +42,6 @@ export const createGameObjectsManager = (
     },
 
     despawnObject(object) {
-      options.quadtree.remove(object);
       delete this.objects[object.id];
     },
 
@@ -59,11 +59,14 @@ export const createGameObjectsManager = (
       return res;
     },
 
-    findClosestObject(point: Vector, filter: (object: StateObject) => boolean) {
+    findClosestObject(
+      point: Vector,
+      filter: (object: StateObject) => boolean,
+      radius = 1000,
+    ) {
       let closestObject: StateObject | null = null;
       let closestDistance = Infinity;
-      const RADIUS = 1000;
-      const objects = options.quadtree.queryRadius(point, RADIUS);
+      const objects = options.quadtree.queryRadius(point, radius);
 
       for (const object of objects) {
         if (filter(object)) {

@@ -75,12 +75,14 @@ const gameLoop = (ctx: CanvasRenderingContext2D, currentTime: number) => {
   accumulatedTime -= frameTime;
 };
 
-// Start game loop
-void loadAudioFiles().then(() => {
-  requestAnimationFrame((now) => {
-    gameLoop(canvasContext, now);
+const startGame = () => {
+  // Start game loop
+  void loadAudioFiles().then(() => {
+    requestAnimationFrame((now) => {
+      gameLoop(canvasContext, now);
+    });
   });
-});
+};
 
 // Export some global stuff
 Object.defineProperty(window, "Game", {
@@ -109,3 +111,31 @@ volumeControl.style.top = "230px";
 volumeControl.style.left = "10px";
 
 document.body.appendChild(volumeControl);
+
+// Start button
+(() => {
+  const startButton = document.createElement("button");
+
+  startButton.textContent = "Start";
+  startButton.style.position = "fixed";
+  // Centered
+  startButton.style.top = "50%";
+  startButton.style.left = "50%";
+  startButton.style.transform = "translate(-50%, -50%)";
+  startButton.style.fontSize = "2em";
+  startButton.focus();
+
+  startButton.addEventListener("click", () => {
+    startGame();
+
+    // Remove button
+    startButton.remove();
+  });
+
+  document.body.appendChild(startButton);
+})();
+
+// Default styles
+document.body.style.margin = "0";
+document.body.style.overflow = "hidden";
+document.body.style.backgroundColor = "black";

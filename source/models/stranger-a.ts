@@ -1,8 +1,7 @@
-import { createBullet } from "./bullet";
 import { createExplosion } from "./helpers";
+import { createMachineGun } from "./weapon-a";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
-import { getSoundPosition, playSound } from "services/audio";
 import { getKeysPressed } from "services/io";
 import {
   createObjectHealthManager,
@@ -13,9 +12,9 @@ import {
   createObjectMovementManager,
   createObjectCollisionManager,
   type Healthy,
-  createIntervalManager,
 } from "services/state";
 import { vector } from "services/vector";
+import type { Weapon } from "services/state";
 
 type TypicalObject = Identifiable & Updatable & Collidable & Movable & Healthy;
 
@@ -24,8 +23,8 @@ export interface StrangerA extends TypicalObject {
   isHovered: boolean;
   isSelected: boolean;
   shootingAngle: number;
-  shootingInterval: ReturnType<typeof createIntervalManager>;
   shield: ReturnType<typeof createObjectShieldManager>;
+  weapon: Weapon;
 }
 
 export function createStrangerA(
@@ -47,7 +46,8 @@ export function createStrangerA(
     isSelected: false,
     targetPoint: null,
     shootingAngle: 0,
-    shootingInterval: createIntervalManager(1000 / 12),
+
+    weapon: createMachineGun(),
 
     shield: createObjectShieldManager(),
 
@@ -56,7 +56,7 @@ export function createStrangerA(
       this.collision.update(delta, getState, this);
       this.movement.update(delta, getState, this);
       this.collision.update(delta, getState, this);
-      this.shootingInterval.update(delta, getState);
+      this.weapon.update(delta, getState, this);
 
       // START: Selectable object logic
       const { worldPointerPosition, isPointerDown } = getState().cameraManager;
@@ -156,34 +156,7 @@ export function createStrangerA(
       }
 
       if (isPointerDown) {
-        this.shootingInterval.fireIfReady(() => {
-          const BULLET_OFFSET = this.collisionCircle.radius + 5;
-          const bulletPosition = vector.add(
-            this,
-            vector.scale(vector.fromAngle(this.shootingAngle), BULLET_OFFSET),
-          );
-
-          const bulletDirection = vector.fromAngle(this.shootingAngle);
-
-          // randomize bullet direction
-          bulletDirection.x += Math.random() * 0.1 - 0.05;
-          bulletDirection.y += Math.random() * 0.1 - 0.05;
-
-          const bullet = createBullet({
-            ...bulletPosition,
-            direction: bulletDirection,
-            belongsTo: this.id,
-            attack: 2,
-            speed: 0.8,
-          });
-
-          getState().gameObjectsManager.spawnObject(bullet);
-
-          // Set the volume depending on camera position
-          const { cameraManager } = getState();
-
-          playSound("basic shot", getSoundPosition(this, cameraManager));
-        });
+        this.weapon.fireAtAngle(this.shootingAngle);
       }
 
       // After death

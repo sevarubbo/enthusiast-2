@@ -1,26 +1,27 @@
-import { createBullet, type Bullet } from "./bullet";
+import { type Bullet } from "./bullet";
+import { createMachineGun } from "./weapon-a";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
-import { getSoundPosition, playSound } from "services/audio";
 import {
-  createIntervalManager,
   createObjectCollisionManager,
   createObjectHealthManager,
   createObjectMovementManager,
   type Collidable,
   type Healthy,
-  type IntervalManager,
   type Movable,
 } from "services/state";
+import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
+import type { Matrix } from "services/matrix";
+import type { Weapon } from "services/state";
 
 export interface DefenderA extends Movable, Collidable, Healthy {
   type: "defender_a";
-  shootingInterval: IntervalManager;
   shootingRange: number;
   color: string;
   targetEnemyId: string | undefined;
   shield: ReturnType<typeof createObjectShieldManager>;
+  weapon: Weapon;
 }
 
 export function createDefenderA(
@@ -40,17 +41,19 @@ export function createDefenderA(
     movement: createObjectMovementManager({ maxSpeed: 0.08 }),
     collision: createObjectCollisionManager(),
     targetPoint: null,
-    shootingInterval: createIntervalManager(1000 / 12),
     shootingRange: 300,
     targetEnemyId: undefined,
     shield: createObjectShieldManager(),
+    weapon: createMachineGun(),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.collision.update(delta, getState, this);
       this.movement.update(delta, getState, this);
       this.collision.update(delta, getState, this);
-      this.shootingInterval.update(delta, getState);
+      this.weapon.update(delta, getState, this);
+
+      const { gameObjectsManager } = getState();
 
       // Defend StrangerA
       (() => {
@@ -60,38 +63,48 @@ export function createDefenderA(
           (oo) => oo.type === "stranger_a",
         );
 
-        if (!closestStranger) {
-          this.movement.stop();
+        // Defend stranger
+        (() => {
+          if (closestStranger) {
+            const distanceToStranger = Math.sqrt(
+              (closestStranger.x - this.x) ** 2 +
+                (closestStranger.y - this.y) ** 2,
+            );
 
-          return;
-        }
+            if (distanceToStranger > this.shootingRange) {
+              this.targetPoint = {
+                x: closestStranger.x,
+                y: closestStranger.y,
+              };
+              this.targetEnemyId = undefined;
 
-        const distanceToStranger = Math.sqrt(
-          (closestStranger.x - this.x) ** 2 + (closestStranger.y - this.y) ** 2,
-        );
+              return;
+            }
 
-        if (distanceToStranger > this.shootingRange) {
-          this.targetPoint = {
-            x: closestStranger.x,
-            y: closestStranger.y,
-          };
-          this.targetEnemyId = undefined;
+            if (!this.targetEnemyId) {
+              this.targetPoint = null;
+              this.movement.stop();
+            }
 
-          return;
-        }
+            // If stranger hit by a bullet
+            const enemyBullet =
+              closestStranger.collision.collidesWithObjects.find(
+                (o) => o.type === "bullet",
+              ) as Bullet | undefined;
+
+            if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
+              this.targetEnemyId = enemyBullet.belongsTo;
+            }
+          }
+        })();
 
         if (!this.targetEnemyId) {
-          this.targetPoint = null;
-          this.movement.stop();
-        }
-
-        // If stranger hit by a bullet
-        const enemyBullet = closestStranger.collision.collidesWithObjects.find(
-          (o) => o.type === "bullet",
-        ) as Bullet | undefined;
-
-        if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
-          this.targetEnemyId = enemyBullet.belongsTo;
+          this.targetEnemyId = gameObjectsManager.findClosestObject(
+            this,
+            (oo) =>
+              oo.type === "shooting_enemy_a" || oo.type === "shooting_enemy_b",
+            this.shootingRange,
+          )?.id;
         }
 
         const targetEnemy =
@@ -123,24 +136,41 @@ export function createDefenderA(
           targetEnemy.x - this.x,
         );
 
-        this.shootingInterval.fireIfReady(() => {
-          if (this.shootingInterval.ready) {
-            getState().gameObjectsManager.spawnObject(
-              createBullet({
-                x: this.x,
-                y: this.y,
-                direction: vector.fromAngle(this.movement.angle),
-                belongsTo: this.id,
-                speed: 0.3,
-              }),
-            );
+        // Adjust angle by enemy speed
+        if ("movement" in targetEnemy) {
+          const adjustmentVector = vector.scale(
+            targetEnemy.movement.speedVector,
+            distanceToEnemy,
+          );
 
-            playSound(
-              "basic shot",
-              getSoundPosition(this, getState().cameraManager),
-            );
+          this.movement.angle = Math.atan2(
+            targetEnemy.y - this.y + adjustmentVector.y,
+            targetEnemy.x - this.x + adjustmentVector.x,
+          );
+        }
+
+        // Check if can shoot
+        const shootingSegment: Matrix = [
+          vector.create(this.x, this.y),
+          vector.create(targetEnemy.x, targetEnemy.y),
+        ];
+        const willCollideWithFriendlyObject = !!getFirstObjectLineCollision(
+          getState,
+          shootingSegment,
+          (object) => {
+            if (object === this) {
+              return false;
+            }
+
+            return object.type === "defender_a" || object.type === "stranger_a";
+          },
+        );
+
+        if (!willCollideWithFriendlyObject) {
+          if (this.weapon.ammo > 0) {
+            this.weapon.fireAtAngle(this.movement.angle);
           }
-        });
+        }
       })();
     },
   };

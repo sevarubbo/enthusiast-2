@@ -1,5 +1,4 @@
 import { createBullet } from "./bullet";
-import { createShootingEnemyB } from "./enemy-d";
 import { createShieldItem } from "./shield-item";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
@@ -52,29 +51,37 @@ export function createShootingEnemyA(
       this.movement.update(delta, getState, this);
       this.shootingInterval.update(delta, getState);
 
-      // Find the closest stranger
-      const closestStranger = getState().gameObjectsManager.findClosestObject(
-        {
-          x: this.x,
-          y: this.y,
-        },
-        (oo) =>
-          oo.type === "stranger_a" ||
-          oo.type === "plant_eater_a" ||
-          oo.type === "shooting_enemy_b",
-      );
+      const { gameObjectsManager } = getState();
 
-      if (closestStranger) {
+      // Find targetEnemy
+      const targetEnemy =
+        gameObjectsManager.findClosestObject(
+          this,
+          (oo) => oo.type === "stranger_a" || oo.type === "shooting_enemy_b",
+        ) ||
+        gameObjectsManager.findClosestObject(
+          this,
+          (oo) => oo.type === "tower",
+        ) ||
+        gameObjectsManager.findClosestObject(
+          this,
+          (oo) =>
+            oo.type === "plant_eater_a" ||
+            oo.type === "enemyC" ||
+            oo.type === "enemy",
+        );
+
+      if (targetEnemy) {
         // Get to shooting range
 
         const distance = Math.sqrt(
-          (closestStranger.x - this.x) ** 2 + (closestStranger.y - this.y) ** 2,
+          (targetEnemy.x - this.x) ** 2 + (targetEnemy.y - this.y) ** 2,
         );
 
         // Aim at the stranger
         this.movement.angle = Math.atan2(
-          closestStranger.y - this.y,
-          closestStranger.x - this.x,
+          targetEnemy.y - this.y,
+          targetEnemy.x - this.x,
         );
 
         if (distance <= this.shootingRange) {
@@ -107,8 +114,8 @@ export function createShootingEnemyA(
           this.movement.stop();
         } else {
           this.targetPoint = {
-            x: closestStranger.x,
-            y: closestStranger.y,
+            x: targetEnemy.x,
+            y: targetEnemy.y,
           };
         }
       } else {
@@ -163,25 +170,6 @@ export function createShootingEnemyA(
             }
           }
         })();
-
-        if (Math.random() < 0.3) {
-          // create 5 enemies
-          for (let i = 0; i < 5; i++) {
-            const position = vector.add(this, {
-              x: Math.random() * 50 - 25,
-              y: Math.random() * 50 - 25,
-            });
-
-            getState().gameObjectsManager.spawnObject(
-              createShootingEnemyB(position),
-            );
-          }
-
-          playSound("egg hatch", {
-            ...getSoundPosition(this, getState().cameraManager),
-            volume: 3,
-          });
-        }
 
         if (Math.random() < 0.1) {
           getState().gameObjectsManager.spawnObject(

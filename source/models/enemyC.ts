@@ -1,7 +1,9 @@
 import { createBullet } from "./bullet";
+import { createEnemyD } from "./enemy-d";
 import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createTower } from "./tower";
 import { createId } from "../helpers";
+import { getSoundPosition, playSound } from "services/audio";
 import {
   createObjectCollisionManager,
   createObjectHealthManager,
@@ -129,6 +131,21 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
           getState().gameObjectsManager.spawnObject(
             createTower({ x: this.x, y: this.y }),
           );
+        } else if (Math.random() < 0.3) {
+          // create 5 enemies
+          for (let i = 0; i < 5; i++) {
+            const position = vector.add(this, {
+              x: Math.random() * 50 - 25,
+              y: Math.random() * 50 - 25,
+            });
+
+            getState().gameObjectsManager.spawnObject(createEnemyD(position));
+          }
+
+          playSound("egg hatch", {
+            ...getSoundPosition(this, getState().cameraManager),
+            volume: 1.5,
+          });
         } else {
           getState().gameObjectsManager.spawnObject(
             createShootingEnemyA({ x: this.x, y: this.y }),

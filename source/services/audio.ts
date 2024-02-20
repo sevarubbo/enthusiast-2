@@ -1,6 +1,6 @@
 import { vector } from "./vector";
 import type { CameraManager } from "./state";
-import type { StateObject } from "types";
+import type { Vector } from "./vector";
 
 // Define types for audio data
 interface AudioData {
@@ -35,6 +35,10 @@ const audioFiles = [
   {
     name: "egg hatch",
     url: "sounds/LarvaEggHatch_BU01.514.wav",
+  },
+  {
+    name: "no ammo",
+    url: "sounds/MouseClick_SFXB.4114.wav",
   },
 ] as const;
 
@@ -91,10 +95,11 @@ export function playSound(
 }
 
 export const getSoundPosition = (
-  object: StateObject,
+  point: Vector,
   cameraManager: CameraManager,
+  volume = 1,
 ) => {
-  const objectPosition = vector.create(object.x, object.y);
+  const objectPosition = vector.create(point.x, point.y);
   const screenPosition = cameraManager.toScreen(objectPosition);
 
   const distance = vector.distance(
@@ -107,7 +112,9 @@ export const getSoundPosition = (
   pan = Math.max(-1, Math.min(1, pan));
 
   return {
-    volume: globalVolume * (200 / (distance + 200)),
+    volume: volume * globalVolume * (200 / (distance + 200)),
     pan,
   };
 };
+
+export const getSoundProperties = getSoundPosition;

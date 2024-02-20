@@ -7,6 +7,7 @@ import type { GameSpeedManager } from "./gameSpeedManager";
 import type { ObjectHealthManager } from "./objectHealthManager";
 import type { ObjectMovementManager } from "./objectMovementManager";
 import type { ObjectCollisionManager } from "models/managers";
+import type { createWeaponA } from "models/weapon-a";
 import type { StatsManager } from "services/statsManager";
 import type { Vector } from "services/vector";
 
@@ -51,3 +52,5 @@ export interface Movable extends Vector, Updatable, Identifiable {
 export interface ObjectManager {
   update(delta: number, getState: () => State, object: StateObject): void;
 }
+
+export type Weapon = ReturnType<typeof createWeaponA>;

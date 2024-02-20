@@ -256,6 +256,32 @@ function drawObject(
           color: "#fff",
           radius: 4,
         });
+
+        // Draw ammo
+
+        if (object.weapon.ammo < object.weapon.maxAmmo) {
+          let points = Math.floor(
+            (object.weapon.ammo / object.weapon.maxAmmo) * 5,
+          );
+          let color =
+            points <= 1 ? "rgba(255, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.5)";
+
+          if (points === 0) {
+            points = 1;
+
+            if (object.weapon.ammo === 0) color = "rgba(255, 0, 0, 0.2)";
+          }
+
+          for (let i = 0; i < points; i++) {
+            drawCircle(ctx, {
+              position: state.cameraManager.toScreen(
+                vector.add(object, vector.create(-10 + i * 5, 26)),
+              ),
+              color,
+              radius: 2,
+            });
+          }
+        }
       });
 
       if (object.health.current < object.health.max) {

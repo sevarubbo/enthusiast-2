@@ -1,6 +1,4 @@
 import { normalRandom } from "../../helpers";
-import { createBullet } from "../bullet";
-import { getSoundPosition, playSound } from "services/audio";
 import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
 import type { Tower } from ".";
@@ -19,7 +17,8 @@ const isEnemy = (object: StateObject) => {
     object.type === "shooting_enemy_a" ||
     object.type === "plant_eater_a" ||
     object.type === "stranger_a" ||
-    object.type === "shooting_enemy_b"
+    object.type === "shooting_enemy_b" ||
+    object.type === "enemyC"
   );
 };
 
@@ -65,54 +64,15 @@ const canShootEnemy = (
 
 const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, getState) => {
   const { gameObjectsManager } = getState();
-
-  // Find the closest enemy
-  let closestDistance = Infinity;
-  let closestEnemy: StateObject | null = null;
-
-  for (const id in gameObjectsManager.objects) {
-    const object = gameObjectsManager.getObject(id);
-    const distance = vector.distance(self, object);
-
-    if (!isEnemy(object)) {
-      continue;
-    }
-
-    if (!canShootEnemy(self, getState, object)) {
-      continue;
-    }
-
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestEnemy = object;
-    }
-  }
+  const closestEnemy = gameObjectsManager.findClosestObject(
+    self,
+    (object) => {
+      return isEnemy(object) && canShootEnemy(self, getState, object);
+    },
+    self.shootingRange,
+  );
 
   self.targetEnemyId = closestEnemy?.id;
-};
-
-const shoot: ObjectUpdateFunction<Tower> = (self, delta, getState) => {
-  self.shotInterval.fire();
-
-  const BULLET_OFFSET = 30;
-  const bulletPosition = vector.add(
-    self,
-    vector.scale(vector.fromAngle(self.angle), BULLET_OFFSET),
-  );
-  const bullet = createBullet({
-    ...bulletPosition,
-    direction: vector.fromAngle(self.angle),
-    belongsTo: self.id,
-    attack: self.bulletStrength,
-    speed: 0.4,
-  });
-
-  getState().gameObjectsManager.spawnObject(bullet);
-
-  // Set the volume depending on camera position
-  const { cameraManager } = getState();
-
-  playSound("basic shot", getSoundPosition(self, cameraManager));
 };
 
 const rotateToAngle: ObjectUpdateFunction<Tower> = (self, delta) => {
@@ -169,8 +129,8 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
 
   if (self.targetEnemyId) {
     // Shoot
-    if (self.shotInterval.ready && self.angle === self.targetAngle) {
-      shoot(self, delta, getState);
+    if (self.angle === self.targetAngle) {
+      self.weapon.fireAtAngle(self.angle);
     }
 
     const targetMovementAdjustment = 32;

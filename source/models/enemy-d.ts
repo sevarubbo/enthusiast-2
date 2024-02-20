@@ -25,7 +25,7 @@ export interface EnemyD extends Movable, Collidable, Healthy {
 const BASE_HEALTH = 4;
 const BASE_SPEED = 0.009;
 
-export function createShootingEnemyB(
+export function createEnemyD(
   o: Partial<Pick<EnemyD, "x" | "y"> & { scale: number }> = {},
 ): EnemyD {
   const scale = 0.05;
@@ -45,7 +45,7 @@ export function createShootingEnemyB(
     collision: createObjectCollisionManager(),
     targetPoint: null,
     shootingInterval: createIntervalManager(400 + scale * 400),
-    shootingRange: 1000 * scale,
+    shootingRange: 700 * scale,
     shield: createObjectShieldManager(),
 
     update(delta, getState) {
@@ -53,13 +53,17 @@ export function createShootingEnemyB(
       this.movement.update(delta, getState, this);
       this.shootingInterval.update(delta, getState);
 
-      // Find the closest stranger
       let targetEnemy = getState().gameObjectsManager.findClosestObject(
         {
           x: this.x,
           y: this.y,
         },
-        (oo) => oo.type === "stranger_a" || oo.type === "shooting_enemy_a",
+        (oo) =>
+          oo.type === "stranger_a" ||
+          oo.type === "shooting_enemy_a" ||
+          oo.type === "enemyC" ||
+          oo.type === "enemy" ||
+          oo.type === "tower",
       );
 
       targetEnemy = targetEnemy === this ? null : targetEnemy;
@@ -69,9 +73,10 @@ export function createShootingEnemyB(
         this.movement.stop();
       } else {
         // Get to shooting range
-        const distance = Math.sqrt(
-          (targetEnemy.x - this.x) ** 2 + (targetEnemy.y - this.y) ** 2,
-        );
+        const distance =
+          Math.sqrt(
+            (targetEnemy.x - this.x) ** 2 + (targetEnemy.y - this.y) ** 2,
+          ) - targetEnemy.collisionCircle.radius;
 
         // Aim at the stranger
         this.movement.angle = Math.atan2(
@@ -98,7 +103,6 @@ export function createShootingEnemyB(
                 ...bulletPosition,
                 direction: vector.fromAngle(this.movement.angle),
                 belongsTo: this.id,
-                speed: 0.8,
               }),
             );
 

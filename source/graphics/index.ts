@@ -56,6 +56,11 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
     LEFT_OFFSET,
     300,
   );
+
+  // Render number of towers
+  const towers = state.gameObjectsManager.findObjectsByType("tower");
+
+  ctx.fillText(`tt: ${towers.length}`, LEFT_OFFSET, 340);
 }
 
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {

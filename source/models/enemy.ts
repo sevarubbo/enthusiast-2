@@ -1,3 +1,4 @@
+import { createDefenderA } from "./defender-a";
 import { createEnemyC } from "./enemyC";
 import { createPlantA } from "./plant-a";
 import { createPlantEaterA } from "./plant-eater-a";
@@ -88,6 +89,10 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
         } else if (Math.random() < 0.1) {
           getState().gameObjectsManager.spawnObject(
             createPlantEaterA({ x: this.x, y: this.y }),
+          );
+        } else if (Math.random() < 0.05) {
+          getState().gameObjectsManager.spawnObject(
+            createDefenderA({ x: this.x, y: this.y }),
           );
           // eslint-disable-next-line no-dupe-else-if
         } else if (Math.random() < 0.3) {

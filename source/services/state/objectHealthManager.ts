@@ -29,7 +29,9 @@ export const createObjectHealthManager = (o: {
 
     // Healing
     this.healInterval?.fireIfReady(() => {
-      this.current = Math.min((this.current += this.max / 20), this.max);
+      const healingValue = this.max / 30;
+
+      this.current = Math.min((this.current += healingValue), this.max);
     });
 
     // Dying
