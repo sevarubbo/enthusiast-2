@@ -3,6 +3,7 @@ import { createEnemyC } from "./enemyC";
 import { createPlantA } from "./plant-a";
 import { createPlantEaterA } from "./plant-eater-a";
 import { createShieldItem } from "./shield-item";
+import { createWeaponAItem } from "./weapon-a-item";
 import { createId } from "../helpers";
 import { matrix } from "../services/matrix";
 import {
@@ -84,6 +85,11 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
         } else if (Math.random() < 0.1) {
           getState().gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
+          );
+          // eslint-disable-next-line no-dupe-else-if
+        } else if (Math.random() < 0.1) {
+          getState().gameObjectsManager.spawnObject(
+            createWeaponAItem({ x: this.x, y: this.y }),
           );
           // eslint-disable-next-line no-dupe-else-if
         } else if (Math.random() < 0.1) {
