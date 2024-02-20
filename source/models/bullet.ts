@@ -1,6 +1,5 @@
 import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
-import { matrix } from "services/matrix";
 import {
   createObjectCollisionManager,
   type Collidable,
@@ -54,17 +53,10 @@ export function createBullet(
         return;
       }
 
-      const { world, gameObjectsManager, cameraManager } = getState();
+      const { gameObjectsManager, cameraManager } = getState();
 
       this.x += this.direction.x * this.speed * delta;
       this.y += this.direction.y * this.speed * delta;
-      const worldBox = matrix.create(0, 0, world.size.x, world.size.y);
-
-      if (!matrix.withinBox(this, worldBox)) {
-        gameObjectsManager.despawnObject(this);
-
-        return;
-      }
 
       this.collision.update(delta, getState, this);
 

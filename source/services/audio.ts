@@ -107,7 +107,12 @@ export const getSoundPosition = (
     cameraManager.worldTargetPoint,
   );
 
-  let pan = screenPosition.x / cameraManager.frame.size.x;
+  // From -1 to 1
+  let pan =
+    ((screenPosition.x - cameraManager.frame.position.x) /
+      cameraManager.frame.size.x) *
+      2 -
+    1;
 
   pan = Math.max(-1, Math.min(1, pan));
 

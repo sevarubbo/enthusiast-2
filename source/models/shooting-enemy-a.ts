@@ -58,7 +58,10 @@ export function createShootingEnemyA(
       const targetEnemy =
         gameObjectsManager.findClosestObject(
           this,
-          (oo) => oo.type === "stranger_a" || oo.type === "shooting_enemy_b",
+          (oo) =>
+            oo.type === "stranger_a" ||
+            oo.type === "shooting_enemy_b" ||
+            oo.type === "defender_a",
         ) ||
         gameObjectsManager.findClosestObject(
           this,
@@ -156,7 +159,7 @@ export function createShootingEnemyA(
             }
           }
 
-          if (Math.random() < 0.6) {
+          if (Math.random() < 0.7) {
             const randomPosition = getState().world.getRandomPoint();
 
             if (
@@ -177,7 +180,7 @@ export function createShootingEnemyA(
           getState().gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.2) {
+        } else if (Math.random() < 0.18) {
           // Drop weapon
           getState().gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),

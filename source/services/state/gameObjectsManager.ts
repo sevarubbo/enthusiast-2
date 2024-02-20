@@ -70,12 +70,11 @@ export const createGameObjectsManager = (
 
       for (const object of objects) {
         if (filter(object)) {
-          const distance = Math.sqrt(
-            (point.x - object.x) ** 2 + (point.y - object.y) ** 2,
-          );
+          const distanceSquared =
+            (point.x - object.x) ** 2 + (point.y - object.y) ** 2;
 
-          if (distance < closestDistance) {
-            closestDistance = distance;
+          if (distanceSquared < closestDistance) {
+            closestDistance = distanceSquared;
             closestObject = object;
           }
         }

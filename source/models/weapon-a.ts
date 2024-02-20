@@ -56,12 +56,10 @@ export const createWeaponA = <T extends string = "default">({
           if (!scheduledShoot) return;
 
           if (ammo <= 0) {
-            const sp = getSoundProperties(owner, getState().cameraManager, 1);
-
-            playSound("no ammo", {
-              ...sp,
-              pan: 0,
-            });
+            playSound(
+              "no ammo",
+              getSoundProperties(owner, getState().cameraManager, 1),
+            );
 
             return;
           }
@@ -116,9 +114,9 @@ export const createWeaponA = <T extends string = "default">({
 export const createMachineGun = () => {
   return createWeaponA({
     bulletSpeed: 0.8,
-    maxAmmo: 6,
+    maxAmmo: 7,
     fireRate: 3,
-    autoRefillRate: 0.5,
+    autoRefillRate: 0.6,
   });
 };
 
