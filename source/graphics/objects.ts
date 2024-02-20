@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { drawHealthBar } from "./healthbar";
 import { getPlantColor } from "./helpers";
 import {
@@ -258,8 +259,10 @@ function drawObject(
         });
 
         // Draw ammo
-
-        if (object.weapon.ammo < object.weapon.maxAmmo) {
+        if (
+          object.weapon.ammo < object.weapon.maxAmmo ||
+          object.weapon.type === "machine_gun_b"
+        ) {
           let points = Math.floor(
             (object.weapon.ammo / object.weapon.maxAmmo) * 5,
           );
@@ -281,6 +284,19 @@ function drawObject(
               radius: 2,
             });
           }
+        }
+
+        if (object.weapon.type === "machine_gun_b") {
+          ctx.font = "10px Arial";
+          ctx.fillStyle = "#fff";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            "🗡️",
+            state.cameraManager.toScreen(object).x -
+              object.collisionCircle.radius -
+              18,
+            state.cameraManager.toScreen(object).y + 7,
+          );
         }
       });
 
@@ -344,6 +360,20 @@ function drawObject(
       ctx.textAlign = "center";
       ctx.fillText(
         "🛡",
+        state.cameraManager.toScreen(object).x,
+        state.cameraManager.toScreen(object).y,
+      );
+
+      return;
+    }
+
+    case "weapon_a_item": {
+      // Draw text on top in the middle
+      ctx.font = "16px Arial";
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        "🗡️",
         state.cameraManager.toScreen(object).x,
         state.cameraManager.toScreen(object).y,
       );

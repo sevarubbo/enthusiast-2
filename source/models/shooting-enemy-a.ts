@@ -1,5 +1,6 @@
 import { createBullet } from "./bullet";
 import { createShieldItem } from "./shield-item";
+import { createWeaponAItem } from "./weapon-a-item";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
@@ -171,9 +172,16 @@ export function createShootingEnemyA(
           }
         })();
 
+        // Drop shield
         if (Math.random() < 0.1) {
           getState().gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
+          );
+          // eslint-disable-next-line no-dupe-else-if
+        } else if (Math.random() < 0.2) {
+          // Drop weapon
+          getState().gameObjectsManager.spawnObject(
+            createWeaponAItem({ x: this.x, y: this.y }),
           );
         }
       }

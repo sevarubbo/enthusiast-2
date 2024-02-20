@@ -12,6 +12,7 @@ import type { DefenderA } from "models/defender-a";
 import type { EnemyD } from "models/enemy-d";
 import type { PlantEaterA } from "models/plant-eater-a";
 import type { ShootingEnemyA } from "models/shooting-enemy-a";
+import type { WeaponAItem } from "models/weapon-a-item";
 
 export type StateObject =
   | Enemy
@@ -25,4 +26,5 @@ export type StateObject =
   | ShootingEnemyA
   | DefenderA
   | ShieldItem
-  | EnemyD;
+  | EnemyD
+  | WeaponAItem;

@@ -8,13 +8,14 @@ import { createIntervalManager, type State } from "services/state";
 import { vector } from "services/vector";
 import type { StateObject } from "types";
 
-export const createWeaponA = ({
+export const createWeaponA = <T extends string = "default">({
   bulletSpeed = 1,
   fireRate = 1,
   accuracy = 0.97,
   maxAmmo = 10,
   bulletStrength,
   autoRefillRate = 1,
+  type = "default" as T,
 }: {
   bulletSpeed?: number;
   fireRate?: number;
@@ -22,6 +23,7 @@ export const createWeaponA = ({
   maxAmmo?: number;
   bulletStrength?: number;
   autoRefillRate?: number;
+  type?: T;
 } = {}) => {
   let scheduledShoot: { angle: number } | null = null;
   const shootInterval = createIntervalManager(1000 / fireRate);
@@ -38,6 +40,8 @@ export const createWeaponA = ({
     get maxAmmo() {
       return maxAmmo;
     },
+
+    type,
 
     fireAtAngle: (angle: number) => {
       scheduledShoot = { angle };
@@ -106,24 +110,26 @@ export const createWeaponA = ({
         });
       }
     },
-  };
+  } as const;
 };
 
 export const createMachineGun = () => {
   return createWeaponA({
-    bulletSpeed: 0.6,
-    maxAmmo: 10,
-    fireRate: 8,
-    autoRefillRate: 0,
+    bulletSpeed: 0.8,
+    maxAmmo: 6,
+    fireRate: 3,
+    autoRefillRate: 0.5,
   });
 };
 
 export const createMachineGunB = () => {
   return createWeaponA({
-    bulletSpeed: 1,
-    maxAmmo: 20,
-    fireRate: 10,
-    bulletStrength: 0.5,
+    type: "machine_gun_b",
+    bulletSpeed: 0.9,
+    maxAmmo: 50,
+    fireRate: 12,
+    bulletStrength: 2,
+    accuracy: 0.98,
   });
 };
 

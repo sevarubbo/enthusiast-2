@@ -159,6 +159,10 @@ export function createStrangerA(
         this.weapon.fireAtAngle(this.shootingAngle);
       }
 
+      if (this.weapon.type === "machine_gun_b" && this.weapon.ammo <= 0) {
+        this.weapon = createMachineGun();
+      }
+
       // After death
       if (this.health.current <= 0) {
         createExplosion(this, getState, 60);

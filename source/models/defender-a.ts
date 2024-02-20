@@ -137,17 +137,18 @@ export function createDefenderA(
         );
 
         // Adjust angle by enemy speed
-        if ("movement" in targetEnemy) {
-          const adjustmentVector = vector.scale(
-            targetEnemy.movement.speedVector,
-            distanceToEnemy,
-          );
+        // TODO Fix this
+        // if ("movement" in targetEnemy) {
+        //   const adjustmentVector = vector.scale(
+        //     targetEnemy.movement.speedVector,
+        //     distanceToEnemy,
+        //   );
 
-          this.movement.angle = Math.atan2(
-            targetEnemy.y - this.y + adjustmentVector.y,
-            targetEnemy.x - this.x + adjustmentVector.x,
-          );
-        }
+        //   this.movement.angle = Math.atan2(
+        //     targetEnemy.y - this.y + adjustmentVector.y,
+        //     targetEnemy.x - this.x + adjustmentVector.x,
+        //   );
+        // }
 
         // Check if can shoot
         const shootingSegment: Matrix = [
