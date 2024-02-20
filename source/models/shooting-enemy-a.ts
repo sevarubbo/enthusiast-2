@@ -1,27 +1,25 @@
-import { createBullet } from "./bullet";
 import { createShieldItem } from "./shield-item";
+import { createWeaponA } from "./weapon-a";
 import { createWeaponAItem } from "./weapon-a-item";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
-import { getSoundPosition, playSound } from "services/audio";
 import {
   createObjectHealthManager,
   type Collidable,
   type Healthy,
-  type IntervalManager,
   type Movable,
   createObjectMovementManager,
   createObjectCollisionManager,
-  createIntervalManager,
 } from "services/state";
 import { vector } from "services/vector";
+import type { Weapon } from "services/state";
 
 export interface ShootingEnemyA extends Movable, Collidable, Healthy {
   type: "shooting_enemy_a";
-  shootingInterval: IntervalManager;
   shootingRange: number;
   color: string;
   shield: ReturnType<typeof createObjectShieldManager>;
+  weapon: Weapon;
 }
 
 export function createShootingEnemyA(
@@ -43,14 +41,14 @@ export function createShootingEnemyA(
     movement: createObjectMovementManager({ maxSpeed: 0.05 / scale }),
     collision: createObjectCollisionManager(),
     targetPoint: null,
-    shootingInterval: createIntervalManager(500 + scale * 500),
     shootingRange: 300 * scale,
     shield: createObjectShieldManager(),
+    weapon: createWeaponA(),
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
       this.movement.update(delta, getState, this);
-      this.shootingInterval.update(delta, getState);
+      this.weapon.update(delta, getState, this);
 
       const { gameObjectsManager } = getState();
 
@@ -89,33 +87,11 @@ export function createShootingEnemyA(
         );
 
         if (distance <= this.shootingRange) {
-          const bulletPosition = vector.add(
-            this,
-            vector.scale(
-              vector.fromAngle(this.movement.angle),
-              this.collisionCircle.radius,
-            ),
-          );
-
-          // Shoot
-          this.shootingInterval.fireIfReady(() => {
-            getState().gameObjectsManager.spawnObject(
-              createBullet({
-                ...bulletPosition,
-                direction: vector.fromAngle(this.movement.angle),
-                belongsTo: this.id,
-                speed: 0.8,
-              }),
-            );
-
-            playSound(
-              "basic shot",
-              getSoundPosition(this, getState().cameraManager),
-            );
-          });
-
           this.targetPoint = null;
           this.movement.stop();
+
+          // Shoot
+          this.weapon.fireAtAngle(this.movement.angle);
         } else {
           this.targetPoint = {
             x: targetEnemy.x,

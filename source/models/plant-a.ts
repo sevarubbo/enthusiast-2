@@ -1,4 +1,6 @@
+import { createEnemy } from "./enemy";
 import { createShieldItem } from "./shield-item";
+import { createWeaponAItem } from "./weapon-a-item";
 import { createId } from "helpers";
 import {
   type Identifiable,
@@ -116,6 +118,14 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
         if (Math.random() < 0.003) {
           getState().gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
+          );
+        } else if (Math.random() < 0.004) {
+          getState().gameObjectsManager.spawnObject(
+            createWeaponAItem({ x: this.x, y: this.y }),
+          );
+        } else if (Math.random() < 0.05) {
+          getState().gameObjectsManager.spawnObject(
+            createEnemy({ x: this.x, y: this.y }),
           );
         }
       }

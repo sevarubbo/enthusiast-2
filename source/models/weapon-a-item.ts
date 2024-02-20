@@ -1,5 +1,6 @@
 import { createMachineGunB } from "./weapon-a";
 import { createId } from "helpers";
+import { getSoundProperties, playSound } from "services/audio";
 import {
   type Identifiable,
   type Updatable,
@@ -35,6 +36,10 @@ export const createWeaponAItem = (
         collidesWith.weapon.ammo < collidesWith.weapon.maxAmmo
       ) {
         collidesWith.weapon = createMachineGunB();
+        playSound(
+          "weapon pick",
+          getSoundProperties(this, getState().cameraManager),
+        );
         getState().gameObjectsManager.despawnObject(this);
       }
     }

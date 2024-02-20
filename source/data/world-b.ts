@@ -1,5 +1,6 @@
 import { createWorldDefaults } from "./defaults";
-import { createStrangerA, createTower } from "models";
+import { createPlantA, createStrangerA, createTower } from "models";
+import { createShootingEnemyA } from "models/shooting-enemy-a";
 import { createGameObjectsManager } from "services/state";
 import type { State } from "services/state";
 
@@ -14,9 +15,13 @@ export const createWorldB = (): State => {
     gameObjectsManager: createGameObjectsManager({
       quadtree: defaults.quadtree,
       objectsArray: [
-        createStrangerA({ x: 500, y: 500 }),
+        createStrangerA(defaults.world.getRandomPoint()),
 
         createTower({ x: 100, y: 100 }),
+
+        createShootingEnemyA(defaults.world.getRandomPoint()),
+
+        createPlantA(defaults.world.getRandomPoint()),
       ],
     }),
   };

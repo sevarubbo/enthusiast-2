@@ -40,6 +40,10 @@ const audioFiles = [
     name: "no ammo",
     url: "sounds/MouseClick_SFXB.4114.wav",
   },
+  {
+    name: "weapon pick",
+    url: "sounds/ESM_Ancient_Game_Pick_Up_Weapon_Fantasy_Material_Action_Movement_Texture.wav",
+  },
 ] as const;
 
 export type SoundName = (typeof audioFiles)[number]["name"];

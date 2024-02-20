@@ -1,13 +1,7 @@
 import { createShieldItem } from "../models/shield-item";
 import { createQuadtree } from "../services/quadtree";
 import { createCollisionManager } from "../services/state/collisionManager";
-import {
-  createEnemy,
-  createEnemyC,
-  createHouse,
-  createPlantA,
-  createTower,
-} from "models";
+import { createEnemyC, createHouse, createPlantA, createTower } from "models";
 import { createDefenderA } from "models/defender-a";
 import { createPlantEaterA } from "models/plant-eater-a";
 import { createShootingEnemyA } from "models/shooting-enemy-a";
@@ -18,7 +12,6 @@ import { createGameSpeedManager } from "services/state/gameSpeedManager";
 import { createStatsManager } from "services/statsManager";
 import { vector } from "services/vector";
 import type { State, Updatable } from "services/state";
-import type { Vector } from "services/vector";
 
 const createEnemySpawner = (): Updatable => {
   let timeSinceLastSpawn = 0;
@@ -46,23 +39,23 @@ const createEnemySpawner = (): Updatable => {
       if (timeSinceLastSpawn > 1 / SPAWN_FREQUENCY) {
         timeSinceLastSpawn = 0;
 
-        const enemySpawnPosition = ((): Vector => {
-          const side = Math.round(Math.random() * 4) as 1 | 2 | 3 | 4;
+        // const enemySpawnPosition = ((): Vector => {
+        //   const side = Math.round(Math.random() * 4) as 1 | 2 | 3 | 4;
 
-          switch (side) {
-            case 1:
-              return vector.create(Math.random() * world.size.x, 0);
-            case 2:
-              return vector.create(world.size.x, Math.random() * world.size.y);
-            case 3:
-              return vector.create(Math.random() * world.size.x, world.size.y);
-            // case 4:
-            default:
-              return vector.create(0, Math.random() * world.size.y);
-          }
-        })();
+        //   switch (side) {
+        //     case 1:
+        //       return vector.create(Math.random() * world.size.x, 0);
+        //     case 2:
+        //       return vector.create(world.size.x, Math.random() * world.size.y);
+        //     case 3:
+        //       return vector.create(Math.random() * world.size.x, world.size.y);
+        //     // case 4:
+        //     default:
+        //       return vector.create(0, Math.random() * world.size.y);
+        //   }
+        // })();
 
-        gameObjectsManager.spawnObject(createEnemy(enemySpawnPosition));
+        // gameObjectsManager.spawnObject(createEnemy(enemySpawnPosition));
 
         // If there are no plants, spawn a plant
         const plants = Object.values(gameObjectsManager.objects).filter(
@@ -156,7 +149,6 @@ export function createDefaultState(): State {
         tower2,
         tower3,
 
-        createTower(getRandomPosition()),
         createTower(getRandomPosition()),
         createTower(getRandomPosition()),
 
