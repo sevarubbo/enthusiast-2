@@ -2,6 +2,7 @@ import { createDefaultState } from "./data";
 import { createCanvasDrawer } from "./graphics";
 import { createCanvas } from "./services/canvas";
 import { vector } from "./services/vector";
+import { createWorldB } from "data/world-b";
 import { loadAudioFiles, setGlobalVolume } from "services/audio";
 import {
   setIsPointerDown,
@@ -10,6 +11,7 @@ import {
   setPointerPosition,
 } from "services/io";
 import type { KeyboardKey } from "services/io";
+import type { State } from "services/state";
 
 const { canvas, onCanvasMouseMove, onPointerDown, onPointerUp } =
   createCanvas();
@@ -38,7 +40,7 @@ document.addEventListener("keyup", (e) => {
 });
 
 // State
-const state = createDefaultState();
+let state: State;
 
 const { draw } = createCanvasDrawer(canvasContext);
 
@@ -75,7 +77,9 @@ const gameLoop = (ctx: CanvasRenderingContext2D, currentTime: number) => {
   accumulatedTime -= frameTime;
 };
 
-const startGame = () => {
+const startGame = (initialState: State) => {
+  state = initialState;
+
   // Start game loop
   void loadAudioFiles().then(() => {
     requestAnimationFrame((now) => {
@@ -112,27 +116,35 @@ volumeControl.style.left = "10px";
 
 document.body.appendChild(volumeControl);
 
-// Start button
+// Start buttons
 (() => {
-  const startButton = document.createElement("button");
+  const startButtons = document.createElement("div");
 
-  startButton.textContent = "Start";
-  startButton.style.position = "fixed";
-  // Centered
-  startButton.style.top = "50%";
-  startButton.style.left = "50%";
-  startButton.style.transform = "translate(-50%, -50%)";
-  startButton.style.fontSize = "2em";
-  startButton.focus();
+  startButtons.style.position = "fixed";
+  startButtons.style.top = "50%";
+  startButtons.style.left = "50%";
+  startButtons.style.transform = "translate(-50%, -50%)";
+  startButtons.style.display = "flex";
+  startButtons.style.gap = "20px";
 
-  startButton.addEventListener("click", () => {
-    startGame();
+  [() => createDefaultState(), () => createWorldB()].forEach(
+    (createWorld, index) => {
+      const button = document.createElement("button");
 
-    // Remove button
-    startButton.remove();
-  });
+      button.textContent = `World ${index + 1}`;
+      button.style.fontSize = "24px";
 
-  document.body.appendChild(startButton);
+      button.addEventListener("click", () => {
+        startGame(createWorld());
+
+        startButtons.remove();
+      });
+
+      startButtons.appendChild(button);
+    },
+  );
+
+  document.body.appendChild(startButtons);
 })();
 
 // Default styles

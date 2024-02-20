@@ -33,13 +33,13 @@ export function createHouse(o: Pick<House, "x" | "y">): House {
     collisionCircle: { radius: RADIUS },
     health: createObjectHealthManager({
       maxHealth: 100,
+      selfHealing: true,
     }),
     collision: createObjectCollisionManager(),
     ...o,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
     },
   };
 }

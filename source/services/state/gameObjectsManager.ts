@@ -66,17 +66,17 @@ export const createGameObjectsManager = (
     ) {
       let closestObject: StateObject | null = null;
       let closestDistance = Infinity;
-      const objects = options.quadtree.queryRadius(point, radius);
+      const objects = options.quadtree
+        .queryRadius(point, radius)
+        .filter(filter);
 
       for (const object of objects) {
-        if (filter(object)) {
-          const distanceSquared =
-            (point.x - object.x) ** 2 + (point.y - object.y) ** 2;
+        const distanceSquared =
+          (point.x - object.x) ** 2 + (point.y - object.y) ** 2;
 
-          if (distanceSquared < closestDistance) {
-            closestDistance = distanceSquared;
-            closestObject = object;
-          }
+        if (distanceSquared < closestDistance) {
+          closestDistance = distanceSquared;
+          closestObject = object;
         }
       }
 

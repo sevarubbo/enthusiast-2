@@ -23,7 +23,7 @@ const isEnemy = (object: StateObject) => {
 };
 
 const isNeutral = (object: StateObject) => {
-  return object.type === "plant_a";
+  return object.type === "plant_a" || object.type === "bullet";
 };
 
 const canShootEnemy = (
@@ -39,7 +39,7 @@ const canShootEnemy = (
     vector.create(self.x, self.y),
     vector.create(enemy.x, enemy.y),
   ];
-  const willCollideWithFriendlyObject = !!getFirstObjectLineCollision(
+  const willCollideWithFriendlyObject = getFirstObjectLineCollision(
     getState,
     shootingSegment,
     (object) => {
@@ -113,7 +113,7 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
     ? gameObjectsManager.objects[self.targetEnemyId]
     : undefined;
 
-  if (!targetEnemy || !isEnemy(targetEnemy)) {
+  if (!targetEnemy) {
     self.targetEnemyId = undefined;
 
     return;
@@ -121,8 +121,6 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
 
   if (!canShootEnemy(self, getState, targetEnemy)) {
     findTargetEnemy(self, delta, getState);
-
-    return;
   }
 
   const error = -self.aimError + normalRandom() * 2 * self.aimError;
@@ -130,7 +128,9 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
   if (self.targetEnemyId) {
     // Shoot
     if (self.angle === self.targetAngle) {
-      self.weapon.fireAtAngle(self.angle);
+      if (self.weapon.ammo) {
+        self.weapon.fireAtAngle(self.angle);
+      }
     }
 
     const targetMovementAdjustment = 32;

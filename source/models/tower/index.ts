@@ -56,6 +56,7 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     weapon: createWeaponA({
       bulletSpeed: 0.9,
       fireRate: 10,
+      maxAmmo: 4,
     }),
 
     update(delta, getState) {
