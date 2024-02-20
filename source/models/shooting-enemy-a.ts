@@ -177,7 +177,6 @@ export function createShootingEnemyA(
           getState().gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
-          // eslint-disable-next-line no-dupe-else-if
         } else if (Math.random() < 0.2) {
           // Drop weapon
           getState().gameObjectsManager.spawnObject(
