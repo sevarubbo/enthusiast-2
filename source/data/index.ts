@@ -2,10 +2,11 @@ import { createShieldItem } from "../models/shield-item";
 import { createQuadtree } from "../services/quadtree";
 import { createCollisionManager } from "../services/state/collisionManager";
 import { createEnemyC, createHouse, createPlantA, createTower } from "models";
+import { createBossA } from "models/boss-a";
 import { createDefenderA } from "models/defender-a";
 import { createPlantEaterA } from "models/plant-eater-a";
-import { createShootingEnemyA } from "models/shooting-enemy-a";
 import { createStrangerA } from "models/stranger-a";
+import { createWeaponAItem } from "models/weapon-a-item";
 import { createCameraManager } from "services/state/cameraManager";
 import { createGameObjectsManager } from "services/state/gameObjectsManager";
 import { createGameSpeedManager } from "services/state/gameSpeedManager";
@@ -134,6 +135,9 @@ export function createDefaultState(): State {
     gameObjectsManager: createGameObjectsManager({
       quadtree,
       objectsArray: [
+        STRANGER_A,
+        createWeaponAItem(getRandomPosition()),
+
         ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(() => {
           const pos = {
             x: Math.random() * WORLD_SIZE.x,
@@ -147,7 +151,6 @@ export function createDefaultState(): State {
 
         house,
         HOUSE_2,
-        STRANGER_A,
 
         createPlantA({
           x: Math.random() * WORLD_SIZE.x,
@@ -173,9 +176,6 @@ export function createDefaultState(): State {
           x: Math.random() * WORLD_SIZE.x,
           y: Math.random() * WORLD_SIZE.y,
         }),
-
-        createShootingEnemyA(getRandomPosition()),
-        createShootingEnemyA(getRandomPosition()),
 
         createDefenderA({
           x: Math.random() * WORLD_SIZE.x,
@@ -201,6 +201,8 @@ export function createDefaultState(): State {
           x: Math.random() * WORLD_SIZE.x,
           y: Math.random() * WORLD_SIZE.y,
         }),
+
+        createBossA(getRandomPosition()),
       ],
 
       update(delta, getState) {

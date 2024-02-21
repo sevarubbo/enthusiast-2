@@ -6,7 +6,9 @@ import {
 } from "services/audio";
 import { createIntervalManager, type State } from "services/state";
 import { vector } from "services/vector";
-import type { StateObject } from "types";
+import type { SoundName } from "services/audio";
+import type { Collidable, Identifiable } from "services/state";
+import type { Vector } from "services/vector";
 
 type WeaponType = "default" | "machine_gun_b";
 
@@ -18,6 +20,8 @@ export const createWeaponA = <T extends WeaponType = "default">({
   bulletStrength,
   autoRefillRate = 1,
   type = "default" as T,
+  bulletSize,
+  shotSound = "basic shot",
 }: {
   bulletSpeed?: number;
   fireRate?: number;
@@ -26,6 +30,8 @@ export const createWeaponA = <T extends WeaponType = "default">({
   bulletStrength?: number;
   autoRefillRate?: number;
   type?: T;
+  bulletSize?: number;
+  shotSound?: SoundName;
 } = {}) => {
   let scheduledShoot: { angle: number } | null = null;
   const shootInterval = createIntervalManager(1000 / fireRate);
@@ -49,7 +55,11 @@ export const createWeaponA = <T extends WeaponType = "default">({
       scheduledShoot = { angle };
     },
 
-    update: (delta: number, getState: () => State, owner: StateObject) => {
+    update: (
+      delta: number,
+      getState: () => State,
+      owner: Vector & Collidable & Identifiable,
+    ) => {
       shootInterval.update(delta, getState);
       autoRefillInterval.update(delta, getState);
 
@@ -90,16 +100,14 @@ export const createWeaponA = <T extends WeaponType = "default">({
               belongsTo: owner.id,
               speed: bulletSpeed,
               attack: bulletStrength,
+              size: bulletSize,
             }),
           );
 
           // Set the volume depending on camera position
           const { cameraManager } = getState();
 
-          playSound(
-            "basic shot",
-            getSoundPosition(bulletPosition, cameraManager),
-          );
+          playSound(shotSound, getSoundPosition(bulletPosition, cameraManager));
         });
         scheduledShoot = null;
       }

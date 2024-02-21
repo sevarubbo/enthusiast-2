@@ -1,6 +1,8 @@
 import { createWorldDefaults } from "./defaults";
-import { createPlantA } from "models";
-import { createPlantEaterA } from "models/plant-eater-a";
+import { createStrangerA } from "models";
+import { createBossA } from "models/boss-a";
+import { createShieldItem } from "models/shield-item";
+import { createWeaponAItem } from "models/weapon-a-item";
 import { createGameObjectsManager } from "services/state";
 import type { State } from "services/state";
 
@@ -15,12 +17,14 @@ export const createWorldC = (): State => {
     gameObjectsManager: createGameObjectsManager({
       quadtree: defaults.quadtree,
       objectsArray: [
-        createPlantEaterA(defaults.world.getRandomPoint()),
-        createPlantA(defaults.world.getRandomPoint()),
-        createPlantA(defaults.world.getRandomPoint()),
-        createPlantA(defaults.world.getRandomPoint()),
-        createPlantA(defaults.world.getRandomPoint()),
-        createPlantA(defaults.world.getRandomPoint()),
+        createBossA(defaults.world.getRandomPoint()),
+        createStrangerA(defaults.world.getRandomPoint()),
+        createWeaponAItem(defaults.world.getRandomPoint()),
+        createWeaponAItem(defaults.world.getRandomPoint()),
+        createWeaponAItem(defaults.world.getRandomPoint()),
+        createWeaponAItem(defaults.world.getRandomPoint()),
+        createShieldItem(defaults.world.getRandomPoint()),
+        createShieldItem(defaults.world.getRandomPoint()),
       ],
     }),
   };

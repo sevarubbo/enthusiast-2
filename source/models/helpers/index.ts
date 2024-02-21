@@ -1,5 +1,7 @@
 import { createBullet } from "../bullet";
+import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
+import type { Matrix } from "services/matrix";
 import type { State } from "services/state";
 import type { StateObject } from "types";
 
@@ -31,4 +33,24 @@ export const createExplosion = (
       }),
     );
   }
+};
+
+export const canShootEnemyWithoutFriendlyFire = (
+  object: StateObject,
+  enemy: StateObject,
+  isFriend: (o: StateObject) => boolean,
+  getState: () => State,
+): boolean => {
+  const shootingSegment: Matrix = [
+    vector.create(object.x, object.y),
+    vector.create(enemy.x, enemy.y),
+  ];
+
+  return !getFirstObjectLineCollision(getState, shootingSegment, (o) => {
+    if (o === object) {
+      return false;
+    }
+
+    return isFriend(o);
+  });
 };

@@ -14,7 +14,7 @@ const BASE_ATTACK = 5;
 export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
   type: "bullet";
   color: string;
-  radius: typeof RADIUS;
+  radius: number;
   belongsTo: string;
   speed: number;
   direction: Vector;
@@ -27,7 +27,9 @@ const BASE_MAX_AGE = 1000;
 
 export function createBullet(
   o: Pick<Bullet, "x" | "y" | "direction" | "belongsTo"> &
-    Partial<Pick<Bullet, "attack" | "speed">>,
+    Partial<Pick<Bullet, "attack" | "speed">> & {
+      size?: number;
+    },
 ): Bullet {
   const speed = o.speed || 0.3;
 
@@ -35,12 +37,12 @@ export function createBullet(
     id: createId(),
     type: "bullet",
     color: "#f0f0f0",
-    radius: RADIUS,
-    collisionCircle: { radius: RADIUS },
+    radius: o.size || RADIUS,
+    collisionCircle: { radius: o.size || RADIUS },
     speed,
     collision: createObjectCollisionManager(),
     age: 0,
-    maxAge: Math.random() * BASE_MAX_AGE + BASE_MAX_AGE,
+    maxAge: (Math.random() * BASE_MAX_AGE + BASE_MAX_AGE) / (speed * 2),
     ...o,
     attack: BASE_ATTACK * speed * (o.attack || 1),
 
@@ -53,7 +55,7 @@ export function createBullet(
         return;
       }
 
-      const { gameObjectsManager, cameraManager } = getState();
+      const { cameraManager } = getState();
 
       this.x += this.direction.x * this.speed * delta;
       this.y += this.direction.y * this.speed * delta;
@@ -64,7 +66,7 @@ export function createBullet(
 
       if (otherObject && otherObject.id !== this.belongsTo) {
         if ("health" in otherObject) {
-          gameObjectsManager.despawnObject(this);
+          getState().gameObjectsManager.despawnObject(this);
 
           if ("shield" in otherObject && otherObject.shield.active) {
             otherObject.shield.absorbDamage(this.attack);

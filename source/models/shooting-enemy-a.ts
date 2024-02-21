@@ -1,3 +1,4 @@
+import { canShootEnemyWithoutFriendlyFire } from "./helpers";
 import { createItemRewardA } from "./item-reward-a";
 import { createShieldItem } from "./shield-item";
 import { createWeaponA } from "./weapon-a";
@@ -12,7 +13,6 @@ import {
   createObjectMovementManager,
   createObjectCollisionManager,
 } from "services/state";
-import { vector } from "services/vector";
 import type { Weapon } from "services/state";
 
 export interface ShootingEnemyA extends Movable, Collidable, Healthy {
@@ -88,7 +88,15 @@ export function createShootingEnemyA(
           targetEnemy.x - this.x,
         );
 
-        if (distance <= this.shootingRange) {
+        if (
+          distance <= this.shootingRange &&
+          canShootEnemyWithoutFriendlyFire(
+            this,
+            targetEnemy,
+            (oo) => oo.type === "shooting_enemy_a" || oo.type === "boss_a",
+            getState,
+          )
+        ) {
           this.targetPoint = null;
           this.movement.stop();
 
@@ -166,39 +174,39 @@ export function createShootingEnemyA(
             return;
           }
 
-          // Respawn
-          (() => {
-            const randomPosition = getState().world.getRandomPoint();
+          // // Respawn
+          // (() => {
+          //   const randomPosition = getState().world.getRandomPoint();
 
-            if (
-              !(
-                vector.distance(randomPosition, stranger) <
-                this.shootingRange * 3
-              ) ||
-              getState().gameObjectsManager.findObjectsByType(
-                "shooting_enemy_a",
-              ).length <= 0
-            ) {
-              getState().gameObjectsManager.spawnObject(
-                createShootingEnemyA(randomPosition),
-              );
-            }
-          })();
+          //   if (
+          //     !(
+          //       vector.distance(randomPosition, stranger) <
+          //       this.shootingRange * 3
+          //     ) ||
+          //     getState().gameObjectsManager.findObjectsByType(
+          //       "shooting_enemy_a",
+          //     ).length <= 0
+          //   ) {
+          //     getState().gameObjectsManager.spawnObject(
+          //       createShootingEnemyA(randomPosition),
+          //     );
+          //   }
+          // })();
 
-          if (Math.random() < 0.6) {
-            const randomPosition = getState().world.getRandomPoint();
+          // if (Math.random() < 0.1) {
+          //   const randomPosition = getState().world.getRandomPoint();
 
-            if (
-              !(
-                vector.distance(randomPosition, stranger) <
-                this.shootingRange * 3
-              )
-            ) {
-              getState().gameObjectsManager.spawnObject(
-                createShootingEnemyA(randomPosition),
-              );
-            }
-          }
+          //   if (
+          //     !(
+          //       vector.distance(randomPosition, stranger) <
+          //       this.shootingRange * 3
+          //     )
+          //   ) {
+          //     getState().gameObjectsManager.spawnObject(
+          //       createShootingEnemyA(randomPosition),
+          //     );
+          //   }
+          // }
         })();
 
         // Drop shield

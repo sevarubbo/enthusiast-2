@@ -17,6 +17,10 @@ const audioFiles = [
     url: "sounds/ESM_MU_FX_foley_cloth_whoosh_organic_basic_small_quick_swoosh_01.wav",
   },
   {
+    name: "heavy shot",
+    url: "sounds/DS_VUKH_fx_riser_one_shot_fire_inside_short_noise.wav",
+  },
+  {
     name: "basic death",
     url: "sounds/ESM_Card_Game_Magic_Launch_01_Fantasy_Cast_Spell_Shoot_Poof_Whoosh.wav",
   },
