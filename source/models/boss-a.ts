@@ -1,3 +1,4 @@
+import { createExplosion } from "./helpers";
 import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createWeaponA } from "./weapon-a";
 import { createId } from "helpers";
@@ -9,6 +10,7 @@ import {
   createObjectMovementManager,
   type State,
 } from "services/state";
+import { createObjectShieldManager } from "services/state/objectShieldManager";
 import { vector, type Vector } from "services/vector";
 
 const createBaseObject = (position: Vector) => ({
@@ -46,10 +48,12 @@ export const createBossA = (position: Vector) => {
 
     weapon: createWeaponA({
       bulletSize: 4,
-      bulletSpeed: 0.07,
-      bulletStrength: 20,
+      bulletSpeed: 0.08,
+      bulletStrength: 40,
       shotSound: "heavy shot",
     }),
+
+    shield: createObjectShieldManager({ active: true, maxHp: 1000 }),
 
     get targetPoint() {
       return targetPoint;
@@ -90,6 +94,14 @@ export const createBossA = (position: Vector) => {
           },
           worldBox,
         );
+
+        // try to get closer to center
+        const center = vector.scale(world.size, 0.5);
+
+        targetPoint = vector.add(
+          targetPoint,
+          vector.scale(vector.subtract(center, targetPoint), 0.1),
+        );
       })();
 
       const { gameObjectsManager } = getState();
@@ -126,9 +138,14 @@ export const createBossA = (position: Vector) => {
 
         if (!stranger) return;
 
-        const distanceSquared = vector.distanceSquared(this, stranger);
+        const distanceToStrangerSquared = vector.distanceSquared(
+          this,
+          stranger,
+        );
 
-        if (distanceSquared > this.fireRange ** 3) return;
+        if (distanceToStrangerSquared > this.fireRange ** 3) return;
+
+        if (this.health.current < this.health.max) return;
 
         this.childrenSpawnInterval.fireIfReady(() => {
           gameObjectsManager.spawnObject(
@@ -139,6 +156,16 @@ export const createBossA = (position: Vector) => {
             }),
           );
         });
+      })();
+
+      // After death
+      (() => {
+        if (this.health.current <= 0) {
+          // Create massive explosion
+          createExplosion(this, getState, 1000);
+
+          getState().statsManager.bossDied = true;
+        }
       })();
     },
   } as const;

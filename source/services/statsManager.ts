@@ -8,4 +8,7 @@ export const createStatsManager = () => ({
   addMoney(amount: number) {
     this.money += amount;
   },
+
+  strangerDied: false,
+  bossDied: false,
 });

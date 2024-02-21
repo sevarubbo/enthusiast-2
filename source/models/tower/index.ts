@@ -1,6 +1,9 @@
 import { towerUpdate } from "./update";
 import { createId } from "helpers";
+import { createExplosion } from "models/helpers";
+import { createShieldItem } from "models/shield-item";
 import { createWeaponA } from "models/weapon-a";
+import { createWeaponAItem } from "models/weapon-a-item";
 import {
   createObjectCollisionManager,
   createObjectHealthManager,
@@ -65,6 +68,19 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
       this.weapon.update(delta, getState, this);
 
       towerUpdate(this, delta, getState);
+
+      // After death
+      (() => {
+        if (this.health.current <= 0) {
+          createExplosion(this, getState);
+          getState().gameObjectsManager.spawnObject(
+            createWeaponAItem({ x: this.x, y: this.y }),
+          );
+          getState().gameObjectsManager.spawnObject(
+            createShieldItem({ x: this.x, y: this.y }),
+          );
+        }
+      })();
     },
   };
 }

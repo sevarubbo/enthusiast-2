@@ -132,7 +132,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
           getState().gameObjectsManager.spawnObject(
             createTower({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.3) {
+        } else if (Math.random() < 0.4) {
           // create 5 enemies
           for (let i = 0; i < 5; i++) {
             const position = vector.add(this, {

@@ -143,14 +143,14 @@ export const drawObjectShield = (
 ) => {
   if (object.shield.active) {
     drawCircleOutline(ctx, {
-      radius: 20,
+      radius: Math.max(object.collisionCircle.radius, 17) + 3,
       position: state.cameraManager.toScreen(object),
       color: "rgba(255, 255, 255, 0.5)",
       lineWidth: 3,
     });
 
     drawCircleProgress(ctx, {
-      radius: 20,
+      radius: Math.max(object.collisionCircle.radius, 17) + 3,
       position: state.cameraManager.toScreen(object),
       color: "rgba(255, 255, 255, 0.5)",
       lineWidth: 3,

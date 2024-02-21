@@ -62,7 +62,10 @@ export const createCollisionManager = () => {
                       object.collisionCircle.radius);
 
                   if ("setPosition" in object) {
-                    object.setPosition({ x: object.x, y: object.y });
+                    object.setPosition({
+                      x: object.x - direction.x * offset,
+                      y: object.y - direction.y * offset,
+                    });
                   } else {
                     object.x -= direction.x * offset;
                     object.y -= direction.y * offset;

@@ -67,6 +67,52 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
     state.gameObjectsManager.findObjectsByType("plant_eater_a");
 
   ctx.fillText(`pe: ${plantEaters.length}`, LEFT_OFFSET, 380);
+
+  // If stranger died, show the message
+  if (state.statsManager.strangerDied) {
+    drawQueue.schedule(2, (_ctx) => {
+      _ctx.font = "24px serif";
+      // Center to camera frame
+      _ctx.textAlign = "center";
+      _ctx.fillStyle = "#f00";
+      _ctx.fillText(
+        "STRANGER DIED",
+        state.cameraManager.frame.position.x +
+          state.cameraManager.frame.size.x / 2,
+        state.cameraManager.frame.position.y +
+          state.cameraManager.frame.size.y / 2,
+      );
+
+      // Restart on text click
+      // Only text, not the whole canvas
+      ctx.canvas.addEventListener("click", () => {
+        window.location.reload();
+      });
+    });
+  }
+
+  // If all enemies are dead, show the message
+  if (state.statsManager.bossDied) {
+    drawQueue.schedule(2, (_ctx) => {
+      _ctx.font = "24px serif";
+      // Center to camera frame
+      _ctx.textAlign = "center";
+      _ctx.fillStyle = "#f00";
+      _ctx.fillText(
+        "MISSION COMPLETE",
+        state.cameraManager.frame.position.x +
+          state.cameraManager.frame.size.x / 2,
+        state.cameraManager.frame.position.y +
+          state.cameraManager.frame.size.y / 2,
+      );
+
+      // Restart on text click
+      // Only text, not the whole canvas
+      ctx.canvas.addEventListener("click", () => {
+        window.location.reload();
+      });
+    });
+  }
 }
 
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {

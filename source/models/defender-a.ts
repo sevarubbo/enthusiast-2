@@ -177,9 +177,31 @@ export function createDefenderA(
           this.targetEnemyId = gameObjectsManager.findClosestObject(
             this,
             (oo) =>
-              oo.type === "shooting_enemy_a" || oo.type === "shooting_enemy_b",
+              oo.type === "shooting_enemy_a" ||
+              oo.type === "shooting_enemy_b" ||
+              oo.type === "boss_a",
             this.shootingRange,
           )?.id;
+
+          if (!this.targetEnemyId) {
+            const enemyBullet = this.collision.collidesWithObjects.find(
+              (o) => o.type === "bullet",
+            ) as Bullet | undefined;
+
+            const targetEnemy =
+              enemyBullet && gameObjectsManager.objects[enemyBullet.belongsTo];
+
+            if (targetEnemy) {
+              // Don't go too far for an enemy
+              if (
+                closestStranger &&
+                vector.distance(closestStranger, targetEnemy) <
+                  this.shootingRange
+              ) {
+                this.targetEnemyId = targetEnemy.id;
+              }
+            }
+          }
         }
 
         const targetEnemy =

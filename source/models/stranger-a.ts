@@ -157,6 +157,8 @@ export function createStrangerA(
       if (this.health.current <= 0) {
         createExplosion(this, getState, 60);
         getState().cameraManager.followPoint = null;
+
+        getState().statsManager.strangerDied = true;
       }
     },
   };
