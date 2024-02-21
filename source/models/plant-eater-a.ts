@@ -1,3 +1,4 @@
+import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import {
@@ -30,8 +31,9 @@ export interface PlantEaterA
   growthInterval: ReturnType<typeof createIntervalManager>;
   biteInterval: ReturnType<typeof createIntervalManager>;
   age: number;
-  maxAge: number;
+  adultAge: number;
   attackRange: number;
+  maxAge: number;
 }
 
 const BASE_ATTACK = 1.5;
@@ -66,7 +68,8 @@ export function createPlantEaterA(
     growthInterval: createIntervalManager(10000),
     biteInterval: createIntervalManager(500),
     age: 1,
-    maxAge: MAX_AGE,
+    adultAge: MAX_AGE,
+    maxAge: MAX_AGE * 3,
     shield: createObjectShieldManager(),
     attackRange: 0,
 
@@ -161,7 +164,7 @@ export function createPlantEaterA(
         }
       }
 
-      if (this.age < this.maxAge) {
+      if (this.age < this.adultAge) {
         this.growthInterval.fireIfReady(() => {
           if (this.health.current >= this.health.max) {
             this.age += 1;
@@ -171,12 +174,19 @@ export function createPlantEaterA(
 
       this.collisionCircle.radius = 5 + this.age;
       this.health.max = this.age * BASE_HEALTH;
-      this.attack = BASE_ATTACK + (BASE_ATTACK * this.age) / this.maxAge;
+      this.attack = BASE_ATTACK + (BASE_ATTACK * this.age) / this.adultAge;
       this.movement.maxSpeed =
-        ((BASE_SPEED + (BASE_SPEED * this.age) / this.maxAge) *
+        ((BASE_SPEED + (BASE_SPEED * this.age) / this.adultAge) *
           this.health.current) /
         this.health.max;
       this.attackRange = this.collisionCircle.radius / 2;
+
+      if (this.age >= this.maxAge) {
+        gameObjectsManager.despawnObject(this);
+        gameObjectsManager.spawnObject(
+          createShootingEnemyA({ x: this.x, y: this.y }),
+        );
+      }
     },
   };
 }

@@ -92,10 +92,10 @@ export const createBossA = (position: Vector) => {
         );
       })();
 
+      const { gameObjectsManager } = getState();
+
       // Shoot stranger
       (() => {
-        const { gameObjectsManager } = getState();
-
         const targetEnemy = gameObjectsManager.findClosestObject(
           this,
           (oo) => oo.type === "stranger_a",
@@ -118,17 +118,28 @@ export const createBossA = (position: Vector) => {
       })();
 
       // Spawn children
-      this.childrenSpawnInterval.fireIfReady(() => {
-        const { gameObjectsManager } = getState();
-
-        gameObjectsManager.spawnObject(
-          // Offset position slightly random
-          createShootingEnemyA({
-            x: this.x + Math.random() * 100 - 50,
-            y: this.y + Math.random() * 100 - 50,
-          }),
+      (() => {
+        const stranger = gameObjectsManager.findClosestObject(
+          this,
+          (oo) => oo.type === "stranger_a",
         );
-      });
+
+        if (!stranger) return;
+
+        const distanceSquared = vector.distanceSquared(this, stranger);
+
+        if (distanceSquared > this.fireRange ** 3) return;
+
+        this.childrenSpawnInterval.fireIfReady(() => {
+          gameObjectsManager.spawnObject(
+            // Offset position slightly random
+            createShootingEnemyA({
+              x: this.x + Math.random() * 100 - 50,
+              y: this.y + Math.random() * 100 - 50,
+            }),
+          );
+        });
+      })();
     },
   } as const;
 };
