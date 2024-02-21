@@ -8,7 +8,9 @@ import { createIntervalManager, type State } from "services/state";
 import { vector } from "services/vector";
 import type { StateObject } from "types";
 
-export const createWeaponA = <T extends string = "default">({
+type WeaponType = "default" | "machine_gun_b";
+
+export const createWeaponA = <T extends WeaponType = "default">({
   bulletSpeed = 1,
   fireRate = 1,
   accuracy = 0.97,

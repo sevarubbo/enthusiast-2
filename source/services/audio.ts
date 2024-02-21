@@ -44,6 +44,10 @@ const audioFiles = [
     name: "weapon pick",
     url: "sounds/ESM_Ancient_Game_Pick_Up_Weapon_Fantasy_Material_Action_Movement_Texture.wav",
   },
+  {
+    name: "coin chime",
+    url: "sounds/ESM_Christmas_Magic_Positive_Award_Chime_1_Dry_Game.wav",
+  },
 ] as const;
 
 export type SoundName = (typeof audioFiles)[number]["name"];

@@ -8,7 +8,7 @@ import type { ObjectHealthManager } from "./objectHealthManager";
 import type { ObjectMovementManager } from "./objectMovementManager";
 import type { ObjectCollisionManager } from "models/managers";
 import type { createMachineGunB, createWeaponA } from "models/weapon-a";
-import type { StatsManager } from "services/statsManager";
+import type { createStatsManager } from "services/statsManager";
 import type { Vector } from "services/vector";
 
 export interface State {
@@ -17,7 +17,7 @@ export interface State {
   gameSpeedManager: GameSpeedManager;
   gameObjectsManager: GameObjectsManager;
   collisionManager: ReturnType<typeof createCollisionManager>;
-  statsManager: StatsManager;
+  statsManager: ReturnType<typeof createStatsManager>;
   world: {
     size: Vector;
 

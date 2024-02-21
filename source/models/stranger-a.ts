@@ -115,16 +115,6 @@ export function createStrangerA(
       }
       // END
 
-      // START: Check collisions with other objects
-      const otherObject = this.collision.collidesWithObjects[0];
-
-      if (otherObject) {
-        this.targetPoint = null;
-        this.movement.stop();
-
-        return;
-      }
-
       this.shootingAngle = Math.atan2(
         worldPointerPosition.y - this.y,
         worldPointerPosition.x - this.x,

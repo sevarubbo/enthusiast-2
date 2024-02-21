@@ -10,6 +10,7 @@ import type {
 import type { ShieldItem } from "./models/shield-item";
 import type { DefenderA } from "models/defender-a";
 import type { EnemyD } from "models/enemy-d";
+import type { createItemRewardA } from "models/item-reward-a";
 import type { PlantEaterA } from "models/plant-eater-a";
 import type { ShootingEnemyA } from "models/shooting-enemy-a";
 import type { WeaponAItem } from "models/weapon-a-item";
@@ -27,4 +28,5 @@ export type StateObject =
   | DefenderA
   | ShieldItem
   | EnemyD
-  | WeaponAItem;
+  | WeaponAItem
+  | ReturnType<typeof createItemRewardA>;

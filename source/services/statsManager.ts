@@ -1,11 +1,11 @@
-export interface StatsManager {
-  enemiesDied: number;
-  incrementEnemiesDied(): void;
-}
-
-export const createStatsManager = (): StatsManager => ({
+export const createStatsManager = () => ({
   enemiesDied: 0,
   incrementEnemiesDied() {
     this.enemiesDied++;
+  },
+
+  money: 0,
+  addMoney(amount: number) {
+    this.money += amount;
   },
 });

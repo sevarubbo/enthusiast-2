@@ -1,5 +1,6 @@
 import { createDefenderA } from "./defender-a";
 import { createEnemyC } from "./enemyC";
+import { createItemRewardA } from "./item-reward-a";
 import { createPlantEaterA } from "./plant-eater-a";
 import { createShieldItem } from "./shield-item";
 import { createWeaponAItem } from "./weapon-a-item";
@@ -99,6 +100,8 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
           getState().gameObjectsManager.spawnObject(
             createDefenderA({ x: this.x, y: this.y }),
           );
+        } else if (Math.random() < 0.2) {
+          createItemRewardA({ x: this.x, y: this.y });
         }
       }
     },

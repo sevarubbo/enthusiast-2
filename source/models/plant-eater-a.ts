@@ -34,10 +34,11 @@ export interface PlantEaterA
   attackRange: number;
 }
 
-const BASE_ATTACK = 1;
+const BASE_ATTACK = 1.5;
 const BASE_SPEED = 0.002;
 const MAX_AGE = 10;
 const MAX_REPRODUCTION_AGE = 8;
+const BASE_HEALTH = 4;
 
 export function createPlantEaterA(
   o: Partial<Pick<PlantEaterA, "x" | "y">> = {},
@@ -169,7 +170,7 @@ export function createPlantEaterA(
       }
 
       this.collisionCircle.radius = 5 + this.age;
-      this.health.max = this.age * 3;
+      this.health.max = this.age * BASE_HEALTH;
       this.attack = BASE_ATTACK + (BASE_ATTACK * this.age) / this.maxAge;
       this.movement.maxSpeed =
         ((BASE_SPEED + (BASE_SPEED * this.age) / this.maxAge) *

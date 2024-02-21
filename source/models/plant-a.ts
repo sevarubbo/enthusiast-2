@@ -1,4 +1,7 @@
 import { createEnemy } from "./enemy";
+import { createEnemyC } from "./enemyC";
+import { createItemRewardA } from "./item-reward-a";
+import { createPlantEaterA } from "./plant-eater-a";
 import { createShieldItem } from "./shield-item";
 import { createWeaponAItem } from "./weapon-a-item";
 import { createId } from "helpers";
@@ -127,6 +130,14 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           getState().gameObjectsManager.spawnObject(
             createEnemy({ x: this.x, y: this.y }),
           );
+        } else if (Math.random() < 0.011) {
+          getState().gameObjectsManager.spawnObject(
+            createEnemyC({ x: this.x, y: this.y }),
+          );
+        } else if (Math.random() < 0.01) {
+          createItemRewardA({ x: this.x, y: this.y });
+        } else if (Math.random() < 0.005) {
+          createPlantEaterA({ x: this.x, y: this.y });
         }
       }
     },

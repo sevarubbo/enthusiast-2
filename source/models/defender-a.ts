@@ -24,6 +24,8 @@ export interface DefenderA extends Movable, Collidable, Healthy {
   weapon: Weapon;
 }
 
+const defaultWeapon = createMachineGun();
+
 export function createDefenderA(
   options: Partial<Pick<DefenderA, "x" | "y">> = {},
 ): DefenderA {
@@ -44,7 +46,7 @@ export function createDefenderA(
     shootingRange: 300,
     targetEnemyId: undefined,
     shield: createObjectShieldManager(),
-    weapon: createMachineGun(),
+    weapon: defaultWeapon,
 
     update(delta, getState) {
       this.health.update(delta, getState, this);
@@ -96,6 +98,79 @@ export function createDefenderA(
               this.targetEnemyId = enemyBullet.belongsTo;
             }
           }
+        })();
+
+        // Find better weapon
+        (() => {
+          if (this.targetPoint) {
+            return;
+          }
+
+          if (this.weapon.type === "machine_gun_b" && this.weapon.ammo > 0) {
+            return;
+          }
+
+          const weaponItem = gameObjectsManager.findClosestObject(
+            this,
+            (oo) => oo.type === "weapon_a_item",
+          );
+
+          if (!weaponItem) {
+            return;
+          }
+
+          // Don't go too far for a weapon
+          if (
+            closestStranger &&
+            vector.distance(closestStranger, weaponItem) > this.shootingRange
+          ) {
+            return;
+          }
+
+          this.targetPoint = {
+            x: weaponItem.x,
+            y: weaponItem.y,
+          };
+        })();
+
+        // Switch to default weapon when ammo is empty
+        (() => {
+          if (this.weapon.type === "machine_gun_b" && this.weapon.ammo <= 0) {
+            this.weapon = defaultWeapon;
+          }
+        })();
+
+        // Find shield
+        (() => {
+          if (this.targetPoint) {
+            return;
+          }
+
+          if (this.shield.active && this.shield.hp > 0) {
+            return;
+          }
+
+          const shieldItem = gameObjectsManager.findClosestObject(
+            this,
+            (oo) => oo.type === "shield_item",
+          );
+
+          if (!shieldItem) {
+            return;
+          }
+
+          // Don't go too far for a shield
+          if (
+            closestStranger &&
+            vector.distance(closestStranger, shieldItem) > this.shootingRange
+          ) {
+            return;
+          }
+
+          this.targetPoint = {
+            x: shieldItem.x,
+            y: shieldItem.y,
+          };
         })();
 
         if (!this.targetEnemyId) {

@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { drawHealthBar } from "./healthbar";
-import { getPlantColor } from "./helpers";
+import { drawObjectAsText, getPlantColor } from "./helpers";
 import {
   drawCircle,
   drawCircleOutline,
@@ -8,7 +8,7 @@ import {
 } from "services/canvas";
 import { vector } from "services/vector";
 import type { createObjectShieldManager } from "../services/state/objectShieldManager";
-import type { State } from "services/state";
+import type { State, Weapon } from "services/state";
 import type { StateObject } from "types";
 
 const drawObjectShield = (
@@ -35,6 +35,51 @@ const drawObjectShield = (
       lineWidth: 3,
       progress: object.shield.hp / object.shield.maxHp,
     });
+  }
+};
+
+const drawObjectWeapon = (
+  ctx: CanvasRenderingContext2D,
+  state: State,
+  object: StateObject & { weapon: Weapon },
+) => {
+  if (object.weapon.type === "machine_gun_b") {
+    ctx.font = "10px Arial";
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      "🗡️",
+      state.cameraManager.toScreen(object).x -
+        object.collisionCircle.radius -
+        18,
+      state.cameraManager.toScreen(object).y + 7,
+    );
+  }
+
+  // Draw ammo
+  if (
+    object.weapon.ammo < object.weapon.maxAmmo ||
+    object.weapon.type === "machine_gun_b"
+  ) {
+    let points = Math.floor((object.weapon.ammo / object.weapon.maxAmmo) * 5);
+    let color =
+      points <= 1 ? "rgba(255, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.5)";
+
+    if (points === 0) {
+      points = 1;
+
+      if (object.weapon.ammo === 0) color = "rgba(255, 0, 0, 0.2)";
+    }
+
+    for (let i = 0; i < points; i++) {
+      drawCircle(ctx, {
+        position: state.cameraManager.toScreen(
+          vector.add(object, vector.create(-10 + i * 5, 26)),
+        ),
+        color,
+        radius: 2,
+      });
+    }
   }
 };
 
@@ -173,6 +218,10 @@ function drawObject(
   //   state.cameraManager.toScreen(object).y - 50,
   // );
 
+  if ("weapon" in object) {
+    drawObjectWeapon(ctx, state, object);
+  }
+
   switch (object.type) {
     case "enemy": {
       drawObjectAsCircle(ctx, state, object);
@@ -257,47 +306,6 @@ function drawObject(
           color: "#fff",
           radius: 4,
         });
-
-        // Draw ammo
-        if (
-          object.weapon.ammo < object.weapon.maxAmmo ||
-          object.weapon.type === "machine_gun_b"
-        ) {
-          let points = Math.floor(
-            (object.weapon.ammo / object.weapon.maxAmmo) * 5,
-          );
-          let color =
-            points <= 1 ? "rgba(255, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.5)";
-
-          if (points === 0) {
-            points = 1;
-
-            if (object.weapon.ammo === 0) color = "rgba(255, 0, 0, 0.2)";
-          }
-
-          for (let i = 0; i < points; i++) {
-            drawCircle(ctx, {
-              position: state.cameraManager.toScreen(
-                vector.add(object, vector.create(-10 + i * 5, 26)),
-              ),
-              color,
-              radius: 2,
-            });
-          }
-        }
-
-        if (object.weapon.type === "machine_gun_b") {
-          ctx.font = "10px Arial";
-          ctx.fillStyle = "#fff";
-          ctx.textAlign = "center";
-          ctx.fillText(
-            "🗡️",
-            state.cameraManager.toScreen(object).x -
-              object.collisionCircle.radius -
-              18,
-            state.cameraManager.toScreen(object).y + 7,
-          );
-        }
       });
 
       if (object.health.current < object.health.max) {
@@ -368,15 +376,13 @@ function drawObject(
     }
 
     case "weapon_a_item": {
-      // Draw text on top in the middle
-      ctx.font = "16px Arial";
-      ctx.fillStyle = "#fff";
-      ctx.textAlign = "center";
-      ctx.fillText(
-        "🗡️",
-        state.cameraManager.toScreen(object).x,
-        state.cameraManager.toScreen(object).y,
-      );
+      drawObjectAsText(ctx, state, object, "🗡️");
+
+      return;
+    }
+
+    case "item_reward_a": {
+      drawObjectAsText(ctx, state, object, object.icon);
 
       return;
     }

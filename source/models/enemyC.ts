@@ -1,5 +1,6 @@
 import { createBullet } from "./bullet";
 import { createEnemyD } from "./enemy-d";
+import { createHouse } from "./house";
 import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createTower } from "./tower";
 import { createId } from "../helpers";
@@ -127,7 +128,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
         }
 
         // Also turn into shooting enemy or tower
-        if (Math.random() < 0.1) {
+        if (Math.random() < 0.2) {
           getState().gameObjectsManager.spawnObject(
             createTower({ x: this.x, y: this.y }),
           );
@@ -146,6 +147,10 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
             ...getSoundPosition(this, getState().cameraManager),
             volume: 1.5,
           });
+        } else if (Math.random() < 0.01) {
+          getState().gameObjectsManager.spawnObject(
+            createHouse({ x: this.x, y: this.y }),
+          );
         } else {
           getState().gameObjectsManager.spawnObject(
             createShootingEnemyA({ x: this.x, y: this.y }),

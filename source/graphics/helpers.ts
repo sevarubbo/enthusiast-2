@@ -1,5 +1,8 @@
 // With types
 
+import type { State } from "services/state";
+import type { StateObject } from "types";
+
 export const createGradientArray = (
   colorA: string,
   colorB: string,
@@ -42,4 +45,21 @@ export const getPlantColor = (health: number, maxHealth: number): string => {
   );
 
   return plantColors[colorIndex] as string;
+};
+
+export const drawObjectAsText = (
+  ctx: CanvasRenderingContext2D,
+  state: State,
+  object: StateObject,
+  icon: string,
+) => {
+  // Draw text on top in the middle
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.fillText(
+    icon,
+    state.cameraManager.toScreen(object).x,
+    state.cameraManager.toScreen(object).y,
+  );
 };

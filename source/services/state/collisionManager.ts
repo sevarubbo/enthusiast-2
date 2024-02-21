@@ -40,7 +40,7 @@ export const createCollisionManager = () => {
               const distance = vector.length(vectorBetween);
 
               if (
-                distance <
+                distance <=
                 object.collisionCircle.radius +
                   nearbyObject.collisionCircle.radius
               ) {
@@ -50,25 +50,23 @@ export const createCollisionManager = () => {
                 if ("collision" in object) {
                   const otherObject = nearbyObject;
 
-                  let direction;
+                  // Move the object back to the edge of the collision
+                  const overlap =
+                    object.collisionCircle.radius +
+                    nearbyObject.collisionCircle.radius -
+                    distance;
+                  const direction = vector.normalize(vectorBetween);
+                  const offset =
+                    (overlap * otherObject.collisionCircle.radius) /
+                    (otherObject.collisionCircle.radius +
+                      object.collisionCircle.radius);
 
-                  if ("movement" in object) {
-                    direction = Math.atan2(
-                      object.y + object.movement.speedVector.y - otherObject.y,
-                      object.x + object.movement.speedVector.x - otherObject.x,
-                    );
+                  if ("setPosition" in object) {
+                    object.setPosition({ x: object.x, y: object.y });
                   } else {
-                    direction = Math.atan2(
-                      object.y - otherObject.y,
-                      object.x - otherObject.x,
-                    );
+                    object.x -= direction.x * offset;
+                    object.y -= direction.y * offset;
                   }
-
-                  const moveStep = vector.scale(vector.fromAngle(direction), 1);
-
-                  // Move the object away from the other object, via setting x and y
-                  object.x += moveStep.x;
-                  object.y += moveStep.y;
                 }
               }
             }

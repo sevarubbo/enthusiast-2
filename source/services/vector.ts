@@ -42,7 +42,9 @@ export const vector = {
     };
   },
   normalize(v: Vector): Vector {
-    return vector.scale(v, 1 / vector.length(v));
+    const length = vector.length(v);
+
+    return length ? vector.scale(v, 1 / length) : vector.create(1, 0);
   },
   direction(vector1: Vector, vector2: Vector): Vector {
     return vector.normalize(vector.subtract(vector2, vector1));

@@ -3,6 +3,7 @@ import { createCanvasDrawer } from "./graphics";
 import { createCanvas } from "./services/canvas";
 import { vector } from "./services/vector";
 import { createWorldB } from "data/world-b";
+import { createWorldC } from "data/world-c";
 import { loadAudioFiles, setGlobalVolume } from "services/audio";
 import {
   setIsPointerDown,
@@ -127,22 +128,24 @@ document.body.appendChild(volumeControl);
   startButtons.style.display = "flex";
   startButtons.style.gap = "20px";
 
-  [() => createDefaultState(), () => createWorldB()].forEach(
-    (createWorld, index) => {
-      const button = document.createElement("button");
+  [
+    () => createDefaultState(),
+    () => createWorldB(),
+    () => createWorldC(),
+  ].forEach((createWorld, index) => {
+    const button = document.createElement("button");
 
-      button.textContent = `World ${index + 1}`;
-      button.style.fontSize = "24px";
+    button.textContent = `World ${index + 1}`;
+    button.style.fontSize = "24px";
 
-      button.addEventListener("click", () => {
-        startGame(createWorld());
+    button.addEventListener("click", () => {
+      startGame(createWorld());
 
-        startButtons.remove();
-      });
+      startButtons.remove();
+    });
 
-      startButtons.appendChild(button);
-    },
-  );
+    startButtons.appendChild(button);
+  });
 
   document.body.appendChild(startButtons);
 })();

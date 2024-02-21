@@ -30,10 +30,10 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
   ctx.fillStyle = "#fff";
   ctx.font = "24px serif";
 
-  const n = state.statsManager.enemiesDied;
+  const n = state.statsManager.money;
   const LEFT_OFFSET = 50;
 
-  ctx.fillText(`${n}`, LEFT_OFFSET, 100);
+  ctx.fillText(`SCORE: ${n}`, LEFT_OFFSET, 100);
   ctx.fillText(
     `${state.gameSpeedManager.gameSpeed.toFixed(2)}`,
     LEFT_OFFSET,
@@ -61,6 +61,12 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
   const towers = state.gameObjectsManager.findObjectsByType("tower");
 
   ctx.fillText(`tt: ${towers.length}`, LEFT_OFFSET, 340);
+
+  // Render number of plant eaters
+  const plantEaters =
+    state.gameObjectsManager.findObjectsByType("plant_eater_a");
+
+  ctx.fillText(`pe: ${plantEaters.length}`, LEFT_OFFSET, 380);
 }
 
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {

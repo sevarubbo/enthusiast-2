@@ -100,9 +100,6 @@ const STRANGER_A = createStrangerA(getRandomPosition());
 
 export function createDefaultState(): State {
   const enemySpawner = createEnemySpawner();
-  const tower = createTower(getRandomPosition());
-  const tower2 = createTower(getRandomPosition());
-  const tower3 = createTower(getRandomPosition());
   const house = createHouse(getRandomPosition());
   const HOUSE_2 = createHouse(getRandomPosition());
   const quadtree = createQuadtree(
@@ -145,11 +142,7 @@ export function createDefaultState(): State {
 
           return createEnemyC(pos);
         }),
-        tower,
-        tower2,
-        tower3,
 
-        createTower(getRandomPosition()),
         createTower(getRandomPosition()),
 
         house,

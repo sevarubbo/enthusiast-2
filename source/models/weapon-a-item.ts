@@ -30,7 +30,15 @@ export const createWeaponAItem = (
     // If collides with player, give weapon
     const collidesWith = this.collision.collidesWithObjects[0];
 
-    if (collidesWith?.type === "stranger_a") {
+    if (!collidesWith) return;
+
+    if (!("weapon" in collidesWith)) return;
+
+    if (
+      collidesWith.type === "stranger_a" ||
+      collidesWith.type === "defender_a" ||
+      collidesWith.type === "shooting_enemy_a"
+    ) {
       if (
         collidesWith.weapon.type === "default" ||
         collidesWith.weapon.ammo < collidesWith.weapon.maxAmmo
