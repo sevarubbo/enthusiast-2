@@ -7,7 +7,7 @@ import type { StateObject } from "types";
 
 export const createExplosion = (
   object: StateObject,
-  getState: () => State,
+  state: State,
   size = 30,
 ) => {
   const bulletsCount = size;
@@ -24,7 +24,7 @@ export const createExplosion = (
       ),
     );
 
-    getState().gameObjectsManager.spawnObject(
+    state.gameObjectsManager.spawnObject(
       createBullet({
         ...bulletPosition,
         direction: vector.fromAngle(i * angleStep),
@@ -39,14 +39,14 @@ export const canShootEnemyWithoutFriendlyFire = (
   object: StateObject,
   enemy: StateObject,
   isFriend: (o: StateObject) => boolean,
-  getState: () => State,
+  state: State,
 ): boolean => {
   const shootingSegment: Matrix = [
     vector.create(object.x, object.y),
     vector.create(enemy.x, enemy.y),
   ];
 
-  return !getFirstObjectLineCollision(getState, shootingSegment, (o) => {
+  return !getFirstObjectLineCollision(state, shootingSegment, (o) => {
     if (o === object) {
       return false;
     }

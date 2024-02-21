@@ -30,11 +30,11 @@ export const createItemRewardA = (position: Vector) => {
       return y;
     },
 
-    update(delta: number, getState: () => State) {
+    update(delta: number, state: State) {
       if (this.collision.collidesWithObjects[0]?.type === "stranger_a") {
-        getState().gameObjectsManager.despawnObject(this);
+        state.gameObjectsManager.despawnObject(this);
 
-        getState().statsManager.addMoney(1);
+        state.statsManager.addMoney(1);
 
         playSound("coin chime", {
           volume: 0.3,

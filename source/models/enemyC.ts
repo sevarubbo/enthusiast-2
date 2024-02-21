@@ -46,12 +46,12 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
       direction: vector.fromAngle(Math.random() * 2 * Math.PI),
     }),
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.movement.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.movement.update(delta, state, this);
+      this.collision.update(delta, state, this);
 
-      const { world } = getState();
+      const { world } = state;
 
       // Check collisions with world edges
       const { radius } = this.collisionCircle;
@@ -96,6 +96,8 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
         );
 
         this.movement.start(vector.fromAngle(direction));
+
+        this.health.decrease(this.health.max / 100);
       } else {
         this.color = "white";
       }
@@ -117,7 +119,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
             ),
           );
 
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createBullet({
               ...bulletPosition,
               direction: vector.fromAngle(i * angleStep),
@@ -128,8 +130,8 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
         }
 
         // Also turn into shooting enemy or tower
-        if (Math.random() < 0.2) {
-          getState().gameObjectsManager.spawnObject(
+        if (Math.random() < 0.1) {
+          state.gameObjectsManager.spawnObject(
             createTower({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.4) {
@@ -140,19 +142,19 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
               y: Math.random() * 50 - 25,
             });
 
-            getState().gameObjectsManager.spawnObject(createEnemyD(position));
+            state.gameObjectsManager.spawnObject(createEnemyD(position));
           }
 
           playSound("egg hatch", {
-            ...getSoundPosition(this, getState().cameraManager),
+            ...getSoundPosition(this, state.cameraManager),
             volume: 1.5,
           });
         } else if (Math.random() < 0.01) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createHouse({ x: this.x, y: this.y }),
           );
         } else {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createShootingEnemyA({ x: this.x, y: this.y }),
           );
         }

@@ -26,7 +26,7 @@ export interface State {
 }
 
 export interface Updatable {
-  update(delta: number, getState: () => State): void;
+  update(delta: number, state: State): void;
 }
 
 export interface Identifiable {
@@ -50,7 +50,7 @@ export interface Movable extends Vector, Updatable, Identifiable {
 }
 
 export interface ObjectManager {
-  update(delta: number, getState: () => State, object: StateObject): void;
+  update(delta: number, state: State, object: StateObject): void;
 }
 
 export type Weapon =

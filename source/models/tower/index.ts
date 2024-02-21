@@ -62,21 +62,21 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
       maxAmmo: 4,
     }),
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
-      this.weapon.update(delta, getState, this);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.collision.update(delta, state, this);
+      this.weapon.update(delta, state, this);
 
-      towerUpdate(this, delta, getState);
+      towerUpdate(this, delta, state);
 
       // After death
       (() => {
         if (this.health.current <= 0) {
-          createExplosion(this, getState);
-          getState().gameObjectsManager.spawnObject(
+          createExplosion(this, state);
+          state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
         }

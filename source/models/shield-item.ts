@@ -20,8 +20,8 @@ export const createShieldItem = (
   x: o.x,
   y: o.y,
 
-  update(delta, getState) {
-    this.collision.update(delta, getState, this);
+  update(delta, state) {
+    this.collision.update(delta, state, this);
     // If collides with player, give shield
     const collidesWith = this.collision.collidesWithObjects[0];
 
@@ -32,10 +32,10 @@ export const createShieldItem = (
       ) {
         collidesWith.shield.active = true;
         collidesWith.shield.hp = collidesWith.shield.maxHp;
-        getState().gameObjectsManager.despawnObject(this);
+        state.gameObjectsManager.despawnObject(this);
         playSound(
           "shield acquired",
-          getSoundPosition(this, getState().cameraManager),
+          getSoundPosition(this, state.cameraManager),
         );
       }
     }

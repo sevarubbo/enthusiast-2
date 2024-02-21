@@ -3,8 +3,8 @@ import type { State } from "./types";
 
 export const createCollisionManager = () => {
   return {
-    update(delta: number, getState: () => State) {
-      const { gameObjectsManager, quadtree } = getState();
+    update(delta: number, state: State) {
+      const { gameObjectsManager, quadtree } = state;
 
       quadtree.clear();
 

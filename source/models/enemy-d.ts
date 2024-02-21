@@ -48,12 +48,12 @@ export function createEnemyD(
     shootingRange: 700 * scale,
     shield: createObjectShieldManager(),
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.movement.update(delta, getState, this);
-      this.shootingInterval.update(delta, getState);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.movement.update(delta, state, this);
+      this.shootingInterval.update(delta, state);
 
-      let targetEnemy = getState().gameObjectsManager.findClosestObject(
+      let targetEnemy = state.gameObjectsManager.findClosestObject(
         {
           x: this.x,
           y: this.y,
@@ -98,7 +98,7 @@ export function createEnemyD(
 
           // Shoot
           this.shootingInterval.fireIfReady(() => {
-            getState().gameObjectsManager.spawnObject(
+            state.gameObjectsManager.spawnObject(
               createBullet({
                 ...bulletPosition,
                 direction: vector.fromAngle(this.movement.angle),
@@ -108,7 +108,7 @@ export function createEnemyD(
 
             playSound(
               "basic shot",
-              getSoundPosition(this, getState().cameraManager),
+              getSoundPosition(this, state.cameraManager),
             );
           });
         } else {

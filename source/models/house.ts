@@ -38,8 +38,8 @@ export function createHouse(o: Pick<House, "x" | "y">): House {
     collision: createObjectCollisionManager(),
     ...o,
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
+    update(delta, state) {
+      this.health.update(delta, state, this);
     },
   };
 }

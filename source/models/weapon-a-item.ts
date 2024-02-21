@@ -25,8 +25,8 @@ export const createWeaponAItem = (
   x: o.x,
   y: o.y,
 
-  update(delta, getState) {
-    this.collision.update(delta, getState, this);
+  update(delta, state) {
+    this.collision.update(delta, state, this);
     // If collides with player, give weapon
     const collidesWith = this.collision.collidesWithObjects[0];
 
@@ -44,11 +44,8 @@ export const createWeaponAItem = (
         collidesWith.weapon.ammo < collidesWith.weapon.maxAmmo
       ) {
         collidesWith.weapon = createMachineGunB();
-        playSound(
-          "weapon pick",
-          getSoundProperties(this, getState().cameraManager),
-        );
-        getState().gameObjectsManager.despawnObject(this);
+        playSound("weapon pick", getSoundProperties(this, state.cameraManager));
+        state.gameObjectsManager.despawnObject(this);
       }
     }
   },

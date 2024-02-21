@@ -46,28 +46,28 @@ export function createBullet(
     ...o,
     attack: BASE_ATTACK * speed * (o.attack || 1),
 
-    update(delta, getState) {
+    update(delta, state) {
       this.age += delta;
 
       if (this.age > this.maxAge) {
-        getState().gameObjectsManager.despawnObject(this);
+        state.gameObjectsManager.despawnObject(this);
 
         return;
       }
 
-      const { cameraManager } = getState();
+      const { cameraManager } = state;
 
       this.x += this.direction.x * this.speed * delta;
       this.y += this.direction.y * this.speed * delta;
 
-      this.collision.update(delta, getState, this);
+      this.collision.update(delta, state, this);
 
       const otherObject = this.collision.collidesWithObjects[0];
 
       if (otherObject && otherObject.id !== this.belongsTo) {
-        if ("health" in otherObject) {
-          getState().gameObjectsManager.despawnObject(this);
+        state.gameObjectsManager.despawnObject(this);
 
+        if ("health" in otherObject) {
           if ("shield" in otherObject && otherObject.shield.active) {
             otherObject.shield.absorbDamage(this.attack);
 

@@ -16,11 +16,7 @@ export interface ObjectMovementManager {
   moveToTargetPoint(object: Movable, v: Vector | null | undefined): void;
   angle: number;
 
-  update(
-    delta: number,
-    getState: () => State,
-    object: StateObject & Movable,
-  ): void;
+  update(delta: number, state: State, object: StateObject & Movable): void;
 }
 
 type Props<OB extends object, RP extends keyof OB, OP extends keyof OB> = Pick<
@@ -78,7 +74,7 @@ export const createObjectMovementManager = (
       return;
     },
 
-    update(delta, getState, object) {
+    update(delta, state, object) {
       this.moveToTargetPoint(object, object.targetPoint);
 
       this.realSpeed = this.speed * delta;

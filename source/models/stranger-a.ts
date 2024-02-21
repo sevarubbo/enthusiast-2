@@ -51,15 +51,15 @@ export function createStrangerA(
 
     shield: createObjectShieldManager(),
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
-      this.movement.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
-      this.weapon.update(delta, getState, this);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.collision.update(delta, state, this);
+      this.movement.update(delta, state, this);
+      this.collision.update(delta, state, this);
+      this.weapon.update(delta, state, this);
 
       // START: Selectable object logic
-      const { worldPointerPosition, isPointerDown } = getState().cameraManager;
+      const { worldPointerPosition, isPointerDown } = state.cameraManager;
 
       // Check for intersection with pointer
       if (
@@ -83,7 +83,7 @@ export function createStrangerA(
       // END
 
       // START: Check collisions with world edges
-      const { world } = getState();
+      const { world } = state;
       const { radius } = this.collisionCircle;
 
       if (this.x > world.size.x - radius) {
@@ -139,9 +139,9 @@ export function createStrangerA(
           ),
         );
 
-        getState().cameraManager.followPoint = vector.create(this.x, this.y);
+        state.cameraManager.followPoint = vector.create(this.x, this.y);
       } else {
-        getState().cameraManager.followPoint = null;
+        state.cameraManager.followPoint = null;
         this.movement.stop();
       }
 
@@ -155,10 +155,10 @@ export function createStrangerA(
 
       // After death
       if (this.health.current <= 0) {
-        createExplosion(this, getState, 60);
-        getState().cameraManager.followPoint = null;
+        createExplosion(this, state, 60);
+        state.cameraManager.followPoint = null;
 
-        getState().statsManager.strangerDied = true;
+        state.statsManager.strangerDied = true;
       }
     },
   };

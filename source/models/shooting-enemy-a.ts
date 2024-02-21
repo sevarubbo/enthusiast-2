@@ -47,12 +47,12 @@ export function createShootingEnemyA(
     shield: createObjectShieldManager(),
     weapon: defaultWeapon,
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.movement.update(delta, getState, this);
-      this.weapon.update(delta, getState, this);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.movement.update(delta, state, this);
+      this.weapon.update(delta, state, this);
 
-      const { gameObjectsManager } = getState();
+      const { gameObjectsManager } = state;
 
       // Find targetEnemy
       const targetEnemy =
@@ -82,7 +82,7 @@ export function createShootingEnemyA(
           (targetEnemy.x - this.x) ** 2 + (targetEnemy.y - this.y) ** 2,
         );
 
-        // Aim at the stranger
+        // Aim at targetEnemy
         this.movement.angle = Math.atan2(
           targetEnemy.y - this.y,
           targetEnemy.x - this.x,
@@ -94,7 +94,7 @@ export function createShootingEnemyA(
             this,
             targetEnemy,
             (oo) => oo.type === "shooting_enemy_a" || oo.type === "boss_a",
-            getState,
+            state,
           )
         ) {
           this.targetPoint = null;
@@ -162,11 +162,11 @@ export function createShootingEnemyA(
 
       // After death
       if (this.health.current <= 0) {
-        getState().statsManager.incrementEnemiesDied();
+        state.statsManager.incrementEnemiesDied();
 
         // Check if the position is not too close to the player
         const stranger =
-          getState().gameObjectsManager.findObjectsByType("stranger_a")[0];
+          state.gameObjectsManager.findObjectsByType("stranger_a")[0];
 
         // Respawning
         (() => {
@@ -176,25 +176,25 @@ export function createShootingEnemyA(
 
           // // Respawn
           // (() => {
-          //   const randomPosition = getState().world.getRandomPoint();
+          //   const randomPosition = state.world.getRandomPoint();
 
           //   if (
           //     !(
           //       vector.distance(randomPosition, stranger) <
           //       this.shootingRange * 3
           //     ) ||
-          //     getState().gameObjectsManager.findObjectsByType(
+          //     state.gameObjectsManager.findObjectsByType(
           //       "shooting_enemy_a",
           //     ).length <= 0
           //   ) {
-          //     getState().gameObjectsManager.spawnObject(
+          //     state.gameObjectsManager.spawnObject(
           //       createShootingEnemyA(randomPosition),
           //     );
           //   }
           // })();
 
           // if (Math.random() < 0.1) {
-          //   const randomPosition = getState().world.getRandomPoint();
+          //   const randomPosition = state.world.getRandomPoint();
 
           //   if (
           //     !(
@@ -202,7 +202,7 @@ export function createShootingEnemyA(
           //       this.shootingRange * 3
           //     )
           //   ) {
-          //     getState().gameObjectsManager.spawnObject(
+          //     state.gameObjectsManager.spawnObject(
           //       createShootingEnemyA(randomPosition),
           //     );
           //   }
@@ -211,16 +211,16 @@ export function createShootingEnemyA(
 
         // Drop shield
         if (Math.random() < 0.1) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.18) {
           // Drop weapon
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.5) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createItemRewardA({ x: this.x, y: this.y }),
           );
         }

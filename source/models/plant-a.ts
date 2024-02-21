@@ -41,10 +41,10 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
     newGrowth: true,
     children: 0,
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
-      this.sproutInterval.update(delta, getState);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.collision.update(delta, state, this);
+      this.sproutInterval.update(delta, state);
 
       const MAX_NUMBER_OF_CHILDREN = 3;
 
@@ -58,9 +58,9 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           return;
         }
 
-        const { gameObjectsManager } = getState();
+        const { gameObjectsManager } = state;
 
-        const plantsWithinRange = getState().quadtree.query({
+        const plantsWithinRange = state.quadtree.query({
           x: this.x - this.collisionCircle.radius * 10,
           y: this.y - this.collisionCircle.radius * 10,
           width: this.collisionCircle.radius * 20,
@@ -69,7 +69,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
 
         if (
           plantsWithinRange.length < 10 &&
-          Object.keys(getState().gameObjectsManager.objects).length < 4000
+          Object.keys(state.gameObjectsManager.objects).length < 4000
         ) {
           const RADIUS = 25;
           const spawnLocation = {
@@ -88,9 +88,9 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           // Check if spawnLocation is within the world
           if (
             spawnLocation.x < 0 ||
-            spawnLocation.x > getState().world.size.x ||
+            spawnLocation.x > state.world.size.x ||
             spawnLocation.y < 0 ||
-            spawnLocation.y > getState().world.size.y
+            spawnLocation.y > state.world.size.y
           ) {
             collides = true;
           }
@@ -119,19 +119,19 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
       // After death
       if (this.health.current <= 0) {
         if (Math.random() < 0.003) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.004) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.05) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createEnemy({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.011) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createEnemyC({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.01) {

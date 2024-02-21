@@ -36,7 +36,7 @@ export interface PlantEaterA
   maxAge: number;
 }
 
-const BASE_ATTACK = 1.5;
+const BASE_ATTACK = 1.6;
 const BASE_SPEED = 0.002;
 const MAX_AGE = 10;
 const MAX_REPRODUCTION_AGE = 8;
@@ -73,16 +73,16 @@ export function createPlantEaterA(
     shield: createObjectShieldManager(),
     attackRange: 0,
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
-      this.movement.update(delta, getState, this);
-      this.lookAroundInterval.update(delta, getState);
-      this.growthInterval.update(delta, getState);
-      this.biteInterval.update(delta, getState);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.collision.update(delta, state, this);
+      this.movement.update(delta, state, this);
+      this.lookAroundInterval.update(delta, state);
+      this.growthInterval.update(delta, state);
+      this.biteInterval.update(delta, state);
 
       // Find the closest plant
-      const { gameObjectsManager } = getState();
+      const { gameObjectsManager } = state;
 
       const collisions = this.collision.collidesWithObjects;
       const bullet = collisions.find((oo) => oo.type === "bullet") as

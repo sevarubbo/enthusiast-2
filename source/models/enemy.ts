@@ -44,12 +44,12 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
     collision: createObjectCollisionManager(),
     targetPoint: null,
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.movement.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.movement.update(delta, state, this);
+      this.collision.update(delta, state, this);
 
-      const { world } = getState();
+      const { world } = state;
 
       // Find target point
       if (!this.targetPoint) {
@@ -79,25 +79,25 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
       if (this.health.current <= 0) {
         // Drop shield item
         if (Math.random() < 0.3) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createEnemyC({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.1) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
           // eslint-disable-next-line no-dupe-else-if
         } else if (Math.random() < 0.1) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
           // eslint-disable-next-line no-dupe-else-if
         } else if (Math.random() < 0.1) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createPlantEaterA({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.05) {
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createDefenderA({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.2) {

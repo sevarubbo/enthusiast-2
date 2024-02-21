@@ -10,7 +10,7 @@ export interface ObjectHealthManager {
   current: number;
   healInterval: IntervalManager | null;
   decrease(value: number): void;
-  update(delta: number, getState: () => State, object: StateObject): void;
+  update(delta: number, state: State, object: StateObject): void;
 }
 
 export const createObjectHealthManager = (o: {
@@ -24,8 +24,8 @@ export const createObjectHealthManager = (o: {
   decrease(value: number) {
     this.current = Math.max(0, this.current - value);
   },
-  update(delta, getState, object) {
-    this.healInterval?.update(delta, getState);
+  update(delta, state, object) {
+    this.healInterval?.update(delta, state);
 
     // Healing
     this.healInterval?.fireIfReady(() => {
@@ -36,12 +36,12 @@ export const createObjectHealthManager = (o: {
 
     // Dying
     if (this.current <= 0) {
-      getState().gameObjectsManager.despawnObject(object);
+      state.gameObjectsManager.despawnObject(object);
 
       if (o.deathSound !== null) {
         playSound(
           o.deathSound || "basic death",
-          getSoundPosition(object, getState().cameraManager),
+          getSoundPosition(object, state.cameraManager),
         );
       }
     }

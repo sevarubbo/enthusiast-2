@@ -4,11 +4,11 @@ import type { State } from "services/state";
 import type { StateObject } from "types";
 
 export function getFirstObjectLineCollision(
-  getState: () => State,
+  state: State,
   line: Matrix,
   condition: (object: StateObject) => boolean,
 ): StateObject | null {
-  const { gameObjectsManager } = getState();
+  const { gameObjectsManager } = state;
 
   for (const otherObjectId in gameObjectsManager.objects) {
     const otherObject = gameObjectsManager.objects[otherObjectId];

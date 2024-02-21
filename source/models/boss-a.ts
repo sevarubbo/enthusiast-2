@@ -63,13 +63,13 @@ export const createBossA = (position: Vector) => {
       targetPoint = p;
     },
 
-    update(delta: number, getState: () => State) {
-      this.childrenSpawnInterval.update(delta, getState);
-      this.movement.update(delta, getState, this);
-      this.weapon.update(delta, getState, this);
-      this.health.update(delta, getState, this);
+    update(delta: number, state: State) {
+      this.childrenSpawnInterval.update(delta, state);
+      this.movement.update(delta, state, this);
+      this.weapon.update(delta, state, this);
+      this.health.update(delta, state, this);
 
-      const { world } = getState();
+      const { world } = state;
 
       // Move to random points
       (() => {
@@ -104,7 +104,7 @@ export const createBossA = (position: Vector) => {
         );
       })();
 
-      const { gameObjectsManager } = getState();
+      const { gameObjectsManager } = state;
 
       // Shoot stranger
       (() => {
@@ -162,9 +162,9 @@ export const createBossA = (position: Vector) => {
       (() => {
         if (this.health.current <= 0) {
           // Create massive explosion
-          createExplosion(this, getState, 1000);
+          createExplosion(this, state, 1000);
 
-          getState().statsManager.bossDied = true;
+          state.statsManager.bossDied = true;
         }
       })();
     },

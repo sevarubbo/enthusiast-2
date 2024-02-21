@@ -20,8 +20,8 @@ const createEnemySpawner = (): Updatable => {
   const SPAWN_FREQUENCY = 1 / 3000;
 
   return {
-    update(delta, getState) {
-      const { gameObjectsManager, world } = getState();
+    update(delta, state) {
+      const { gameObjectsManager, world } = state;
 
       timeSinceLastSpawn += delta;
 
@@ -205,8 +205,8 @@ export function createDefaultState(): State {
         createBossA(getRandomPosition()),
       ],
 
-      update(delta, getState) {
-        enemySpawner.update(delta, getState);
+      update(delta, state) {
+        enemySpawner.update(delta, state);
       },
     }),
   };

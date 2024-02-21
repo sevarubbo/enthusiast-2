@@ -28,7 +28,7 @@ const isNeutral = (object: StateObject) => {
 
 const canShootEnemy = (
   self: Tower,
-  getState: () => State,
+  state: State,
   enemy: StateObject,
 ): boolean => {
   if (vector.distance(self, enemy) > self.shootingRange) {
@@ -40,7 +40,7 @@ const canShootEnemy = (
     vector.create(enemy.x, enemy.y),
   ];
   const willCollideWithFriendlyObject = getFirstObjectLineCollision(
-    getState,
+    state,
     shootingSegment,
     (object) => {
       if (object === self) {
@@ -62,12 +62,12 @@ const canShootEnemy = (
   return !willCollideWithFriendlyObject;
 };
 
-const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, getState) => {
-  const { gameObjectsManager } = getState();
+const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, state) => {
+  const { gameObjectsManager } = state;
   const closestEnemy = gameObjectsManager.findClosestObject(
     self,
     (object) => {
-      return isEnemy(object) && canShootEnemy(self, getState, object);
+      return isEnemy(object) && canShootEnemy(self, state, object);
     },
     self.shootingRange,
   );
@@ -99,14 +99,14 @@ const rotateToAngle: ObjectUpdateFunction<Tower> = (self, delta) => {
 export const towerUpdate: ObjectUpdateFunction<Tower> = (
   self,
   delta,
-  getState,
+  state,
 ) => {
-  rotateToAngle(self, delta, getState);
+  rotateToAngle(self, delta, state);
 
-  const { gameObjectsManager } = getState();
+  const { gameObjectsManager } = state;
 
   if (!self.targetEnemyId) {
-    findTargetEnemy(self, delta, getState);
+    findTargetEnemy(self, delta, state);
   }
 
   const targetEnemy = self.targetEnemyId
@@ -119,8 +119,8 @@ export const towerUpdate: ObjectUpdateFunction<Tower> = (
     return;
   }
 
-  if (!canShootEnemy(self, getState, targetEnemy)) {
-    findTargetEnemy(self, delta, getState);
+  if (!canShootEnemy(self, state, targetEnemy)) {
+    findTargetEnemy(self, delta, state);
   }
 
   const error = -self.aimError + normalRandom() * 2 * self.aimError;

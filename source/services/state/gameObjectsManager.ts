@@ -93,21 +93,19 @@ export const createGameObjectsManager = (
       return object;
     },
 
-    update(delta, getState) {
-      const state = getState();
-
+    update(delta, state) {
       if (state.gameSpeedManager.gameSpeed > 0) {
         for (const objectId in this.objects) {
           const object = this.objects[objectId];
 
           if (object && "update" in object) {
-            object.update(delta, () => state);
+            object.update(delta, state);
           }
         }
       }
 
       if (options.update) {
-        options.update(delta, getState);
+        options.update(delta, state);
       }
     },
   };

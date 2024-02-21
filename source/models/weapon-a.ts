@@ -57,11 +57,11 @@ export const createWeaponA = <T extends WeaponType = "default">({
 
     update: (
       delta: number,
-      getState: () => State,
+      state: State,
       owner: Vector & Collidable & Identifiable,
     ) => {
-      shootInterval.update(delta, getState);
-      autoRefillInterval.update(delta, getState);
+      shootInterval.update(delta, state);
+      autoRefillInterval.update(delta, state);
 
       if (scheduledShoot) {
         shootInterval.fireIfReady(() => {
@@ -70,7 +70,7 @@ export const createWeaponA = <T extends WeaponType = "default">({
           if (ammo <= 0) {
             playSound(
               "no ammo",
-              getSoundProperties(owner, getState().cameraManager, 1),
+              getSoundProperties(owner, state.cameraManager, 1),
             );
 
             return;
@@ -93,7 +93,7 @@ export const createWeaponA = <T extends WeaponType = "default">({
           bulletDirection.x += (2 * Math.random() - 1) * (2 - 2 * accuracy);
           bulletDirection.y += (2 * Math.random() - 1) * (2 - 2 * accuracy);
 
-          getState().gameObjectsManager.spawnObject(
+          state.gameObjectsManager.spawnObject(
             createBullet({
               ...bulletPosition,
               direction: bulletDirection,
@@ -105,7 +105,7 @@ export const createWeaponA = <T extends WeaponType = "default">({
           );
 
           // Set the volume depending on camera position
-          const { cameraManager } = getState();
+          const { cameraManager } = state;
 
           playSound(shotSound, getSoundPosition(bulletPosition, cameraManager));
         });

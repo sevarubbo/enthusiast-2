@@ -69,10 +69,10 @@ const gameLoop = (ctx: CanvasRenderingContext2D, currentTime: number) => {
   // console.log(delta);
   draw(state);
 
-  state.gameSpeedManager.update(delta, () => state);
-  state.cameraManager.update(delta, () => state);
-  state.gameObjectsManager.update(delta, () => state);
-  state.collisionManager.update(delta, () => state);
+  state.gameSpeedManager.update(delta, state);
+  state.cameraManager.update(delta, state);
+  state.gameObjectsManager.update(delta, state);
+  state.collisionManager.update(delta, state);
 
   requestAnimationFrame((newNow) => gameLoop(ctx, newNow));
   accumulatedTime -= frameTime;
@@ -89,7 +89,7 @@ const startGame = (initialState: State) => {
   });
 };
 
-// Export some global stuff
+// Export some global stuff (for debugging)
 Object.defineProperty(window, "Game", {
   value: {
     vector,

@@ -48,55 +48,57 @@ export function createDefenderA(
     shield: createObjectShieldManager(),
     weapon: defaultWeapon,
 
-    update(delta, getState) {
-      this.health.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
-      this.movement.update(delta, getState, this);
-      this.collision.update(delta, getState, this);
-      this.weapon.update(delta, getState, this);
+    update(delta, state) {
+      this.health.update(delta, state, this);
+      this.collision.update(delta, state, this);
+      this.movement.update(delta, state, this);
+      this.collision.update(delta, state, this);
+      this.weapon.update(delta, state, this);
 
-      const { gameObjectsManager } = getState();
+      const { gameObjectsManager } = state;
 
       // Defend StrangerA
       (() => {
         // Find closest stranger
-        const closestStranger = getState().gameObjectsManager.findClosestObject(
+        const closestStranger = state.gameObjectsManager.findClosestObject(
           this,
           (oo) => oo.type === "stranger_a",
         );
 
         // Defend stranger
         (() => {
-          if (closestStranger) {
-            const distanceToStranger = Math.sqrt(
-              (closestStranger.x - this.x) ** 2 +
-                (closestStranger.y - this.y) ** 2,
-            );
+          if (!closestStranger) {
+            return;
+          }
 
-            if (distanceToStranger > this.shootingRange) {
-              this.targetPoint = {
-                x: closestStranger.x,
-                y: closestStranger.y,
-              };
-              this.targetEnemyId = undefined;
+          const distanceToStranger = Math.sqrt(
+            (closestStranger.x - this.x) ** 2 +
+              (closestStranger.y - this.y) ** 2,
+          );
 
-              return;
-            }
+          if (distanceToStranger > this.shootingRange) {
+            this.targetPoint = {
+              x: closestStranger.x,
+              y: closestStranger.y,
+            };
+            this.targetEnemyId = undefined;
 
-            if (!this.targetEnemyId) {
-              this.targetPoint = null;
-              this.movement.stop();
-            }
+            return;
+          }
 
-            // If stranger hit by a bullet
-            const enemyBullet =
-              closestStranger.collision.collidesWithObjects.find(
-                (o) => o.type === "bullet",
-              ) as Bullet | undefined;
+          if (!this.targetEnemyId) {
+            this.targetPoint = null;
+            this.movement.stop();
+          }
 
-            if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
-              this.targetEnemyId = enemyBullet.belongsTo;
-            }
+          // If stranger hit by a bullet
+          const enemyBullet =
+            closestStranger.collision.collidesWithObjects.find(
+              (o) => o.type === "bullet",
+            ) as Bullet | undefined;
+
+          if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
+            this.targetEnemyId = enemyBullet.belongsTo;
           }
         })();
 
@@ -173,17 +175,9 @@ export function createDefenderA(
           };
         })();
 
-        if (!this.targetEnemyId) {
-          this.targetEnemyId = gameObjectsManager.findClosestObject(
-            this,
-            (oo) =>
-              oo.type === "shooting_enemy_a" ||
-              oo.type === "shooting_enemy_b" ||
-              oo.type === "boss_a",
-            this.shootingRange,
-          )?.id;
-
-          if (!this.targetEnemyId) {
+        if (!this.targetEnemyId && !this.targetPoint) {
+          // Defend self
+          (() => {
             const enemyBullet = this.collision.collidesWithObjects.find(
               (o) => o.type === "bullet",
             ) as Bullet | undefined;
@@ -199,14 +193,27 @@ export function createDefenderA(
                   this.shootingRange
               ) {
                 this.targetEnemyId = targetEnemy.id;
+              } else {
+                this.targetEnemyId = undefined;
               }
             }
+          })();
+
+          if (!this.targetEnemyId) {
+            this.targetEnemyId = gameObjectsManager.findClosestObject(
+              this,
+              (oo) =>
+                oo.type === "shooting_enemy_a" ||
+                oo.type === "shooting_enemy_b" ||
+                oo.type === "boss_a",
+              this.shootingRange,
+            )?.id;
           }
         }
 
         const targetEnemy =
           this.targetEnemyId &&
-          getState().gameObjectsManager.objects[this.targetEnemyId];
+          state.gameObjectsManager.objects[this.targetEnemyId];
 
         if (!targetEnemy) {
           this.targetEnemyId = undefined;
@@ -253,7 +260,7 @@ export function createDefenderA(
           vector.create(targetEnemy.x, targetEnemy.y),
         ];
         const willCollideWithFriendlyObject = !!getFirstObjectLineCollision(
-          getState,
+          state,
           shootingSegment,
           (object) => {
             if (object === this) {
