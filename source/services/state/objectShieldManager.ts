@@ -1,27 +1,48 @@
-export interface ObjectShieldManager {
-  active: boolean;
-  hp: number;
-  maxHp: number;
-
-  absorbDamage(damage: number): void;
-}
+import { getSoundProperties, playSound } from "services/audio";
+import type { State } from "./types";
+import type { Vector } from "services/vector";
 
 export const createObjectShieldManager = ({
   maxHp = 30,
   hp = maxHp,
   active = false,
-}: Partial<ObjectShieldManager> = {}): ObjectShieldManager => ({
-  active,
-  hp,
-  maxHp,
+}: {
+  maxHp?: number;
+  hp?: number;
+  active?: boolean;
+} = {}) => {
+  return {
+    maxHp,
 
-  absorbDamage(damage: number) {
-    if (this.active) {
-      this.hp = Math.max(0, this.hp - damage);
+    get active() {
+      return active;
+    },
 
-      if (this.hp === 0) {
-        this.active = false;
+    set active(value: boolean) {
+      active = value;
+    },
+
+    get hp() {
+      return hp;
+    },
+
+    set hp(value: number) {
+      hp = value;
+    },
+
+    absorbDamage(damage: number, shieldOwner: Vector, state: State) {
+      if (active) {
+        hp = Math.max(0, this.hp - damage);
+
+        if (hp === 0) {
+          active = false;
+
+          playSound(
+            "shield lost",
+            getSoundProperties(shieldOwner, state.cameraManager),
+          );
+        }
       }
-    }
-  },
-});
+    },
+  } as const;
+};

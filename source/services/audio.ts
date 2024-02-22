@@ -37,6 +37,10 @@ const audioFiles = [
     url: "sounds/ESM_Magic_Game_Shield_Guard_Fantasy_Cast_Craft_Mobile_App_Special_Touch_Pickup.wav",
   },
   {
+    name: "shield lost",
+    url: "sounds/DS_VP_fx_foley_one_shot_short_glass_shatter.wav",
+  },
+  {
     name: "egg hatch",
     url: "sounds/LarvaEggHatch_BU01.514.wav",
   },
@@ -59,11 +63,13 @@ export type SoundName = (typeof audioFiles)[number]["name"];
 // Array to store loaded audio data
 let loadedAudioData: AudioData[] = [];
 
-let globalVolume = 0.5;
+let globalVolume = 0.1;
 
 export const setGlobalVolume = (volume: number) => {
   globalVolume = volume;
 };
+
+export const getGlobalVolume = () => globalVolume;
 
 // Load audio files and store them in an object
 export async function loadAudioFiles(): Promise<void> {

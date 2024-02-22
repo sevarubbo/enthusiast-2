@@ -145,10 +145,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
             state.gameObjectsManager.spawnObject(createEnemyD(position));
           }
 
-          playSound("egg hatch", {
-            ...getSoundPosition(this, state.cameraManager),
-            volume: 1.5,
-          });
+          playSound("egg hatch", getSoundPosition(this, state.cameraManager));
         } else if (Math.random() < 0.01) {
           state.gameObjectsManager.spawnObject(
             createHouse({ x: this.x, y: this.y }),

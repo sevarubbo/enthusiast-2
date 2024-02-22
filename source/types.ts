@@ -14,7 +14,7 @@ import type { EnemyD } from "models/enemy-d";
 import type { createItemRewardA } from "models/item-reward-a";
 import type { PlantEaterA } from "models/plant-eater-a";
 import type { ShootingEnemyA } from "models/shooting-enemy-a";
-import type { WeaponAItem } from "models/weapon-a-item";
+import type { createWeaponAItem } from "models/weapon-a-item";
 
 export type StateObject =
   | Enemy
@@ -29,6 +29,6 @@ export type StateObject =
   | DefenderA
   | ShieldItem
   | EnemyD
-  | WeaponAItem
+  | ReturnType<typeof createWeaponAItem>
   | ReturnType<typeof createItemRewardA>
   | ReturnType<typeof createBossA>;

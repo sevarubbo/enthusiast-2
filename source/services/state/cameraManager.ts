@@ -13,7 +13,7 @@ export interface CameraManager extends Updatable {
   worldPointerPosition: Vector;
   isPointerDown: boolean;
   fromScreen(coordinates: Vector): Vector;
-  isWithinFrame(screenCoordinates: Vector): boolean;
+  isWithinFrame(screenCoordinates: Vector, margin: number): boolean;
   toScreen(coordinates: Vector): Vector;
 }
 
@@ -46,20 +46,26 @@ export const createCameraManager = (
       this.frame.position,
     );
   },
-  isWithinFrame(screenCoordinates) {
-    if (screenCoordinates.x < this.frame.position.x) {
+  isWithinFrame(screenCoordinates, margin) {
+    if (screenCoordinates.x < this.frame.position.x - margin) {
       return false;
     }
 
-    if (screenCoordinates.y < this.frame.position.y) {
+    if (screenCoordinates.y < this.frame.position.y - margin) {
       return false;
     }
 
-    if (screenCoordinates.x > this.frame.position.x + this.frame.size.x) {
+    if (
+      screenCoordinates.x >
+      this.frame.position.x + this.frame.size.x + margin
+    ) {
       return false;
     }
 
-    if (screenCoordinates.y > this.frame.position.y + this.frame.size.y) {
+    if (
+      screenCoordinates.y >
+      this.frame.position.y + this.frame.size.y + margin
+    ) {
       return false;
     }
 

@@ -322,7 +322,10 @@ export function drawObjects(
 
     if (
       object &&
-      state.cameraManager.isWithinFrame(state.cameraManager.toScreen(object))
+      state.cameraManager.isWithinFrame(
+        state.cameraManager.toScreen(object),
+        50,
+      )
     ) {
       drawObject(ctx, state, object);
     }

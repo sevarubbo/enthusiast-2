@@ -1,8 +1,10 @@
 import { createBullet } from "../bullet";
+import { createId } from "helpers";
 import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
 import type { Matrix } from "services/matrix";
 import type { State } from "services/state";
+import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
 export const createExplosion = (
@@ -54,3 +56,20 @@ export const canShootEnemyWithoutFriendlyFire = (
     return isFriend(o);
   });
 };
+
+export const createBaseObject = (position: Vector) => ({
+  id: createId(),
+
+  get x() {
+    return position.x;
+  },
+
+  get y() {
+    return position.y;
+  },
+
+  setPosition(p: Vector) {
+    position.x = p.x;
+    position.y = p.y;
+  },
+});

@@ -82,12 +82,6 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
         state.cameraManager.frame.position.y +
           state.cameraManager.frame.size.y / 2,
       );
-
-      // Restart on text click
-      // Only text, not the whole canvas
-      ctx.canvas.addEventListener("click", () => {
-        window.location.reload();
-      });
     });
   }
 
@@ -105,12 +99,6 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
         state.cameraManager.frame.position.y +
           state.cameraManager.frame.size.y / 2,
       );
-
-      // Restart on text click
-      // Only text, not the whole canvas
-      ctx.canvas.addEventListener("click", () => {
-        window.location.reload();
-      });
     });
   }
 }

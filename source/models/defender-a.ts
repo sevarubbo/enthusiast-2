@@ -68,6 +68,8 @@ export function createDefenderA(
         // Defend stranger
         (() => {
           if (!closestStranger) {
+            this.targetPoint = null;
+
             return;
           }
 
@@ -77,19 +79,22 @@ export function createDefenderA(
           );
 
           if (distanceToStranger > this.shootingRange) {
+            // Forget about enemy
+            this.targetEnemyId = undefined;
+
+            // Go to stranger
             this.targetPoint = {
               x: closestStranger.x,
               y: closestStranger.y,
             };
-            this.targetEnemyId = undefined;
 
             return;
           }
 
-          if (!this.targetEnemyId) {
-            this.targetPoint = null;
-            this.movement.stop();
-          }
+          // if (!this.targetEnemyId) {
+          //   this.targetPoint = null;
+          //   this.movement.stop();
+          // }
 
           // If stranger hit by a bullet
           const enemyBullet =

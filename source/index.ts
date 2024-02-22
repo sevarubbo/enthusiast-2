@@ -4,7 +4,11 @@ import { createCanvas } from "./services/canvas";
 import { vector } from "./services/vector";
 import { createWorldB } from "data/world-b";
 import { createWorldC } from "data/world-c";
-import { loadAudioFiles, setGlobalVolume } from "services/audio";
+import {
+  getGlobalVolume,
+  loadAudioFiles,
+  setGlobalVolume,
+} from "services/audio";
 import {
   setIsPointerDown,
   setKeyPressed,
@@ -103,17 +107,17 @@ volumeControl.type = "range";
 volumeControl.min = "0";
 volumeControl.max = "1";
 volumeControl.step = "0.01";
-volumeControl.value = "0.5";
+volumeControl.value = getGlobalVolume().toString();
+
+volumeControl.style.position = "fixed";
+volumeControl.style.top = "230px";
+volumeControl.style.left = "10px";
 
 volumeControl.addEventListener("input", (e) => {
   const value = Number((e.target as HTMLInputElement).value);
 
   setGlobalVolume(value);
 });
-
-volumeControl.style.position = "fixed";
-volumeControl.style.top = "230px";
-volumeControl.style.left = "10px";
 
 document.body.appendChild(volumeControl);
 

@@ -1,7 +1,6 @@
-import { createExplosion } from "./helpers";
+import { createBaseObject, createExplosion } from "./helpers";
 import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createWeaponA } from "./weapon-a";
-import { createId } from "helpers";
 import { matrix } from "services/matrix";
 import {
   createIntervalManager,
@@ -12,23 +11,6 @@ import {
 } from "services/state";
 import { createObjectShieldManager } from "services/state/objectShieldManager";
 import { vector, type Vector } from "services/vector";
-
-const createBaseObject = (position: Vector) => ({
-  id: createId(),
-
-  get x() {
-    return position.x;
-  },
-
-  get y() {
-    return position.y;
-  },
-
-  setPosition(p: Vector) {
-    position.x = p.x;
-    position.y = p.y;
-  },
-});
 
 export const createBossA = (position: Vector) => {
   let targetPoint: Vector | null = null;
