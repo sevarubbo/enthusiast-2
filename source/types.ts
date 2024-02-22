@@ -9,6 +9,7 @@ import type {
 } from "./models";
 import type { createHealingStationA } from "./models/healing-station-a";
 import type { ShieldItem } from "./models/shield-item";
+import type { createWallA } from "./models/wall-a";
 import type { createBossA } from "models/boss-a";
 import type { DefenderA } from "models/defender-a";
 import type { EnemyD } from "models/enemy-d";
@@ -33,4 +34,5 @@ export type StateObject =
   | ReturnType<typeof createWeaponAItem>
   | ReturnType<typeof createItemRewardA>
   | ReturnType<typeof createBossA>
-  | ReturnType<typeof createHealingStationA>;
+  | ReturnType<typeof createHealingStationA>
+  | ReturnType<typeof createWallA>;

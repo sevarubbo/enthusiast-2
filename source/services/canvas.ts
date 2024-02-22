@@ -83,3 +83,16 @@ export const drawCircleProgress = (
   ctx.stroke();
   ctx.closePath();
 };
+
+export const drawRectangle = (
+  ctx: CanvasRenderingContext2D,
+  o: {
+    position: Vector;
+    width: number;
+    height: number;
+    color: string;
+  },
+) => {
+  ctx.fillStyle = o.color;
+  ctx.fillRect(o.position.x, o.position.y, o.width, o.height);
+};

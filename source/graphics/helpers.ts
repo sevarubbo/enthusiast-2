@@ -72,10 +72,10 @@ export const drawObjectAsText = (
   );
 };
 
-export const drawDefaultObjectView = (
+export const drawDefaultRoundObjectView = (
   ctx: CanvasRenderingContext2D,
   state: State,
-  object: StateObject,
+  object: StateObject & { collisionCircle: { radius: number } },
 ) => {
   drawCircle(ctx, {
     position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
@@ -138,6 +138,7 @@ export const drawObjectShield = (
 
   // Object with shield
   object: StateObject & {
+    collisionCircle: { radius: number };
     shield: ReturnType<typeof createObjectShieldManager>;
   },
 ) => {
@@ -157,4 +158,20 @@ export const drawObjectShield = (
       progress: object.shield.hp / object.shield.maxHp,
     });
   }
+};
+
+export const drawQueue = {
+  queue: [] as Array<{
+    index: 1 | 2;
+    fn: (ctx: CanvasRenderingContext2D) => void;
+  }>,
+  clear: () => {
+    drawQueue.queue = [];
+  },
+  schedule: (index: 1 | 2, fn: (ctx: CanvasRenderingContext2D) => void) => {
+    drawQueue.queue.push({
+      index,
+      fn,
+    });
+  },
 };

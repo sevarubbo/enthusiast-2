@@ -1,14 +1,16 @@
 import { drawHealthBar } from "./healthbar";
 import {
-  drawDefaultObjectView,
+  drawDefaultRoundObjectView,
   drawObjectAsText,
   drawObjectShield,
+  drawQueue,
   getPlantColor,
 } from "./helpers";
 import { drawObjectBoss } from "./object-boss";
-import { drawCircle, drawCircleOutline } from "services/canvas";
+import { drawCircle, drawCircleOutline, drawRectangle } from "services/canvas";
 import { vector } from "services/vector";
 import type { State, Weapon } from "services/state";
+import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
 const drawObjectWeapon = (
@@ -16,6 +18,10 @@ const drawObjectWeapon = (
   state: State,
   object: StateObject & { weapon: Weapon },
 ) => {
+  if (!("collisionCircle" in object)) {
+    throw new Error("Object must have collisionCircle");
+  }
+
   if (object.weapon.type === "machine_gun_b") {
     ctx.font = "10px Arial";
     ctx.fillStyle = "#fff";
@@ -56,26 +62,12 @@ const drawObjectWeapon = (
   }
 };
 
-export const drawQueue = {
-  queue: [] as Array<{
-    index: 1 | 2;
-    fn: (ctx: CanvasRenderingContext2D) => void;
-  }>,
-  clear: () => {
-    drawQueue.queue = [];
-  },
-  schedule: (index: 1 | 2, fn: (ctx: CanvasRenderingContext2D) => void) => {
-    drawQueue.queue.push({
-      index,
-      fn,
-    });
-  },
-};
-
 function drawObjectAsCircle(
   ctx: CanvasRenderingContext2D,
   state: State,
-  object: { radius: number; x: number; y: number; color: string } | StateObject,
+  object:
+    | { radius: number; x: number; y: number; color: string }
+    | (StateObject & { collisionCircle: { radius: number } }),
 ) {
   if ("health" in object && object.health.current < object.health.max) {
     const healthBarPosition = vector.add(
@@ -328,9 +320,26 @@ function drawObject(
       return;
     }
 
+    case "wall_a": {
+      const box = object.collision.box as Vector;
+
+      drawRectangle(ctx, {
+        position: state.cameraManager.toScreen(object),
+        width: box.x,
+        height: box.y,
+        color: object.color,
+      });
+
+      return;
+    }
+
     default: {
       drawQueue.schedule(2, (ctx2) => {
-        drawDefaultObjectView(ctx2, state, object);
+        if ("collisionCircle" in object) {
+          drawDefaultRoundObjectView(ctx2, state, object);
+        } else {
+          throw new Error("Object must have collisionCircle");
+        }
       });
     }
   }

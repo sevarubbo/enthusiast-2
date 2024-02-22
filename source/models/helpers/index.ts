@@ -15,6 +15,10 @@ export const createExplosion = (
   const bulletsCount = size;
   const angleStep = (2 * Math.PI) / bulletsCount;
 
+  if (!("collisionCircle" in object)) {
+    throw new Error("Object must have collisionCircle");
+  }
+
   for (let i = 0; i < bulletsCount; i++) {
     // Each bullet should be at distance from the center of the enemy
     // equal to the radius of the enemy

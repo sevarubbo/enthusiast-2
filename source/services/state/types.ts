@@ -1,3 +1,4 @@
+import type { createObjectCollisionManager } from "../../models/managers";
 import type { StateObject } from "../../types";
 import type { createQuadtree } from "../quadtree";
 import type { CameraManager } from "./cameraManager";
@@ -6,7 +7,6 @@ import type { GameObjectsManager } from "./gameObjectsManager";
 import type { GameSpeedManager } from "./gameSpeedManager";
 import type { ObjectHealthManager } from "./objectHealthManager";
 import type { ObjectMovementManager } from "./objectMovementManager";
-import type { ObjectCollisionManager } from "models/managers";
 import type { createMachineGunB, createWeaponA } from "models/weapon-a";
 import type { createStatsManager } from "services/statsManager";
 import type { Vector } from "services/vector";
@@ -37,7 +37,7 @@ export interface Collidable extends Vector {
   collisionCircle: {
     radius: number;
   };
-  collision: ObjectCollisionManager;
+  collision: ReturnType<typeof createObjectCollisionManager>;
 }
 
 export interface Healthy extends Identifiable {

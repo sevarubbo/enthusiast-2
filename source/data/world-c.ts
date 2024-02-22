@@ -1,6 +1,7 @@
 import { createWorldDefaults } from "./defaults";
 import { createHealingStationA } from "../models/healing-station-a";
 import { createShootingEnemyA } from "../models/shooting-enemy-a";
+import { createWallA } from "../models/wall-a";
 import { createWeaponAItem } from "../models/weapon-a-item";
 import { createStrangerA } from "models";
 import { createShieldItem } from "models/shield-item";
@@ -46,6 +47,11 @@ export const createWorldC = (): State => {
         createHealingStationA({
           x: 300,
           y: 300,
+        }),
+
+        createWallA({
+          x: 300,
+          y: 100,
         }),
       ],
     }),

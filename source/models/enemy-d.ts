@@ -76,7 +76,10 @@ export function createEnemyD(
         const distance =
           Math.sqrt(
             (targetEnemy.x - this.x) ** 2 + (targetEnemy.y - this.y) ** 2,
-          ) - targetEnemy.collisionCircle.radius;
+          ) -
+          ("collisionCircle" in targetEnemy
+            ? targetEnemy.collisionCircle.radius
+            : 0);
 
         // Aim at the stranger
         this.movement.angle = Math.atan2(

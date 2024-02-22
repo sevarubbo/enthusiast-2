@@ -40,6 +40,10 @@ export const createCollisionManager = () => {
               const vectorBetween = vector.subtract(nearbyObject, object);
               const distance = vector.length(vectorBetween);
 
+              if (!("collisionCircle" in nearbyObject)) {
+                continue;
+              }
+
               if (
                 distance <=
                 object.collisionCircle.radius +

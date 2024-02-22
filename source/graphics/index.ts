@@ -1,4 +1,5 @@
-import { drawObjects, drawQueue } from "./objects";
+import { drawQueue } from "./helpers";
+import { drawObjects } from "./objects";
 import type { Vector } from "../services/vector";
 import type { State } from "services/state";
 
