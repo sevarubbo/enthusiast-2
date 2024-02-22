@@ -1,3 +1,4 @@
+import { matrix } from "../matrix";
 import { vector } from "../vector";
 import type { State } from "./types";
 
@@ -62,13 +63,36 @@ export const createCollisionManager = () => {
                       object.collisionCircle.radius);
 
                   if ("setPosition" in object) {
-                    object.setPosition({
-                      x: object.x - direction.x * offset,
-                      y: object.y - direction.y * offset,
-                    });
+                    const newPosition = matrix.fitPoint(
+                      {
+                        x: object.x - direction.x * offset,
+                        y: object.y - direction.y * offset,
+                      },
+                      matrix.create(
+                        object.collisionCircle.radius,
+                        object.collisionCircle.radius,
+                        state.world.size.x - object.collisionCircle.radius,
+                        state.world.size.y - object.collisionCircle.radius,
+                      ),
+                    );
+
+                    object.setPosition(newPosition);
                   } else {
-                    object.x -= direction.x * offset;
-                    object.y -= direction.y * offset;
+                    const newPosition = matrix.fitPoint(
+                      {
+                        x: object.x - direction.x * offset,
+                        y: object.y - direction.y * offset,
+                      },
+                      matrix.create(
+                        object.collisionCircle.radius,
+                        object.collisionCircle.radius,
+                        state.world.size.x - object.collisionCircle.radius,
+                        state.world.size.y - object.collisionCircle.radius,
+                      ),
+                    );
+
+                    object.x = newPosition.x;
+                    object.y = newPosition.y;
                   }
                 }
               }

@@ -46,6 +46,8 @@ export interface Healthy extends Identifiable {
 
 export interface Movable extends Vector, Updatable, Identifiable {
   movement: ObjectMovementManager;
+
+  /** @deprecated */
   targetPoint?: Vector | null;
 }
 

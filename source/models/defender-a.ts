@@ -42,7 +42,6 @@ export function createDefenderA(
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.08 }),
     collision: createObjectCollisionManager(),
-    targetPoint: null,
     shootingRange: 300,
     targetEnemyId: undefined,
     shield: createObjectShieldManager(),
@@ -68,7 +67,7 @@ export function createDefenderA(
       // Defend stranger
       idle = (() => {
         if (!closestStranger) {
-          this.targetPoint = null;
+          this.movement.setTargetPoint(null);
 
           return true;
         }
@@ -82,21 +81,12 @@ export function createDefenderA(
           this.targetEnemyId = undefined;
 
           // Go to stranger
-          this.targetPoint = {
-            x: closestStranger.x,
-            y: closestStranger.y,
-          };
+          this.movement.setTargetPoint(closestStranger);
         } else {
-          this.targetPoint = null;
-          this.movement.stop();
+          this.movement.setTargetPoint(null);
 
           return true;
         }
-
-        // if (!this.targetEnemyId) {
-        //   this.targetPoint = null;
-        //   this.movement.stop();
-        // }
 
         // If stranger hit by a bullet
         const enemyBullet = closestStranger.collision.collidesWithObjects.find(
@@ -113,10 +103,6 @@ export function createDefenderA(
       // Find better weapon
       (() => {
         if (!idle) {
-          return;
-        }
-
-        if (this.targetPoint) {
           return;
         }
 
@@ -141,10 +127,7 @@ export function createDefenderA(
           return;
         }
 
-        this.targetPoint = {
-          x: weaponItem.x,
-          y: weaponItem.y,
-        };
+        this.movement.setTargetPoint(weaponItem);
       })();
 
       // Switch to default weapon when ammo is empty
@@ -156,7 +139,7 @@ export function createDefenderA(
 
       // Find shield
       (() => {
-        if (this.targetPoint) {
+        if (this.movement.targetPoint) {
           return;
         }
 
@@ -181,10 +164,7 @@ export function createDefenderA(
           return;
         }
 
-        this.targetPoint = {
-          x: shieldItem.x,
-          y: shieldItem.y,
-        };
+        this.movement.setTargetPoint(shieldItem);
       })();
 
       if (!this.targetEnemyId && !this.targetPoint) {
@@ -237,16 +217,12 @@ export function createDefenderA(
         const distanceToEnemy = vector.distance(this, targetEnemy);
 
         if (distanceToEnemy > this.shootingRange) {
-          this.targetPoint = {
-            x: targetEnemy.x,
-            y: targetEnemy.y,
-          };
+          this.movement.setTargetPoint(targetEnemy);
 
           return;
         }
 
-        this.targetPoint = null;
-        this.movement.stop();
+        this.movement.setTargetPoint(null);
 
         this.movement.angle = Math.atan2(
           targetEnemy.y - this.y,

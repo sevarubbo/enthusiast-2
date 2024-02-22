@@ -13,6 +13,7 @@ import {
   createObjectMovementManager,
   createObjectCollisionManager,
 } from "services/state";
+import type { StateObject } from "../types";
 import type { Weapon } from "services/state";
 
 export interface ShootingEnemyA extends Movable, Collidable, Healthy {
@@ -21,6 +22,7 @@ export interface ShootingEnemyA extends Movable, Collidable, Healthy {
   color: string;
   shield: ReturnType<typeof createObjectShieldManager>;
   weapon: Weapon;
+  targetEnemyId: string | undefined;
 }
 
 export function createShootingEnemyA(
@@ -42,10 +44,10 @@ export function createShootingEnemyA(
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.05 / scale }),
     collision: createObjectCollisionManager(),
-    targetPoint: null,
     shootingRange: 300 * scale,
     shield: createObjectShieldManager(),
     weapon: defaultWeapon,
+    targetEnemyId: undefined,
 
     update(delta, state) {
       this.health.update(delta, state, this);
@@ -54,26 +56,45 @@ export function createShootingEnemyA(
 
       const { gameObjectsManager } = state;
 
+      const getTargetEnemy = () => {
+        let enemy: StateObject | undefined = undefined;
+
+        if (this.targetEnemyId) {
+          enemy = gameObjectsManager.objects[this.targetEnemyId];
+        }
+
+        if (enemy) {
+          return enemy;
+        }
+
+        enemy =
+          gameObjectsManager.findClosestObject(
+            this,
+            (oo) =>
+              oo.type === "stranger_a" ||
+              oo.type === "shooting_enemy_b" ||
+              oo.type === "defender_a",
+          ) ||
+          gameObjectsManager.findClosestObject(
+            this,
+            (oo) => oo.type === "tower",
+          ) ||
+          gameObjectsManager.findClosestObject(
+            this,
+            (oo) =>
+              oo.type === "plant_eater_a" ||
+              oo.type === "enemyC" ||
+              oo.type === "enemy",
+          ) ||
+          undefined;
+
+        this.targetEnemyId = enemy?.id;
+
+        return enemy;
+      };
+
       // Find targetEnemy
-      const targetEnemy =
-        gameObjectsManager.findClosestObject(
-          this,
-          (oo) =>
-            oo.type === "stranger_a" ||
-            oo.type === "shooting_enemy_b" ||
-            oo.type === "defender_a",
-        ) ||
-        gameObjectsManager.findClosestObject(
-          this,
-          (oo) => oo.type === "tower",
-        ) ||
-        gameObjectsManager.findClosestObject(
-          this,
-          (oo) =>
-            oo.type === "plant_eater_a" ||
-            oo.type === "enemyC" ||
-            oo.type === "enemy",
-        );
+      const targetEnemy = getTargetEnemy();
 
       if (targetEnemy) {
         // Get to shooting range
@@ -163,51 +184,6 @@ export function createShootingEnemyA(
       // After death
       if (this.health.current <= 0) {
         state.statsManager.incrementEnemiesDied();
-
-        // Check if the position is not too close to the player
-        const stranger =
-          state.gameObjectsManager.findObjectsByType("stranger_a")[0];
-
-        // Respawning
-        (() => {
-          if (!stranger) {
-            return;
-          }
-
-          // // Respawn
-          // (() => {
-          //   const randomPosition = state.world.getRandomPoint();
-
-          //   if (
-          //     !(
-          //       vector.distance(randomPosition, stranger) <
-          //       this.shootingRange * 3
-          //     ) ||
-          //     state.gameObjectsManager.findObjectsByType(
-          //       "shooting_enemy_a",
-          //     ).length <= 0
-          //   ) {
-          //     state.gameObjectsManager.spawnObject(
-          //       createShootingEnemyA(randomPosition),
-          //     );
-          //   }
-          // })();
-
-          // if (Math.random() < 0.1) {
-          //   const randomPosition = state.world.getRandomPoint();
-
-          //   if (
-          //     !(
-          //       vector.distance(randomPosition, stranger) <
-          //       this.shootingRange * 3
-          //     )
-          //   ) {
-          //     state.gameObjectsManager.spawnObject(
-          //       createShootingEnemyA(randomPosition),
-          //     );
-          //   }
-          // }
-        })();
 
         // Drop shield
         if (Math.random() < 0.1) {

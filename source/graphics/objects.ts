@@ -6,7 +6,7 @@ import {
   getPlantColor,
 } from "./helpers";
 import { drawObjectBoss } from "./object-boss";
-import { drawCircle } from "services/canvas";
+import { drawCircle, drawCircleOutline } from "services/canvas";
 import { vector } from "services/vector";
 import type { State, Weapon } from "services/state";
 import type { StateObject } from "types";
@@ -133,6 +133,15 @@ function drawObject(
 
   if ("weapon" in object) {
     drawObjectWeapon(ctx, state, object);
+  }
+
+  if ("shootingRange" in object) {
+    drawCircleOutline(ctx, {
+      position: state.cameraManager.toScreen(object),
+      color: "rgba(255, 255, 255, 0.1)",
+      radius: object.shootingRange,
+      lineWidth: 1,
+    });
   }
 
   switch (object.type) {

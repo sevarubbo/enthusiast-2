@@ -13,8 +13,11 @@ export interface ObjectMovementManager {
   start(direction: Vector): void;
   stop(): void;
   setSpeedVector(v: Vector): void;
-  moveToTargetPoint(object: Movable, v: Vector | null | undefined): void;
   angle: number;
+
+  targetPoint: Vector | null;
+  setTargetPoint(targetPoint: Vector | null): void;
+  moveToTargetPoint(object: Movable, v: Vector | null | undefined): void;
 
   update(delta: number, state: State, object: StateObject & Movable): void;
 }
@@ -52,16 +55,31 @@ export const createObjectMovementManager = (
       this.direction = vector.normalize(this.speedVector);
     },
 
-    moveToTargetPoint(object: Movable, targetPoint: Vector | null) {
-      if (!targetPoint) {
+    targetPoint: null,
+
+    setTargetPoint(targetPoint: Vector | null) {
+      this.targetPoint = targetPoint && {
+        x: targetPoint.x,
+        y: targetPoint.y,
+      };
+
+      if (targetPoint === null) {
+        this.stop();
+      }
+    },
+
+    moveToTargetPoint(object: Movable, targetPoint?: Vector | null) {
+      const tp = targetPoint || this.targetPoint;
+
+      if (!tp) {
         return;
       }
 
-      const d = vector.distance(object, targetPoint);
+      const d = vector.distance(object, tp);
 
       if (d < this.realSpeed) {
-        object.x = targetPoint.x;
-        object.y = targetPoint.y;
+        object.x = tp.x;
+        object.y = tp.y;
         object.targetPoint = null;
 
         this.stop();
@@ -69,7 +87,7 @@ export const createObjectMovementManager = (
         return;
       }
 
-      this.start(vector.direction(object, targetPoint));
+      this.start(vector.direction(object, tp));
 
       return;
     },
@@ -81,8 +99,12 @@ export const createObjectMovementManager = (
       this.speedVector = vector.scale(this.direction, this.realSpeed);
       this.nextPosition = vector.add(object, this.speedVector);
 
-      object.x = this.nextPosition.x;
-      object.y = this.nextPosition.y;
+      if ("setPosition" in object) {
+        object.setPosition(this.nextPosition);
+      } else {
+        object.x = this.nextPosition.x;
+        object.y = this.nextPosition.y;
+      }
 
       this.angle = vector.toAngle(this.direction);
     },
