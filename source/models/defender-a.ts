@@ -57,165 +57,173 @@ export function createDefenderA(
 
       const { gameObjectsManager } = state;
 
-      // Defend StrangerA
-      (() => {
-        // Find closest stranger
-        const closestStranger = state.gameObjectsManager.findClosestObject(
-          this,
-          (oo) => oo.type === "stranger_a",
-        );
+      // Find closest stranger
+      const closestStranger = state.gameObjectsManager.findClosestObject(
+        this,
+        (oo) => oo.type === "stranger_a",
+      );
 
-        // Defend stranger
-        (() => {
-          if (!closestStranger) {
-            this.targetPoint = null;
+      let idle = true;
 
-            return;
-          }
+      // Defend stranger
+      idle = (() => {
+        if (!closestStranger) {
+          this.targetPoint = null;
 
-          const distanceToStranger = Math.sqrt(
-            (closestStranger.x - this.x) ** 2 +
-              (closestStranger.y - this.y) ** 2,
-          );
-
-          if (distanceToStranger > this.shootingRange) {
-            // Forget about enemy
-            this.targetEnemyId = undefined;
-
-            // Go to stranger
-            this.targetPoint = {
-              x: closestStranger.x,
-              y: closestStranger.y,
-            };
-
-            return;
-          }
-
-          // if (!this.targetEnemyId) {
-          //   this.targetPoint = null;
-          //   this.movement.stop();
-          // }
-
-          // If stranger hit by a bullet
-          const enemyBullet =
-            closestStranger.collision.collidesWithObjects.find(
-              (o) => o.type === "bullet",
-            ) as Bullet | undefined;
-
-          if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
-            this.targetEnemyId = enemyBullet.belongsTo;
-          }
-        })();
-
-        // Find better weapon
-        (() => {
-          if (this.targetPoint) {
-            return;
-          }
-
-          if (this.weapon.type === "machine_gun_b" && this.weapon.ammo > 0) {
-            return;
-          }
-
-          const weaponItem = gameObjectsManager.findClosestObject(
-            this,
-            (oo) => oo.type === "weapon_a_item",
-          );
-
-          if (!weaponItem) {
-            return;
-          }
-
-          // Don't go too far for a weapon
-          if (
-            closestStranger &&
-            vector.distance(closestStranger, weaponItem) > this.shootingRange
-          ) {
-            return;
-          }
-
-          this.targetPoint = {
-            x: weaponItem.x,
-            y: weaponItem.y,
-          };
-        })();
-
-        // Switch to default weapon when ammo is empty
-        (() => {
-          if (this.weapon.type === "machine_gun_b" && this.weapon.ammo <= 0) {
-            this.weapon = defaultWeapon;
-          }
-        })();
-
-        // Find shield
-        (() => {
-          if (this.targetPoint) {
-            return;
-          }
-
-          if (this.shield.active && this.shield.hp > 0) {
-            return;
-          }
-
-          const shieldItem = gameObjectsManager.findClosestObject(
-            this,
-            (oo) => oo.type === "shield_item",
-          );
-
-          if (!shieldItem) {
-            return;
-          }
-
-          // Don't go too far for a shield
-          if (
-            closestStranger &&
-            vector.distance(closestStranger, shieldItem) > this.shootingRange
-          ) {
-            return;
-          }
-
-          this.targetPoint = {
-            x: shieldItem.x,
-            y: shieldItem.y,
-          };
-        })();
-
-        if (!this.targetEnemyId && !this.targetPoint) {
-          // Defend self
-          (() => {
-            const enemyBullet = this.collision.collidesWithObjects.find(
-              (o) => o.type === "bullet",
-            ) as Bullet | undefined;
-
-            const targetEnemy =
-              enemyBullet && gameObjectsManager.objects[enemyBullet.belongsTo];
-
-            if (targetEnemy) {
-              // Don't go too far for an enemy
-              if (
-                closestStranger &&
-                vector.distance(closestStranger, targetEnemy) <
-                  this.shootingRange
-              ) {
-                this.targetEnemyId = targetEnemy.id;
-              } else {
-                this.targetEnemyId = undefined;
-              }
-            }
-          })();
-
-          if (!this.targetEnemyId) {
-            this.targetEnemyId = gameObjectsManager.findClosestObject(
-              this,
-              (oo) =>
-                oo.type === "shooting_enemy_a" ||
-                oo.type === "shooting_enemy_b" ||
-                oo.type === "boss_a",
-              this.shootingRange,
-            )?.id;
-          }
+          return true;
         }
 
+        const distanceToStranger = Math.sqrt(
+          (closestStranger.x - this.x) ** 2 + (closestStranger.y - this.y) ** 2,
+        );
+
+        if (distanceToStranger > this.shootingRange) {
+          // Forget about enemy
+          this.targetEnemyId = undefined;
+
+          // Go to stranger
+          this.targetPoint = {
+            x: closestStranger.x,
+            y: closestStranger.y,
+          };
+        } else {
+          this.targetPoint = null;
+          this.movement.stop();
+
+          return true;
+        }
+
+        // if (!this.targetEnemyId) {
+        //   this.targetPoint = null;
+        //   this.movement.stop();
+        // }
+
+        // If stranger hit by a bullet
+        const enemyBullet = closestStranger.collision.collidesWithObjects.find(
+          (o) => o.type === "bullet",
+        ) as Bullet | undefined;
+
+        if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
+          this.targetEnemyId = enemyBullet.belongsTo;
+        }
+
+        return false;
+      })();
+
+      // Find better weapon
+      (() => {
+        if (!idle) {
+          return;
+        }
+
+        if (this.targetPoint) {
+          return;
+        }
+
+        if (this.weapon.type === "machine_gun_b" && this.weapon.ammo > 0) {
+          return;
+        }
+
+        const weaponItem = gameObjectsManager.findClosestObject(
+          this,
+          (oo) => oo.type === "weapon_a_item",
+        );
+
+        if (!weaponItem) {
+          return;
+        }
+
+        // Don't go too far for a weapon
+        if (
+          closestStranger &&
+          vector.distance(closestStranger, weaponItem) > this.shootingRange
+        ) {
+          return;
+        }
+
+        this.targetPoint = {
+          x: weaponItem.x,
+          y: weaponItem.y,
+        };
+      })();
+
+      // Switch to default weapon when ammo is empty
+      (() => {
+        if (this.weapon.type === "machine_gun_b" && this.weapon.ammo <= 0) {
+          this.weapon = defaultWeapon;
+        }
+      })();
+
+      // Find shield
+      (() => {
+        if (this.targetPoint) {
+          return;
+        }
+
+        if (this.shield.active && this.shield.hp > 0) {
+          return;
+        }
+
+        const shieldItem = gameObjectsManager.findClosestObject(
+          this,
+          (oo) => oo.type === "shield_item",
+        );
+
+        if (!shieldItem) {
+          return;
+        }
+
+        // Don't go too far for a shield
+        if (
+          closestStranger &&
+          vector.distance(closestStranger, shieldItem) > this.shootingRange
+        ) {
+          return;
+        }
+
+        this.targetPoint = {
+          x: shieldItem.x,
+          y: shieldItem.y,
+        };
+      })();
+
+      if (!this.targetEnemyId && !this.targetPoint) {
+        // Defend self
+        (() => {
+          const enemyBullet = this.collision.collidesWithObjects.find(
+            (o) => o.type === "bullet",
+          ) as Bullet | undefined;
+
+          const targetEnemy =
+            enemyBullet && gameObjectsManager.objects[enemyBullet.belongsTo];
+
+          if (targetEnemy) {
+            // Don't go too far for an enemy
+            if (
+              closestStranger &&
+              vector.distance(closestStranger, targetEnemy) < this.shootingRange
+            ) {
+              this.targetEnemyId = targetEnemy.id;
+            } else {
+              this.targetEnemyId = undefined;
+            }
+          }
+        })();
+
+        if (!this.targetEnemyId) {
+          this.targetEnemyId = gameObjectsManager.findClosestObject(
+            this,
+            (oo) =>
+              oo.type === "shooting_enemy_a" ||
+              oo.type === "shooting_enemy_b" ||
+              oo.type === "boss_a",
+            this.shootingRange,
+          )?.id;
+        }
+      }
+
+      // Attack enemies in range
+      (() => {
         const targetEnemy =
           this.targetEnemyId &&
           state.gameObjectsManager.objects[this.targetEnemyId];
@@ -244,20 +252,6 @@ export function createDefenderA(
           targetEnemy.y - this.y,
           targetEnemy.x - this.x,
         );
-
-        // Adjust angle by enemy speed
-        // TODO Fix this
-        // if ("movement" in targetEnemy) {
-        //   const adjustmentVector = vector.scale(
-        //     targetEnemy.movement.speedVector,
-        //     distanceToEnemy,
-        //   );
-
-        //   this.movement.angle = Math.atan2(
-        //     targetEnemy.y - this.y + adjustmentVector.y,
-        //     targetEnemy.x - this.x + adjustmentVector.x,
-        //   );
-        // }
 
         // Check if can shoot
         const shootingSegment: Matrix = [

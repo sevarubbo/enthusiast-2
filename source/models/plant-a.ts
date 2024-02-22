@@ -126,7 +126,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.03) {
+        } else if (Math.random() < 0.02) {
           state.gameObjectsManager.spawnObject(
             createEnemy({ x: this.x, y: this.y }),
           );
