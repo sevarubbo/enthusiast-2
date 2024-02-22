@@ -24,7 +24,9 @@ export interface PlantEaterA
   type: "plant_eater_a";
   numberOfPlantsEaten: number;
   color: string;
-  targetEnemy: (Healthy & Collidable) | undefined;
+  targetEnemy:
+    | (Healthy & Collidable & { collisionCircle: { radius: number } })
+    | undefined;
   attack: number;
   lookAroundInterval: ReturnType<typeof createIntervalManager>;
   shield: ReturnType<typeof createObjectShieldManager>;
@@ -34,6 +36,7 @@ export interface PlantEaterA
   adultAge: number;
   attackRange: number;
   maxAge: number;
+  collisionCircle: { radius: number };
 }
 
 const BASE_ATTACK = 1.6;
@@ -56,7 +59,9 @@ export function createPlantEaterA(
       maxHealth: 10,
       selfHealing: true,
     }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 12,
+    }),
     movement: createObjectMovementManager({
       maxSpeed: 0.03,
     }),
@@ -75,7 +80,6 @@ export function createPlantEaterA(
 
     update(delta, state) {
       this.health.update(delta, state, this);
-      this.collision.update(delta, state, this);
       this.movement.update(delta, state, this);
       this.lookAroundInterval.update(delta, state);
       this.growthInterval.update(delta, state);
@@ -91,7 +95,7 @@ export function createPlantEaterA(
 
       if (bullet) {
         this.targetEnemy = gameObjectsManager.objects[bullet.belongsTo] as
-          | (Healthy & Collidable)
+          | (Healthy & Collidable & { collisionCircle: { radius: number } })
           | undefined;
       }
 
@@ -173,6 +177,11 @@ export function createPlantEaterA(
       }
 
       this.collisionCircle.radius = 5 + this.age;
+
+      if ("circleRadius" in this.collision) {
+        this.collision.circleRadius = this.collisionCircle.radius;
+      }
+
       this.health.max = this.age * BASE_HEALTH;
       this.attack = BASE_ATTACK + (BASE_ATTACK * this.age) / this.adultAge;
       this.movement.maxSpeed =

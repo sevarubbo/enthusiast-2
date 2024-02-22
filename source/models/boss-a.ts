@@ -21,7 +21,9 @@ export const createBossA = (position: Vector) => {
     color: "#000",
 
     collisionCircle: { radius: 50 },
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 50,
+    }),
     health: createObjectHealthManager({ maxHealth: 1000, selfHealing: true }),
     childrenSpawnInterval: createIntervalManager(10000, false),
     movement: createObjectMovementManager({ maxSpeed: 0.01 }),

@@ -34,6 +34,7 @@ export interface Tower
   aimError: number;
   shootingRange: number;
   weapon: Weapon;
+  collisionCircle: { radius: number };
 }
 
 export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
@@ -52,7 +53,9 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
       maxHealth: 200,
       selfHealing: true,
     }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 20,
+    }),
     aimError: 0.02,
     rotateSpeed: 2 / 1000,
     shootingRange: 350,
@@ -64,7 +67,6 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
 
     update(delta, state) {
       this.health.update(delta, state, this);
-      this.collision.update(delta, state, this);
       this.weapon.update(delta, state, this);
 
       towerUpdate(this, delta, state);

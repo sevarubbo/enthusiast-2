@@ -3,14 +3,23 @@ import { createObjectCollisionManager } from "./managers";
 import { vector } from "../services/vector";
 import type { Vector } from "../services/vector";
 
-export const createWallA = (position: Vector) => {
+export const createWallA = (
+  position: Vector,
+  size: Vector = vector.create(50, 50),
+) => {
   return {
     type: "wall_a",
     ...createBaseObject(position),
-    color: "#444",
+    color: "#fff",
 
     collision: createObjectCollisionManager({
-      box: vector.create(100, 10),
+      boxSize: size,
     }),
+
+    update() {
+      if (this.collision.collidesWithObjects.length > 0) {
+        // console.log(this.collision.collidesWithObjects);
+      }
+    },
   } as const;
 };

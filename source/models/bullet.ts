@@ -2,16 +2,20 @@ import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
 import {
   createObjectCollisionManager,
-  type Collidable,
   type Identifiable,
   type Updatable,
 } from "services/state";
+import type { CollidableCircle } from "services/state";
 import type { Vector } from "services/vector";
 
 const RADIUS = 2;
 const BASE_ATTACK = 5;
 
-export interface Bullet extends Identifiable, Updatable, Vector, Collidable {
+export interface Bullet
+  extends Identifiable,
+    Updatable,
+    Vector,
+    CollidableCircle {
   type: "bullet";
   color: string;
   radius: number;
@@ -40,7 +44,9 @@ export function createBullet(
     radius: o.size || RADIUS,
     collisionCircle: { radius: o.size || RADIUS },
     speed,
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: o.size || RADIUS,
+    }),
     age: 0,
     maxAge: (Math.random() * BASE_MAX_AGE + BASE_MAX_AGE) / (speed * 2),
     ...o,
@@ -59,8 +65,6 @@ export function createBullet(
 
       this.x += this.direction.x * this.speed * delta;
       this.y += this.direction.y * this.speed * delta;
-
-      this.collision.update(delta, state, this);
 
       const otherObjects = this.collision.collidesWithObjects;
 

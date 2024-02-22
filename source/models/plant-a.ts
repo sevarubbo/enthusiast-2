@@ -21,6 +21,8 @@ export interface PlantA extends Identifiable, Updatable, Collidable, Healthy {
   sproutInterval: IntervalManager;
   newGrowth: boolean;
   children: number;
+  /** @deprecated */
+  collisionCircle: { radius: number };
 }
 
 const BASE_SPROUT_INTERVAL = 4000;
@@ -36,14 +38,15 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
       maxHealth: 4,
       deathSound: null,
     }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 5,
+    }),
     sproutInterval: createIntervalManager(BASE_SPROUT_INTERVAL, false),
     newGrowth: true,
     children: 0,
 
     update(delta, state) {
       this.health.update(delta, state, this);
-      this.collision.update(delta, state, this);
       this.sproutInterval.update(delta, state);
 
       const MAX_NUMBER_OF_CHILDREN = 3;

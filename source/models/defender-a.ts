@@ -6,16 +6,15 @@ import {
   createObjectCollisionManager,
   createObjectHealthManager,
   createObjectMovementManager,
-  type Collidable,
   type Healthy,
   type Movable,
 } from "services/state";
 import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
 import type { Matrix } from "services/matrix";
-import type { Weapon } from "services/state";
+import type { Weapon, CollidableCircle } from "services/state";
 
-export interface DefenderA extends Movable, Collidable, Healthy {
+export interface DefenderA extends Movable, CollidableCircle, Healthy {
   type: "defender_a";
   shootingRange: number;
   color: string;
@@ -41,7 +40,9 @@ export function createDefenderA(
       selfHealing: true,
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.08 }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 12,
+    }),
     shootingRange: 300,
     targetEnemyId: undefined,
     shield: createObjectShieldManager(),
@@ -49,9 +50,7 @@ export function createDefenderA(
 
     update(delta, state) {
       this.health.update(delta, state, this);
-      this.collision.update(delta, state, this);
       this.movement.update(delta, state, this);
-      this.collision.update(delta, state, this);
       this.weapon.update(delta, state, this);
 
       const { gameObjectsManager } = state;

@@ -14,12 +14,13 @@ export const createWeaponAItem = (position: Vector) =>
     type: "weapon_a_item",
     color: "blue",
     collisionCircle: { radius: 15 },
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 15,
+    }),
     health: createObjectHealthManager({ maxHealth: 50 }),
 
     update(delta: number, state: State) {
       this.health.update(delta, state, this);
-      this.collision.update(delta, state, this);
       // If collides with player, give weapon
       const collidesWith = this.collision.collidesWithObjects[0];
 

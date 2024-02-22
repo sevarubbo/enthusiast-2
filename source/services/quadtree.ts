@@ -1,6 +1,7 @@
 // Quadtree
 
 import type { StateObject } from "../types";
+import type { Collidable } from "./state";
 import type { Vector } from "./vector";
 
 interface Point {
@@ -18,12 +19,11 @@ interface Rectangle {
 interface Quadtree {
   boundary: Rectangle;
   capacity: number;
-  points: StateObject[];
+  objects: (StateObject & Collidable)[];
   divided: boolean;
   quadrants: Quadtree[];
   subdivide: () => void;
-  insert: (point: StateObject) => void;
-  remove: (point: Vector) => void;
+  insert: (point: StateObject & Collidable) => void;
   query: (range: Rectangle, found?: StateObject[]) => StateObject[];
   queryRadius: (point: Vector, radius: number) => StateObject[];
   clear: () => void;
@@ -36,17 +36,16 @@ export function createQuadtree(
   const quadtree: Quadtree = {
     boundary,
     capacity,
-    points: [],
+    objects: [],
     divided: false,
     quadrants: [],
     subdivide: () => subdivide(quadtree),
-    insert: (point: StateObject) => insert(quadtree, point),
-    remove: (point: Point) => remove(quadtree, point),
+    insert: (object: StateObject & Collidable) => insert(quadtree, object),
     query: (range: Rectangle) => query(quadtree, range, []),
     queryRadius: (point: Point, radius: number) =>
       queryRadius(quadtree, point, radius),
     clear: () => {
-      quadtree.points = [];
+      quadtree.objects = [];
       quadtree.divided = false;
       quadtree.quadrants = [];
     },
@@ -85,20 +84,25 @@ function subdivide(quadtree: Quadtree): void {
   quadtree.divided = true;
 }
 
-export function insert(quadtree: Quadtree, point: StateObject): void {
-  if (!isPointInBoundary(quadtree.boundary, point)) {
+export function insert(
+  quadtree: Quadtree,
+  object: StateObject & Collidable,
+): void {
+  if (
+    !isRectangleIntersecting(quadtree.boundary, object.collision.getRec(object))
+  ) {
     return;
   }
 
-  if (quadtree.points.length < quadtree.capacity) {
-    quadtree.points.push(point);
+  if (quadtree.objects.length < quadtree.capacity) {
+    quadtree.objects.push(object);
   } else {
     if (!quadtree.divided) {
       subdivide(quadtree);
     }
 
     for (const quadrant of quadtree.quadrants) {
-      insert(quadrant, point);
+      insert(quadrant, object);
     }
   }
 }
@@ -112,9 +116,9 @@ export function query(
     return found;
   }
 
-  for (const point of quadtree.points) {
-    if (isPointInBoundary(range, point)) {
-      found.push(point);
+  for (const object of quadtree.objects) {
+    if (isRectangleIntersecting(range, object.collision.getRec(object))) {
+      found.push(object);
     }
   }
 
@@ -136,39 +140,14 @@ const queryRadius = (quadtree: Quadtree, point: Point, radius: number) => {
   });
 };
 
-function remove(quadtree: Quadtree, point: Point | StateObject): void {
-  // if (!isPointInBoundary(quadtree.boundary, point)) {
-  //   return;
-  // }
-
-  const index = quadtree.points.findIndex(
-    (p) =>
-      (p.x === point.x && p.y === point.y) ||
-      ("id" in point && p.id === point.id),
-  );
-
-  if (index !== -1) {
-    quadtree.points.splice(index, 1);
-  } else if (quadtree.divided) {
-    for (const quadrant of quadtree.quadrants) {
-      remove(quadrant, point);
-    }
-  }
-
-  if (quadtree.points.length === 0) {
-    quadtree.divided = false;
-    quadtree.quadrants = [];
-  }
-}
-
-function isPointInBoundary(boundary: Rectangle, point: Point): boolean {
-  return (
-    point.x >= boundary.x &&
-    point.x <= boundary.x + boundary.width &&
-    point.y >= boundary.y &&
-    point.y <= boundary.y + boundary.height
-  );
-}
+// function isPointInBoundary(boundary: Rectangle, point: Point): boolean {
+//   return (
+//     point.x >= boundary.x &&
+//     point.x <= boundary.x + boundary.width &&
+//     point.y >= boundary.y &&
+//     point.y <= boundary.y + boundary.height
+//   );
+// }
 
 function isRectangleIntersecting(
   rectangleA: Rectangle,

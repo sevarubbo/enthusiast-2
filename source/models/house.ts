@@ -4,10 +4,10 @@ import {
   createObjectHealthManager,
 } from "services/state";
 import type {
-  Collidable,
   Identifiable,
   Updatable,
   Healthy,
+  CollidableCircle,
 } from "services/state";
 import type { Vector } from "services/vector";
 
@@ -17,7 +17,7 @@ export interface House
   extends Identifiable,
     Updatable,
     Vector,
-    Collidable,
+    CollidableCircle,
     Healthy {
   type: "house";
   color: "blue";
@@ -35,7 +35,9 @@ export function createHouse(o: Pick<House, "x" | "y">): House {
       maxHealth: 100,
       selfHealing: true,
     }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: RADIUS,
+    }),
     ...o,
 
     update(delta, state) {

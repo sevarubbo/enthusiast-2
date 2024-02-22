@@ -7,16 +7,15 @@ import { createObjectShieldManager } from "../services/state/objectShieldManager
 import { createId } from "helpers";
 import {
   createObjectHealthManager,
-  type Collidable,
   type Healthy,
   type Movable,
   createObjectMovementManager,
   createObjectCollisionManager,
 } from "services/state";
 import type { StateObject } from "../types";
-import type { Weapon } from "services/state";
+import type { Weapon, CollidableCircle } from "services/state";
 
-export interface ShootingEnemyA extends Movable, Collidable, Healthy {
+export interface ShootingEnemyA extends Movable, CollidableCircle, Healthy {
   type: "shooting_enemy_a";
   shootingRange: number;
   color: string;
@@ -43,7 +42,9 @@ export function createShootingEnemyA(
       selfHealing: true,
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.05 / scale }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: scale * 12,
+    }),
     shootingRange: 300 * scale,
     shield: createObjectShieldManager(),
     weapon: defaultWeapon,

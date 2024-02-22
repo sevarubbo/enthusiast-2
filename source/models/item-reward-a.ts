@@ -14,7 +14,9 @@ export const createItemRewardA = (position: Vector) => {
     collisionCircle: {
       radius: 15,
     },
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 15,
+    }),
     health: createObjectHealthManager({ maxHealth: 5 }),
 
     icon: ["🥥", "🍉", "🍇", "🥑"][Math.floor(Math.random() * 4)] as string,

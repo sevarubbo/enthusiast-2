@@ -4,7 +4,6 @@ import { createId } from "helpers";
 import { getSoundPosition, playSound } from "services/audio";
 import {
   createObjectHealthManager,
-  type Collidable,
   type Healthy,
   type IntervalManager,
   type Movable,
@@ -13,8 +12,9 @@ import {
   createIntervalManager,
 } from "services/state";
 import { vector } from "services/vector";
+import type { CollidableCircle } from "services/state";
 
-export interface EnemyD extends Movable, Collidable, Healthy {
+export interface EnemyD extends Movable, CollidableCircle, Healthy {
   type: "shooting_enemy_b";
   shootingInterval: IntervalManager;
   shootingRange: number;
@@ -42,7 +42,9 @@ export function createEnemyD(
       selfHealing: true,
     }),
     movement: createObjectMovementManager({ maxSpeed: BASE_SPEED / scale }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: scale * 110,
+    }),
     targetPoint: null,
     shootingInterval: createIntervalManager(400 + scale * 400),
     shootingRange: 700 * scale,

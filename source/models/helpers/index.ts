@@ -61,19 +61,32 @@ export const canShootEnemyWithoutFriendlyFire = (
   });
 };
 
-export const createBaseObject = (position: Vector) => ({
-  id: createId(),
+export const createBaseObject = (position: Vector) => {
+  let x = position.x;
+  let y = position.y;
 
-  get x() {
-    return position.x;
-  },
+  return {
+    id: createId(),
 
-  get y() {
-    return position.y;
-  },
+    get x() {
+      return x;
+    },
 
-  setPosition(p: Vector) {
-    position.x = p.x;
-    position.y = p.y;
-  },
-});
+    set x(value: number) {
+      x = value;
+    },
+
+    set y(value: number) {
+      y = value;
+    },
+
+    get y() {
+      return y;
+    },
+
+    setPosition(p: Vector) {
+      this.x = p.x;
+      this.y = p.y;
+    },
+  };
+};

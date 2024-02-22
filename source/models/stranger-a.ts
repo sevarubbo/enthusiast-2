@@ -5,7 +5,6 @@ import { createId } from "helpers";
 import { getKeysPressed } from "services/io";
 import {
   createObjectHealthManager,
-  type Collidable,
   type Identifiable,
   type Movable,
   type Updatable,
@@ -14,9 +13,13 @@ import {
   type Healthy,
 } from "services/state";
 import { vector } from "services/vector";
-import type { Weapon } from "services/state";
+import type { Weapon, CollidableCircle } from "services/state";
 
-type TypicalObject = Identifiable & Updatable & Collidable & Movable & Healthy;
+type TypicalObject = Identifiable &
+  Updatable &
+  CollidableCircle &
+  Movable &
+  Healthy;
 
 export interface StrangerA extends TypicalObject {
   type: "stranger_a";
@@ -41,7 +44,9 @@ export function createStrangerA(
       selfHealing: true,
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.2 }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 12,
+    }),
     isHovered: false,
     isSelected: false,
     targetPoint: null,
@@ -53,9 +58,7 @@ export function createStrangerA(
 
     update(delta, state) {
       this.health.update(delta, state, this);
-      this.collision.update(delta, state, this);
       this.movement.update(delta, state, this);
-      this.collision.update(delta, state, this);
       this.weapon.update(delta, state, this);
 
       // START: Selectable object logic

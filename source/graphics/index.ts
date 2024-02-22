@@ -71,7 +71,7 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
 
   // If stranger died, show the message
   if (state.statsManager.strangerDied) {
-    drawQueue.schedule(2, (_ctx) => {
+    drawQueue.schedule(3, (_ctx) => {
       _ctx.font = "24px serif";
       // Center to camera frame
       _ctx.textAlign = "center";
@@ -88,7 +88,7 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
 
   // If all enemies are dead, show the message
   if (state.statsManager.bossDied) {
-    drawQueue.schedule(2, (_ctx) => {
+    drawQueue.schedule(3, (_ctx) => {
       _ctx.font = "24px serif";
       // Center to camera frame
       _ctx.textAlign = "center";

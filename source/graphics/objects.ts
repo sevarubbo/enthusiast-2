@@ -10,7 +10,6 @@ import { drawObjectBoss } from "./object-boss";
 import { drawCircle, drawCircleOutline, drawRectangle } from "services/canvas";
 import { vector } from "services/vector";
 import type { State, Weapon } from "services/state";
-import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
 const drawObjectWeapon = (
@@ -132,7 +131,7 @@ function drawObject(
   if ("shootingRange" in object) {
     drawCircleOutline(ctx, {
       position: state.cameraManager.toScreen(object),
-      color: "rgba(255, 255, 255, 0.1)",
+      color: "rgba(255, 255, 255, 0.02)",
       radius: object.shootingRange,
       lineWidth: 1,
     });
@@ -321,7 +320,11 @@ function drawObject(
     }
 
     case "wall_a": {
-      const box = object.collision.box as Vector;
+      if (!("boxSize" in object.collision)) {
+        throw new Error("Object must have boxSize");
+      }
+
+      const box = object.collision.boxSize;
 
       drawRectangle(ctx, {
         position: state.cameraManager.toScreen(object),

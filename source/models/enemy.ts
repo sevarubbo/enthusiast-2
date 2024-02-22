@@ -13,13 +13,17 @@ import {
 } from "services/state";
 import type {
   ObjectHealthManager,
-  Collidable,
   Identifiable,
   Updatable,
   Movable,
+  CollidableCircle,
 } from "services/state";
 
-export interface Enemy extends Identifiable, Updatable, Collidable, Movable {
+export interface Enemy
+  extends Identifiable,
+    Updatable,
+    CollidableCircle,
+    Movable {
   type: "enemy";
   color: "red";
   radius: 7;
@@ -41,13 +45,14 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
       maxHealth: 10,
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.01 }),
-    collision: createObjectCollisionManager(),
+    collision: createObjectCollisionManager({
+      circleRadius: 7,
+    }),
     targetPoint: null,
 
     update(delta, state) {
       this.health.update(delta, state, this);
       this.movement.update(delta, state, this);
-      this.collision.update(delta, state, this);
 
       const { world } = state;
 

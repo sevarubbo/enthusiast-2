@@ -7,7 +7,7 @@ import {
 import { createIntervalManager, type State } from "services/state";
 import { vector } from "services/vector";
 import type { SoundName } from "services/audio";
-import type { Collidable, Identifiable } from "services/state";
+import type { Identifiable, CollidableCircle } from "services/state";
 import type { Vector } from "services/vector";
 
 type WeaponType = "default" | "machine_gun_b";
@@ -58,7 +58,7 @@ export const createWeaponA = <T extends WeaponType = "default">({
     update: (
       delta: number,
       state: State,
-      owner: Vector & Collidable & Identifiable,
+      owner: Vector & CollidableCircle & Identifiable,
     ) => {
       shootInterval.update(delta, state);
       autoRefillInterval.update(delta, state);

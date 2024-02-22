@@ -4,9 +4,13 @@ import {
   createObjectCollisionManager,
   createObjectHealthManager,
 } from "services/state";
-import type { Collidable, Updatable, Identifiable } from "../services/state";
+import type {
+  Updatable,
+  Identifiable,
+  CollidableCircle,
+} from "../services/state";
 
-export interface ShieldItem extends Collidable, Updatable, Identifiable {
+export interface ShieldItem extends CollidableCircle, Updatable, Identifiable {
   id: string;
   type: "shield_item";
   color: "blue";
@@ -20,13 +24,14 @@ export const createShieldItem = (
   type: "shield_item",
   color: "blue",
   collisionCircle: { radius: 15 },
-  collision: createObjectCollisionManager(),
+  collision: createObjectCollisionManager({
+    circleRadius: 15,
+  }),
   health: createObjectHealthManager({ maxHealth: 100 }),
   x: o.x,
   y: o.y,
 
   update(delta, state) {
-    this.collision.update(delta, state, this);
     this.health.update(delta, state, this);
     // If collides with player, give shield
     const collidesWith = this.collision.collidesWithObjects[0];

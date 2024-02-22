@@ -162,13 +162,13 @@ export const drawObjectShield = (
 
 export const drawQueue = {
   queue: [] as Array<{
-    index: 1 | 2;
+    index: 1 | 2 | 3;
     fn: (ctx: CanvasRenderingContext2D) => void;
   }>,
   clear: () => {
     drawQueue.queue = [];
   },
-  schedule: (index: 1 | 2, fn: (ctx: CanvasRenderingContext2D) => void) => {
+  schedule: (index: 1 | 2 | 3, fn: (ctx: CanvasRenderingContext2D) => void) => {
     drawQueue.queue.push({
       index,
       fn,
