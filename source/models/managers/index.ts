@@ -6,11 +6,17 @@ import type { StateObject } from "types";
 export interface ObjectCollisionManager extends ObjectManager {
   collidesWithObjects: Array<StateObject & Collidable>;
   lastObjectPosition: Vector;
+  isSolid: boolean;
 }
 
-export const createObjectCollisionManager = (): ObjectCollisionManager => ({
+export const createObjectCollisionManager = ({
+  isSolid = true,
+}: {
+  isSolid?: boolean;
+} = {}): ObjectCollisionManager => ({
   lastObjectPosition: vector.zero,
   collidesWithObjects: [],
+  isSolid,
   update() {
     // ...
   },

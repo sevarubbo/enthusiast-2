@@ -47,8 +47,8 @@ export const createCollisionManager = () => {
               ) {
                 object.collision.collidesWithObjects.push(nearbyObject);
 
-                // Check for collisions
-                if ("collision" in object) {
+                // Adjust positions
+                if ("collision" in object && nearbyObject.collision.isSolid) {
                   const otherObject = nearbyObject;
 
                   // Move the object back to the edge of the collision

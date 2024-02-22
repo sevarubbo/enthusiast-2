@@ -132,7 +132,9 @@ function drawObject(
   // );
 
   if ("weapon" in object) {
-    drawObjectWeapon(ctx, state, object);
+    drawQueue.schedule(2, (ctx2) => {
+      drawObjectWeapon(ctx2, state, object);
+    });
   }
 
   if ("shootingRange" in object) {
@@ -315,8 +317,21 @@ function drawObject(
       return;
     }
 
+    case "healing_station_a": {
+      drawCircleOutline(ctx, {
+        position: state.cameraManager.toScreen(object),
+        color: object.color,
+        radius: object.collisionCircle.radius,
+        lineWidth: 5,
+      });
+
+      return;
+    }
+
     default: {
-      drawDefaultObjectView(ctx, state, object);
+      drawQueue.schedule(2, (ctx2) => {
+        drawDefaultObjectView(ctx2, state, object);
+      });
     }
   }
 }

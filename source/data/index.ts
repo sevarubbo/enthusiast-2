@@ -1,4 +1,6 @@
+import { createHealingStationA } from "../models/healing-station-a";
 import { createShieldItem } from "../models/shield-item";
+import { matrix } from "../services/matrix";
 import { createQuadtree } from "../services/quadtree";
 import { createCollisionManager } from "../services/state/collisionManager";
 import { createEnemyC, createHouse, createPlantA, createTower } from "models";
@@ -166,6 +168,13 @@ export function createDefaultState(): State {
         createDefenderA(getRandomPositionInCorner(1)),
         createWeaponAItem(getRandomPositionInCorner(1)),
         createShieldItem(getRandomPositionInCorner(1)),
+
+        createHealingStationA(
+          matrix.fitPoint(
+            getRandomPosition(),
+            matrix.create(500, 500, WORLD_SIZE.x - 500, WORLD_SIZE.y - 500),
+          ),
+        ),
 
         ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(() => {
           const pos = {

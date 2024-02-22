@@ -11,6 +11,7 @@ export interface ObjectHealthManager {
   healInterval: IntervalManager | null;
   decrease(value: number): void;
   update(delta: number, state: State, object: StateObject): void;
+  increase(value: number): void;
 }
 
 export const createObjectHealthManager = (o: {
@@ -24,6 +25,10 @@ export const createObjectHealthManager = (o: {
   decrease(value: number) {
     this.current = Math.max(0, this.current - value);
   },
+  increase(value: number) {
+    this.current = Math.min(this.max, this.current + value);
+  },
+
   update(delta, state, object) {
     this.healInterval?.update(delta, state);
 

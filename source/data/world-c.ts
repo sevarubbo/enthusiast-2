@@ -1,6 +1,7 @@
 import { createWorldDefaults } from "./defaults";
-import { createDefenderA } from "../models/defender-a";
+import { createHealingStationA } from "../models/healing-station-a";
 import { createShootingEnemyA } from "../models/shooting-enemy-a";
+import { createWeaponAItem } from "../models/weapon-a-item";
 import { createStrangerA } from "models";
 import { createShieldItem } from "models/shield-item";
 import { createGameObjectsManager } from "services/state";
@@ -8,7 +9,7 @@ import type { State } from "services/state";
 
 export const createWorldC = (): State => {
   const defaults = createWorldDefaults({
-    worldSize: { x: 500, y: 500 },
+    worldSize: { x: 600, y: 600 },
   });
 
   return {
@@ -17,10 +18,10 @@ export const createWorldC = (): State => {
     gameObjectsManager: createGameObjectsManager({
       quadtree: defaults.quadtree,
       objectsArray: [
-        createDefenderA({
-          x: 100,
-          y: 100,
-        }),
+        // createDefenderA({
+        //   x: 100,
+        //   y: 100,
+        // }),
 
         createShootingEnemyA({
           x: 400,
@@ -35,6 +36,16 @@ export const createWorldC = (): State => {
         createShieldItem({
           x: 200,
           y: 100,
+        }),
+
+        createWeaponAItem({
+          x: 100,
+          y: 100,
+        }),
+
+        createHealingStationA({
+          x: 300,
+          y: 300,
         }),
       ],
     }),
