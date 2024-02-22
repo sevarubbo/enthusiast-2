@@ -24,14 +24,18 @@ export const createWorldC = (): State => {
         //   y: 100,
         // }),
         //
-        // createShootingEnemyA({
-        //   x: 400,
-        //   y: 400,
-        // }),
+        createShootingEnemyA({
+          x: 400,
+          y: 400,
+        }),
+        createShootingEnemyA({
+          x: 450,
+          y: 450,
+        }),
 
         createStrangerA({
           x: 100,
-          y: 200,
+          y: 100,
         }),
 
         // createShieldItem({

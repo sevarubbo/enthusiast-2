@@ -4,6 +4,7 @@ import { createShieldItem } from "./shield-item";
 import { createWeaponA } from "./weapon-a";
 import { createWeaponAItem } from "./weapon-a-item";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
+import { vector } from "../services/vector";
 import { createId } from "helpers";
 import {
   createObjectHealthManager,
@@ -100,9 +101,7 @@ export function createShootingEnemyA(
       if (targetEnemy) {
         // Get to shooting range
 
-        const distance = Math.sqrt(
-          (targetEnemy.x - this.x) ** 2 + (targetEnemy.y - this.y) ** 2,
-        );
+        const distanceSq = vector.distanceSquared(this, targetEnemy);
 
         // Aim at targetEnemy
         this.movement.angle = Math.atan2(
@@ -111,7 +110,7 @@ export function createShootingEnemyA(
         );
 
         if (
-          distance <= this.shootingRange &&
+          distanceSq <= this.shootingRange ** 2 &&
           canShootEnemyWithoutFriendlyFire(
             this,
             targetEnemy,
@@ -119,20 +118,15 @@ export function createShootingEnemyA(
             state,
           )
         ) {
-          this.targetPoint = null;
-          this.movement.stop();
+          this.movement.setTargetPoint(null);
 
           // Shoot
           this.weapon.fireAtAngle(this.movement.angle);
         } else {
-          this.targetPoint = {
-            x: targetEnemy.x,
-            y: targetEnemy.y,
-          };
+          this.movement.setTargetPoint(targetEnemy);
         }
       } else {
-        this.targetPoint = null;
-        this.movement.stop();
+        this.movement.setTargetPoint(null);
       }
 
       // Get weapon

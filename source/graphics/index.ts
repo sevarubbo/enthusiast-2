@@ -81,7 +81,8 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
         state.cameraManager.frame.position.x +
           state.cameraManager.frame.size.x / 2,
         state.cameraManager.frame.position.y +
-          state.cameraManager.frame.size.y / 2,
+          state.cameraManager.frame.size.y / 2 -
+          50,
       );
     });
   }
@@ -98,7 +99,8 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
         state.cameraManager.frame.position.x +
           state.cameraManager.frame.size.x / 2,
         state.cameraManager.frame.position.y +
-          state.cameraManager.frame.size.y / 2,
+          state.cameraManager.frame.size.y / 2 +
+          50,
       );
     });
   }

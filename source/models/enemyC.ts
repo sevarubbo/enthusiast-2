@@ -91,7 +91,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
       // Collision with other objects
       const otherObject = this.collision.collidesWithObjects[0];
 
-      if (otherObject) {
+      if (otherObject && otherObject.collision.isSolid) {
         this.color = "gray";
 
         // Change direction, like a billiard ball

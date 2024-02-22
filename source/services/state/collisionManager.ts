@@ -167,9 +167,12 @@ const getCircleIntersectionWithBox = (
     x: Math.max(box.x, Math.min(box.x + box.width, circle.position.x)),
     y: Math.max(box.y, Math.min(box.y + box.height, circle.position.y)),
   };
-  const distanceToClosestPoint = vector.distance(circle.position, closestPoint);
+  const distanceToClosestPointSq = vector.distanceSquared(
+    circle.position,
+    closestPoint,
+  );
 
-  if (distanceToClosestPoint <= circle.radius) {
+  if (distanceToClosestPointSq <= circle.radius ** 2) {
     return closestPoint;
   }
 

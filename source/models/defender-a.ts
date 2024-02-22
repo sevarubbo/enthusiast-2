@@ -55,7 +55,7 @@ export function createDefenderA(
 
       const { gameObjectsManager } = state;
 
-      // Find closest stranger
+      // Find the closest stranger
       const closestStranger = state.gameObjectsManager.findClosestObject(
         this,
         (oo) => oo.type === "stranger_a",
@@ -81,11 +81,11 @@ export function createDefenderA(
 
           // Go to stranger
           this.movement.setTargetPoint(closestStranger);
-        } else {
-          this.movement.setTargetPoint(null);
 
-          return true;
+          return false;
         }
+
+        this.movement.setTargetPoint(null);
 
         // If stranger hit by a bullet
         const enemyBullet = closestStranger.collision.collidesWithObjects.find(
@@ -94,9 +94,11 @@ export function createDefenderA(
 
         if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
           this.targetEnemyId = enemyBullet.belongsTo;
+
+          return false;
         }
 
-        return false;
+        return true;
       })();
 
       // Find better weapon
@@ -138,7 +140,7 @@ export function createDefenderA(
 
       // Find shield
       (() => {
-        if (this.movement.targetPoint) {
+        if (!idle) {
           return;
         }
 
@@ -166,7 +168,7 @@ export function createDefenderA(
         this.movement.setTargetPoint(shieldItem);
       })();
 
-      if (!this.targetEnemyId && !this.targetPoint) {
+      if (!idle) {
         // Defend self
         (() => {
           const enemyBullet = this.collision.collidesWithObjects.find(
@@ -203,6 +205,10 @@ export function createDefenderA(
 
       // Attack enemies in range
       (() => {
+        if (!idle) {
+          return;
+        }
+
         const targetEnemy =
           this.targetEnemyId &&
           state.gameObjectsManager.objects[this.targetEnemyId];

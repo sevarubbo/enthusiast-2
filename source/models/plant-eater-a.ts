@@ -172,6 +172,8 @@ export function createPlantEaterA(
         this.growthInterval.fireIfReady(() => {
           if (this.health.current >= this.health.max) {
             this.age += 1;
+            this.health.max = this.age * BASE_HEALTH;
+            this.health.current = this.health.max;
           }
         });
       }
@@ -182,7 +184,6 @@ export function createPlantEaterA(
         this.collision.circleRadius = this.collisionCircle.radius;
       }
 
-      this.health.max = this.age * BASE_HEALTH;
       this.attack = BASE_ATTACK + (BASE_ATTACK * this.age) / this.adultAge;
       this.movement.maxSpeed =
         ((BASE_SPEED + (BASE_SPEED * this.age) / this.adultAge) *

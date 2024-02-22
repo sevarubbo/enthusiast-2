@@ -98,12 +98,12 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
             collides = true;
           }
 
-          // Check if spawnLocation collides with any other objects
+          // Check if spawnLocation collides with any other solid objects
 
           if (!collides) {
             const collidesWith = this.collision.collidesWithObjects[0];
 
-            collides = !!collidesWith;
+            collides = !!collidesWith?.collision.isSolid;
           }
 
           if (!collides) {
