@@ -62,6 +62,11 @@ const audioFiles = [
     name: "coin chime",
     url: "sounds/ESM_Christmas_Magic_Positive_Award_Chime_1_Dry_Game.wav",
   },
+  {
+    name: "boss shield hit",
+    url: "sounds/ESM_Game_Dark_Item_2_Sci_Fi_Abstract_Tech_Impact_Pick_Up_Alien.wav",
+    baseVolume: 3,
+  },
 ] as const;
 
 export type SoundName = (typeof audioFiles)[number]["name"];

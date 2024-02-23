@@ -9,7 +9,7 @@ import {
   createObjectMovementManager,
   type State,
 } from "services/state";
-import { createObjectShieldManager } from "services/state/objectShieldManager";
+import { createShield } from "services/state/objectShieldManager";
 import { vector, type Vector } from "services/vector";
 
 export const createBossA = (position: Vector) => {
@@ -20,10 +20,10 @@ export const createBossA = (position: Vector) => {
     type: "boss_a",
     color: "#000",
 
-    collisionCircle: { radius: 60 },
     collision: createObjectCollisionManager({
-      circleRadius: 50,
+      circleRadius: 60,
     }),
+
     health: createObjectHealthManager({ maxHealth: 1000, selfHealing: true }),
     childrenSpawnInterval: createIntervalManager(10000, false),
     movement: createObjectMovementManager({ maxSpeed: 0.01 }),
@@ -31,15 +31,19 @@ export const createBossA = (position: Vector) => {
     fireRange: 600,
 
     weapon: createWeaponA({
-      bulletSize: 4,
+      bulletSize: 5,
       bulletSpeed: 0.09,
-      bulletStrength: 40,
+      bulletStrength: 50,
       shotSound: "heavy shot",
       fireRate: 1.1,
       autoRefillRate: 2,
     }),
 
-    shield: createObjectShieldManager({ active: true, maxHp: 1000 }),
+    shield: createShield({
+      active: true,
+      maxHp: 1000,
+      shieldHitSound: "boss shield hit",
+    }),
 
     get targetPoint() {
       return targetPoint;
@@ -63,7 +67,7 @@ export const createBossA = (position: Vector) => {
           return;
         }
 
-        const RANDOM_POINT_OFFSET = this.collisionCircle.radius * 2;
+        const RANDOM_POINT_OFFSET = this.collision.circleRadius * 2;
 
         const worldBox = matrix.create(0, 0, world.size.x, world.size.y);
 
@@ -96,7 +100,7 @@ export const createBossA = (position: Vector) => {
       (() => {
         const targetEnemy = gameObjectsManager.findClosestObject(
           this,
-          (oo) => oo.type === "stranger_a",
+          (oo) => oo.type === "stranger_a" || oo.type === "tower",
         );
 
         if (!targetEnemy) {

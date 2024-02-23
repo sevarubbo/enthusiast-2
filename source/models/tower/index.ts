@@ -9,7 +9,7 @@ import {
   createObjectHealthManager,
 } from "services/state";
 import type {
-  Collidable,
+  CollidableCircle,
   Healthy,
   Identifiable,
   Updatable,
@@ -21,7 +21,7 @@ export interface Tower
   extends Identifiable,
     Updatable,
     Vector,
-    Collidable,
+    CollidableCircle,
     Healthy {
   type: "tower";
   color: string;
@@ -34,7 +34,6 @@ export interface Tower
   aimError: number;
   shootingRange: number;
   weapon: Weapon;
-  collisionCircle: { radius: number };
 }
 
 export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {

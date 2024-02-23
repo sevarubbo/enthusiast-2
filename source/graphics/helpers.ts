@@ -75,18 +75,27 @@ export const drawObjectAsText = (
 export const drawDefaultRoundObjectView = (
   ctx: CanvasRenderingContext2D,
   state: State,
-  object: StateObject & { collisionCircle: { radius: number } },
+  object: StateObject &
+    (
+      | { collisionCircle: { radius: number } }
+      | { collision: { circleRadius: number } }
+    ),
 ) => {
+  const collisionCircleRadius =
+    "collisionCircle" in object
+      ? object.collisionCircle.radius
+      : object.collision.circleRadius;
+
   drawCircle(ctx, {
     position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-    radius: object.collisionCircle.radius,
+    radius: collisionCircleRadius,
     color: "color" in object ? object.color : "#fff",
   });
 
   if ("health" in object && object.health.current < object.health.max) {
     const healthBarPosition = vector.add(
       state.cameraManager.toScreen(object),
-      vector.create(0, -object.collisionCircle.radius - 10),
+      vector.create(0, -collisionCircleRadius - 10),
     );
 
     drawHealthBar(
@@ -115,7 +124,7 @@ export const drawDefaultRoundObjectView = (
   if ("movement" in object) {
     const directionPointPosition = vector.scale(
       vector.fromAngle(object.movement.angle),
-      Math.min(object.collisionCircle.radius * 0.9, 20),
+      Math.min(collisionCircleRadius * 0.9, 20),
     );
 
     drawCircle(ctx, {
@@ -123,7 +132,7 @@ export const drawDefaultRoundObjectView = (
         vector.add(object, directionPointPosition),
       ),
       color: "#fff",
-      radius: Math.min(object.collisionCircle.radius / 3, 4),
+      radius: Math.min(collisionCircleRadius / 3, 4),
     });
   }
 
@@ -138,20 +147,27 @@ export const drawObjectShield = (
 
   // Object with shield
   object: StateObject & {
-    collisionCircle: { radius: number };
     shield: ReturnType<typeof createObjectShieldManager>;
-  },
+  } & (
+      | { collisionCircle: { radius: number } }
+      | { collision: { circleRadius: number } }
+    ),
 ) => {
+  const collisionCircleRadius =
+    "collisionCircle" in object
+      ? object.collisionCircle.radius
+      : object.collision.circleRadius;
+
   if (object.shield.active) {
     drawCircleOutline(ctx, {
-      radius: Math.max(object.collisionCircle.radius, 17) + 3,
+      radius: Math.max(collisionCircleRadius * 1.1, 17) + 3,
       position: state.cameraManager.toScreen(object),
       color: "rgba(255, 255, 255, 0.5)",
       lineWidth: 3,
     });
 
     drawCircleProgress(ctx, {
-      radius: Math.max(object.collisionCircle.radius, 17) + 3,
+      radius: Math.max(collisionCircleRadius * 1.1, 17) + 3,
       position: state.cameraManager.toScreen(object),
       color: "rgba(255, 255, 255, 0.5)",
       lineWidth: 3,
@@ -181,7 +197,18 @@ export const drawObjectWeapon = (
   state: State,
   object: StateObject & { weapon: Weapon },
 ) => {
-  if (!("collisionCircle" in object)) {
+  if (!("collisionCircle" in object) && !("circleRadius" in object.collision)) {
+    throw new Error("Object must have collisionCircle");
+  }
+
+  let collisionCircleRadius =
+    "collisionCircle" in object ? object.collisionCircle.radius : null;
+
+  if (collisionCircleRadius === null && "circleRadius" in object.collision) {
+    collisionCircleRadius = object.collision.circleRadius;
+  }
+
+  if (!collisionCircleRadius) {
     throw new Error("Object must have collisionCircle");
   }
 
@@ -194,9 +221,7 @@ export const drawObjectWeapon = (
     ctx.textAlign = "center";
     ctx.fillText(
       object.weapon.type === "machine_gun_b" ? "🗡️" : "🔪",
-      state.cameraManager.toScreen(object).x -
-        object.collisionCircle.radius -
-        18,
+      state.cameraManager.toScreen(object).x - collisionCircleRadius - 18,
       state.cameraManager.toScreen(object).y + 7,
     );
   }

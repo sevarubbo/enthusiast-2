@@ -1,13 +1,11 @@
 import { vector } from "services/vector";
-import type { Collidable } from "services/state/types";
 import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
-export type ObjectCollisionManager = (
-  | { boxSize: Vector }
-  | { circleRadius: number }
-) & {
-  collidesWithObjects: Array<StateObject & Collidable>;
+type TT = { boxSize: Vector } | { circleRadius: number };
+
+export interface ObjectCollisionManager {
+  collidesWithObjects: Array<StateObject>;
   lastObjectPosition: Vector;
   isSolid: boolean;
   getRec(position: Vector): {
@@ -16,21 +14,21 @@ export type ObjectCollisionManager = (
     width: number;
     height: number;
   };
-};
+}
 
-export const createObjectCollisionManager = (
-  o: {
+export const createObjectCollisionManager = <T extends TT>(
+  o: T & {
     isSolid?: boolean;
-  } & ({ boxSize: Vector } | { circleRadius: number }),
-): ObjectCollisionManager => {
+  },
+): ObjectCollisionManager & T => {
   return {
     lastObjectPosition: vector.zero,
-    collidesWithObjects: [],
+    collidesWithObjects: [] as ObjectCollisionManager["collidesWithObjects"],
     isSolid: o.isSolid !== false,
 
-    ...("boxSize" in o
+    ...(("boxSize" in o
       ? { boxSize: o.boxSize }
-      : { circleRadius: o.circleRadius }),
+      : { circleRadius: o.circleRadius }) as T),
 
     getRec(position: Vector) {
       return "boxSize" in this
@@ -47,5 +45,5 @@ export const createObjectCollisionManager = (
             height: this.circleRadius * 2,
           };
     },
-  };
+  } as ObjectCollisionManager & T;
 };

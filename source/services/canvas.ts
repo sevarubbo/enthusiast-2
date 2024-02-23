@@ -32,7 +32,16 @@ export function createCanvas() {
     });
   };
 
-  return { canvas, onCanvasMouseMove, onPointerDown, onPointerUp };
+  return {
+    canvas,
+    onCanvasMouseMove,
+    onPointerDown,
+    onPointerUp,
+    fitToScreen: () => {
+      canvas.width = document.body.offsetWidth;
+      canvas.height = document.body.offsetHeight;
+    },
+  };
 }
 
 export function drawCircle(

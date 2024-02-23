@@ -1,7 +1,7 @@
+import { createWorldDefaults } from "./defaults";
 import { createHealingStationA } from "../models/healing-station-a";
 import { createShieldItem } from "../models/shield-item";
 import { createWallA } from "../models/wall-a";
-import { matrix } from "../services/matrix";
 import { createQuadtree } from "../services/quadtree";
 import { createCollisionManager } from "../services/state/collisionManager";
 import { createEnemyC, createHouse, createPlantA, createTower } from "models";
@@ -11,7 +11,6 @@ import { createItemShotgun } from "models/item-shotgun";
 import { createPlantEaterA } from "models/plant-eater-a";
 import { createStrangerA } from "models/stranger-a";
 import { createWeaponAItem } from "models/weapon-a-item";
-import { createCameraManager } from "services/state/cameraManager";
 import { createGameObjectsManager } from "services/state/gameObjectsManager";
 import { createGameSpeedManager } from "services/state/gameSpeedManager";
 import { createStatsManager } from "services/statsManager";
@@ -101,32 +100,44 @@ const getRandomPosition = () => ({
   y: Math.random() * WORLD_SIZE.y,
 });
 
-const getRandomPositionInCorner = (corner: 1 | 2 | 3 | 4) => {
+const getRandomPositionInCorner = (corner: 1 | 2 | 3 | 4, margin = 200) => {
   switch (corner) {
     case 1:
       return {
-        x: (Math.random() * WORLD_SIZE.x) / 3,
-        y: (Math.random() * WORLD_SIZE.y) / 3,
+        x: margin + Math.random() * (WORLD_SIZE.x / 3 - margin),
+        y: margin + Math.random() * (WORLD_SIZE.y / 3 - margin),
       };
     case 2:
       return {
-        x: (Math.random() * WORLD_SIZE.x) / 3 + (WORLD_SIZE.x * 2) / 3,
-        y: (Math.random() * WORLD_SIZE.y) / 3,
+        x:
+          (WORLD_SIZE.x * 2) / 3 +
+          margin +
+          Math.random() * (WORLD_SIZE.x / 3 - margin),
+        y: margin + Math.random() * (WORLD_SIZE.y / 3 - margin),
       };
     case 3:
       return {
-        x: (Math.random() * WORLD_SIZE.x) / 3,
-        y: (Math.random() * WORLD_SIZE.y) / 3 + (WORLD_SIZE.y * 2) / 3,
+        x: margin + Math.random() * (WORLD_SIZE.x / 3 - margin),
+        y:
+          (WORLD_SIZE.y * 2) / 3 +
+          margin +
+          Math.random() * (WORLD_SIZE.y / 3 - margin),
       };
     default:
       return {
-        x: (Math.random() * WORLD_SIZE.x) / 3 + (WORLD_SIZE.x * 2) / 3,
-        y: (Math.random() * WORLD_SIZE.y) / 3 + (WORLD_SIZE.y * 2) / 3,
+        x: margin + Math.random() * (WORLD_SIZE.x / 2 - margin),
+        y:
+          WORLD_SIZE.y / 2 +
+          margin +
+          Math.random() * (WORLD_SIZE.y / 2 - margin),
       };
   }
 };
 
-const STRANGER_A = createStrangerA(getRandomPositionInCorner(1));
+const STRANGER_CORNER = Math.round(Math.random() * 4) as 1 | 2 | 3 | 4;
+const BOSS_CORNER = ((STRANGER_CORNER + 2) % 4) as 1 | 2 | 3 | 4;
+
+const STRANGER_A = createStrangerA(getRandomPositionInCorner(STRANGER_CORNER));
 
 export function createDefaultState(): State {
   const enemySpawner = createEnemySpawner();
@@ -143,7 +154,11 @@ export function createDefaultState(): State {
   );
 
   return {
-    quadtree,
+    ...createWorldDefaults({
+      worldSize: WORLD_SIZE,
+      cameraTargetPoint: STRANGER_A,
+      quadtree,
+    }),
     statsManager: createStatsManager(),
     collisionManager: createCollisionManager(),
     world: {
@@ -154,33 +169,38 @@ export function createDefaultState(): State {
       }),
     },
     gameSpeedManager: createGameSpeedManager(),
-    cameraManager: createCameraManager({
-      frame: {
-        position: vector.create(200, 50),
-        size: vector.create(window.innerWidth - 250, window.innerHeight - 100),
-      },
-      worldTargetPoint: vector.create(STRANGER_A.x, STRANGER_A.y),
-    }),
+
     gameObjectsManager: createGameObjectsManager({
       quadtree,
       objectsArray: [
         STRANGER_A,
-        createWeaponAItem(getRandomPositionInCorner(1)),
-        createShieldItem(getRandomPositionInCorner(1)),
-        createDefenderA(getRandomPositionInCorner(1)),
-        createWeaponAItem(getRandomPositionInCorner(1)),
-        createShieldItem(getRandomPositionInCorner(1)),
-        createItemShotgun(getRandomPositionInCorner(1)),
+        createWeaponAItem(getRandomPositionInCorner(STRANGER_CORNER)),
+        createShieldItem(getRandomPositionInCorner(STRANGER_CORNER)),
+        createDefenderA(getRandomPositionInCorner(STRANGER_CORNER)),
+        createWeaponAItem(getRandomPositionInCorner(STRANGER_CORNER)),
+        createShieldItem(getRandomPositionInCorner(STRANGER_CORNER)),
+        createItemShotgun(getRandomPositionInCorner(STRANGER_CORNER)),
+
+        createBossA(getRandomPositionInCorner(BOSS_CORNER)),
 
         createHealingStationA(
-          matrix.fitPoint(
-            getRandomPosition(),
-            matrix.create(500, 500, WORLD_SIZE.x - 500, WORLD_SIZE.y - 500),
+          getRandomPositionInCorner(
+            ((STRANGER_CORNER + 1) % 4) as 1 | 2 | 3 | 4,
           ),
         ),
 
+        // Plants
+        ...([1, 2, 3, 4] as const).map((i) => {
+          return createPlantA(getRandomPositionInCorner(i));
+        }),
+
+        // Plants eaters
+        ...([1, 2, 3, 4] as const).map((i) => {
+          return createPlantEaterA(getRandomPositionInCorner(i));
+        }),
+
         // Walls
-        ...[1, 2, 3, 4, 5].map(() => {
+        ...[1, 2, 3, 4, 5, 6].map(() => {
           return createWallA(
             getRandomPosition(),
             vector.create(Math.random() * 100 + 10, Math.random() * 100 + 10),
@@ -200,27 +220,6 @@ export function createDefaultState(): State {
 
         house,
         HOUSE_2,
-
-        createPlantA(getRandomPosition()),
-        createPlantA(getRandomPosition()),
-        createPlantA(getRandomPosition()),
-
-        createPlantEaterA({
-          x: Math.random() * WORLD_SIZE.x,
-          y: Math.random() * WORLD_SIZE.y,
-        }),
-
-        createPlantEaterA({
-          x: Math.random() * WORLD_SIZE.x,
-          y: Math.random() * WORLD_SIZE.y,
-        }),
-
-        createPlantEaterA({
-          x: Math.random() * WORLD_SIZE.x,
-          y: Math.random() * WORLD_SIZE.y,
-        }),
-
-        createBossA(getRandomPositionInCorner(3)),
       ],
 
       update(delta, state) {

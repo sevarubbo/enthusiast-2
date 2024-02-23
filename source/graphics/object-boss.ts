@@ -17,7 +17,7 @@ export const drawObjectBoss = (
   if (bullet) {
     drawCircle(ctx, {
       position: state.cameraManager.toScreen(object),
-      radius: object.collisionCircle.radius,
+      radius: object.collision.circleRadius,
       color: `rgba(255, 255, 255, ${1 - object.health.current / object.health.max})`,
     });
   }

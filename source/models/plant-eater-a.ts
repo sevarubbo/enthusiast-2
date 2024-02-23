@@ -14,6 +14,7 @@ import {
 import type { Bullet } from "./bullet";
 import type { PlantA } from "./plant-a";
 import type { Movable } from "services/state";
+import type { StateObject } from "types";
 
 export interface PlantEaterA
   extends Identifiable,
@@ -24,9 +25,7 @@ export interface PlantEaterA
   type: "plant_eater_a";
   numberOfPlantsEaten: number;
   color: string;
-  targetEnemy:
-    | (Healthy & Collidable & { collisionCircle: { radius: number } })
-    | undefined;
+  targetEnemy: StateObject | undefined;
   attack: number;
   lookAroundInterval: ReturnType<typeof createIntervalManager>;
   shield: ReturnType<typeof createObjectShieldManager>;
@@ -94,9 +93,7 @@ export function createPlantEaterA(
         | undefined;
 
       if (bullet) {
-        this.targetEnemy = gameObjectsManager.objects[bullet.belongsTo] as
-          | (Healthy & Collidable & { collisionCircle: { radius: number } })
-          | undefined;
+        this.targetEnemy = gameObjectsManager.objects[bullet.belongsTo];
       }
 
       // Check if the target enemy is still alive
@@ -129,7 +126,12 @@ export function createPlantEaterA(
         this.movement.stop();
       }
 
-      if (this.targetPoint && this.targetEnemy) {
+      if (
+        this.targetPoint &&
+        this.targetEnemy &&
+        "collisionCircle" in this.targetEnemy &&
+        "health" in this.targetEnemy
+      ) {
         const distance = Math.sqrt(
           (this.x - this.targetPoint.x) ** 2 +
             (this.y - this.targetPoint.y) ** 2,

@@ -18,12 +18,19 @@ import {
 import type { KeyboardKey } from "services/io";
 import type { State } from "services/state";
 
-const { canvas, onCanvasMouseMove, onPointerDown, onPointerUp } =
+const { canvas, onCanvasMouseMove, onPointerDown, onPointerUp, fitToScreen } =
   createCanvas();
 
 onCanvasMouseMove((position) => setPointerPosition(position));
 onPointerDown(() => setIsPointerDown(true));
 onPointerUp(() => setIsPointerDown(false));
+
+// Prevent context menu
+(() => {
+  canvas.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
+})();
 
 // Draw on canvas
 
@@ -158,3 +165,12 @@ document.body.appendChild(volumeControl);
 document.body.style.margin = "0";
 document.body.style.overflow = "hidden";
 document.body.style.backgroundColor = "black";
+
+// Resize canvas on window resize
+(() => {
+  window.addEventListener("resize", () => {
+    state.cameraManager.frame.size = vector.create(canvas.width, canvas.height);
+    fitToScreen();
+  });
+  fitToScreen();
+})();

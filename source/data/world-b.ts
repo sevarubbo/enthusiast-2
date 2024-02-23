@@ -5,6 +5,7 @@ import {
   createStrangerA,
   createTower,
 } from "models";
+import { createBossA } from "models/boss-a";
 import { createDefenderA } from "models/defender-a";
 import { createItemRewardA } from "models/item-reward-a";
 import { createShieldItem } from "models/shield-item";
@@ -25,6 +26,7 @@ export const createWorldB = (): State => {
       quadtree: defaults.quadtree,
       objectsArray: [
         createStrangerA(defaults.world.getRandomPoint()),
+        createBossA(defaults.world.getRandomPoint()),
 
         createTower({ x: 100, y: 100 }),
 

@@ -1,15 +1,22 @@
-import { getSoundProperties, playSound } from "services/audio";
+import {
+  getSoundPosition,
+  getSoundProperties,
+  playSound,
+} from "services/audio";
 import type { State } from "./types";
+import type { SoundName } from "services/audio";
 import type { Vector } from "services/vector";
 
-export const createObjectShieldManager = ({
+export const createShield = ({
   maxHp = 30,
   hp = maxHp,
   active = false,
+  shieldHitSound = "shield hit",
 }: {
   maxHp?: number;
   hp?: number;
   active?: boolean;
+  shieldHitSound?: SoundName;
 } = {}) => {
   return {
     maxHp,
@@ -41,8 +48,16 @@ export const createObjectShieldManager = ({
             "shield lost",
             getSoundProperties(shieldOwner, state.cameraManager),
           );
+        } else {
+          playSound(
+            shieldHitSound,
+            getSoundPosition(shieldOwner, state.cameraManager),
+          );
         }
       }
     },
   } as const;
 };
+
+/** @deprecated */
+export const createObjectShieldManager = createShield;

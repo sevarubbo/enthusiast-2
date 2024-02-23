@@ -7,7 +7,7 @@ import {
 import { createIntervalManager, type State } from "services/state";
 import { vector } from "services/vector";
 import type { SoundName } from "services/audio";
-import type { Identifiable, CollidableCircle } from "services/state";
+import type { Identifiable } from "services/state";
 import type { Vector } from "services/vector";
 
 type WeaponType = "default" | "machine_gun_b" | "shotgun";
@@ -64,7 +64,9 @@ export const createWeaponA = <T extends WeaponType = "default">({
     update: (
       delta: number,
       state: State,
-      owner: Vector & CollidableCircle & Identifiable,
+      owner: Vector & {
+        collision: { circleRadius: number };
+      } & Identifiable,
     ) => {
       shootInterval.update(delta, state);
       autoRefillInterval.update(delta, state);
@@ -87,10 +89,10 @@ export const createWeaponA = <T extends WeaponType = "default">({
           const bulletPosition = {
             x:
               owner.x +
-              Math.cos(scheduledShoot.angle) * owner.collisionCircle.radius,
+              Math.cos(scheduledShoot.angle) * owner.collision.circleRadius,
             y:
               owner.y +
-              Math.sin(scheduledShoot.angle) * owner.collisionCircle.radius,
+              Math.sin(scheduledShoot.angle) * owner.collision.circleRadius,
           };
 
           for (let i = 0; i < bulletNumber; i++) {

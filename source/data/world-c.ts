@@ -5,6 +5,7 @@ import { createHealingStationA } from "../models/healing-station-a";
 import { createShootingEnemyA } from "../models/shooting-enemy-a";
 import { createWallA } from "../models/wall-a";
 import { createStrangerA } from "models";
+import { createBossA } from "models/boss-a";
 import { createItemShotgun } from "models/item-shotgun";
 import { createGameObjectsManager } from "services/state";
 import type { State } from "services/state";
@@ -37,6 +38,11 @@ export const createWorldC = (): State => {
         createStrangerA({
           x: 100,
           y: 100,
+        }),
+
+        createBossA({
+          x: 300,
+          y: 300,
         }),
 
         // createShieldItem({
