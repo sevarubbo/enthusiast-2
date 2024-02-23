@@ -11,12 +11,20 @@ export const createExplosion = (
   object: StateObject,
   state: State,
   size = 30,
+  speed = 1,
 ) => {
   const bulletsCount = size;
   const angleStep = (2 * Math.PI) / bulletsCount;
 
-  if (!("collisionCircle" in object)) {
-    throw new Error("Object must have collisionCircle");
+  const collisionCircleRadius =
+    "collisionCircle" in object
+      ? object.collisionCircle.radius
+      : "circleRadius" in object.collision
+        ? object.collision.circleRadius
+        : null;
+
+  if (!collisionCircleRadius) {
+    throw new Error("No collision circle radius");
   }
 
   for (let i = 0; i < bulletsCount; i++) {
@@ -26,7 +34,7 @@ export const createExplosion = (
       object,
       vector.scale(
         vector.fromAngle(i * angleStep),
-        object.collisionCircle.radius * 2,
+        collisionCircleRadius * 1.2,
       ),
     );
 
@@ -35,7 +43,7 @@ export const createExplosion = (
         ...bulletPosition,
         direction: vector.fromAngle(i * angleStep),
         belongsTo: object.id,
-        speed: Math.random() * 0.4 + 0.1,
+        speed: (Math.random() * 0.4 + 0.1) * speed,
       }),
     );
   }

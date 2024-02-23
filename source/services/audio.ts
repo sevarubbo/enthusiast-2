@@ -68,8 +68,19 @@ const audioFiles = [
     baseVolume: 3,
   },
   {
+    name: "boss shield lost",
+    // eslint-disable-next-line max-len
+    url: "sounds/ESM_Dirty_Synth_Groan_Item_3_Glitch_Robotic_Technology_Hi_Tech_Futuristic_Game_Tone_Science_UFO_Space_User_Pick_Up_Arcade_Dark.wav",
+    baseVolume: 2,
+  },
+  {
     name: "health critical",
     url: "sounds/ESM_ACV_Vocals_female_pain_tonal_slight_grunt_hit_02.wav",
+  },
+  {
+    name: "boss death",
+    url: "sounds/SciFiExplosion_S08SF.306.wav",
+    baseVolume: 5,
   },
 ] as const;
 

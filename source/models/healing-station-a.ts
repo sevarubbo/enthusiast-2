@@ -18,7 +18,7 @@ export const createHealingStationA = (position: Vector) => {
       circleRadius: 100,
       isSolid: false,
     }),
-    healInterval: createIntervalManager(1000),
+    healInterval: createIntervalManager(500),
 
     get color() {
       return color;

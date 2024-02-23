@@ -271,7 +271,7 @@ function drawObject(
         position: state.cameraManager.toScreen(object),
         color: object.color,
         radius: object.collisionCircle.radius,
-        lineWidth: 5,
+        lineWidth: 2,
       });
 
       return;

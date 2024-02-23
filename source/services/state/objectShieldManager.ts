@@ -12,12 +12,16 @@ export const createShield = ({
   hp = maxHp,
   active = false,
   shieldHitSound = "shield hit",
+  shieldLostSound = "shield lost",
 }: {
   maxHp?: number;
   hp?: number;
   active?: boolean;
   shieldHitSound?: SoundName;
+  shieldLostSound?: SoundName;
 } = {}) => {
+  let onShieldLostCallback: (() => void) | null = null;
+
   return {
     maxHp,
 
@@ -37,6 +41,10 @@ export const createShield = ({
       hp = value;
     },
 
+    onShieldLost(callback: () => void) {
+      onShieldLostCallback = callback;
+    },
+
     absorbDamage(damage: number, shieldOwner: Vector, state: State) {
       if (active) {
         hp = Math.max(0, this.hp - damage);
@@ -45,9 +53,14 @@ export const createShield = ({
           active = false;
 
           playSound(
-            "shield lost",
+            shieldLostSound,
             getSoundProperties(shieldOwner, state.cameraManager),
           );
+
+          if (onShieldLostCallback) {
+            onShieldLostCallback();
+            onShieldLostCallback = null;
+          }
         } else {
           playSound(
             shieldHitSound,

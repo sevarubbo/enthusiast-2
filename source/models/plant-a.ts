@@ -123,11 +123,11 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
 
       // After death
       if (this.health.current <= 0) {
-        if (Math.random() < 0.003) {
+        if (Math.random() < 0.0033) {
           state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.004) {
+        } else if (Math.random() < 0.0039) {
           state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );

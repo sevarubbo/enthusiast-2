@@ -1,6 +1,7 @@
 import { createBaseObject, createExplosion } from "./helpers";
 import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createWeaponA } from "./weapon-a";
+import { getSoundProperties, playSound } from "../services/audio";
 import { matrix } from "services/matrix";
 import {
   createIntervalManager,
@@ -21,10 +22,14 @@ export const createBossA = (position: Vector) => {
     color: "#000",
 
     collision: createObjectCollisionManager({
-      circleRadius: 80,
+      circleRadius: 90,
     }),
 
-    health: createObjectHealthManager({ maxHealth: 1000, selfHealing: true }),
+    health: createObjectHealthManager({
+      maxHealth: 1000,
+      // maxHealth: 100,
+      selfHealing: true,
+    }),
     childrenSpawnInterval: createIntervalManager(10000, false),
     movement: createObjectMovementManager({ maxSpeed: 0.01 }),
 
@@ -41,8 +46,10 @@ export const createBossA = (position: Vector) => {
 
     shield: createShield({
       active: true,
+      // maxHp: 100,
       maxHp: 1000,
       shieldHitSound: "boss shield hit",
+      shieldLostSound: "boss shield lost",
     }),
 
     get targetPoint() {
@@ -157,13 +164,25 @@ export const createBossA = (position: Vector) => {
         });
       })();
 
+      // Shield
+      (() => {
+        this.shield.onShieldLost(() => {
+          createExplosion(this, state, 100, 0.1);
+        });
+      })();
+
       // After death
       (() => {
         if (this.health.current <= 0) {
           // Create massive explosion
-          createExplosion(this, state, 1000);
+          createExplosion(this, state, 1000, 0.3);
 
           state.statsManager.bossDied = true;
+
+          playSound(
+            "boss death",
+            getSoundProperties(this, state.cameraManager),
+          );
         }
       })();
     },

@@ -24,7 +24,7 @@ export const createObjectHealthManager = (o: {
 
   return {
     max: o.maxHealth,
-    healInterval: o.selfHealing ? createIntervalManager(2000) : null,
+    healInterval: o.selfHealing ? createIntervalManager(1000) : null,
 
     get current() {
       return current;
@@ -46,7 +46,7 @@ export const createObjectHealthManager = (o: {
 
       // Healing
       this.healInterval?.fireIfReady(() => {
-        const healingValue = this.max / 50;
+        const healingValue = this.max / 200;
 
         current = Math.min((current += healingValue), this.max);
       });

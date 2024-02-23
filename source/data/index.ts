@@ -195,7 +195,7 @@ export function createDefaultState(): State {
         }),
 
         // Plants eaters
-        ...([1, 2, 3, 4] as const).map((i) => {
+        ...([1, 2, 3] as const).map((i) => {
           return createPlantEaterA(getRandomPositionInCorner(i));
         }),
 
