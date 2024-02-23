@@ -1,5 +1,6 @@
-import { canShootEnemyWithoutFriendlyFire } from "./helpers";
+import { canShootEnemy } from "./helpers";
 import { createItemRewardA } from "./item-reward-a";
+import { createItemShotgun } from "./item-shotgun";
 import { createShieldItem } from "./shield-item";
 import { createWeaponA } from "./weapon-a";
 import { createWeaponAItem } from "./weapon-a-item";
@@ -111,7 +112,7 @@ export function createShootingEnemyA(
 
         if (
           distanceSq <= this.shootingRange ** 2 &&
-          canShootEnemyWithoutFriendlyFire(
+          canShootEnemy(
             this,
             targetEnemy,
             (oo) => oo.type === "shooting_enemy_a" || oo.type === "boss_a",
@@ -189,6 +190,11 @@ export function createShootingEnemyA(
           // Drop weapon
           state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
+          );
+        } else if (Math.random() < 0.09) {
+          // Drop weapon
+          state.gameObjectsManager.spawnObject(
+            createItemShotgun({ x: this.x, y: this.y }),
           );
         } else if (Math.random() < 0.5) {
           state.gameObjectsManager.spawnObject(

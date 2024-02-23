@@ -20,7 +20,21 @@ export const createCollisionManager = () => {
       Object.values(gameObjectsManager.objects).forEach((object) => {
         object.collision.collidesWithObjects = [];
 
-        if ("collisionCircle" in object) {
+        if (
+          "collisionCircle" in object ||
+          ("collision" in object && "circleRadius" in object.collision)
+        ) {
+          const collisionCircleRadius =
+            "collisionCircle" in object
+              ? object.collisionCircle.radius
+              : "circleRadius" in object.collision
+                ? object.collision.circleRadius
+                : null;
+
+          if (!collisionCircleRadius) {
+            return;
+          }
+
           const nearbyObjects = (() => {
             return quadtree.query(object.collision.getRec(object));
           })();
@@ -30,12 +44,12 @@ export const createCollisionManager = () => {
               const vectorBetween = vector.subtract(nearbyObject, object);
               const distance = vector.length(vectorBetween);
 
-              if (!("collisionCircle" in nearbyObject)) {
+              if ("boxSize" in nearbyObject.collision) {
                 // Check if object.collisionsCircle intersects with nearbyObject.box
                 const closestPoint = getCircleIntersectionWithBox(
                   {
                     position: object,
-                    radius: object.collisionCircle.radius,
+                    radius: collisionCircleRadius,
                   },
                   nearbyObject.collision.getRec(nearbyObject),
                 );
@@ -49,7 +63,7 @@ export const createCollisionManager = () => {
                   closestPoint,
                 );
 
-                if (distanceToClosestPoint <= object.collisionCircle.radius) {
+                if (distanceToClosestPoint <= collisionCircleRadius) {
                   object.collision.collidesWithObjects.push(nearbyObject);
                 }
 
@@ -57,7 +71,7 @@ export const createCollisionManager = () => {
                 if (nearbyObject.collision.isSolid) {
                   // Move the object back to the edge of the collision
                   const overlap =
-                    object.collisionCircle.radius - distanceToClosestPoint;
+                    collisionCircleRadius - distanceToClosestPoint;
                   const direction = vector.normalize(
                     vector.subtract(closestPoint, object),
                   );
@@ -79,69 +93,77 @@ export const createCollisionManager = () => {
                   // TODO: Calculate
                   const ratio = 3;
 
-                  nearbyObject.setPosition({
-                    x: nearbyObject.x + (direction.x * offset) / ratio,
-                    y: nearbyObject.y + (direction.y * offset) / ratio,
-                  });
+                  if ("setPosition" in nearbyObject) {
+                    nearbyObject.setPosition({
+                      x: nearbyObject.x + (direction.x * offset) / ratio,
+                      y: nearbyObject.y + (direction.y * offset) / ratio,
+                    });
 
-                  fitObjectToWorld(nearbyObject, state.world.size);
+                    fitObjectToWorld(nearbyObject, state.world.size);
+                  }
                 }
               } else if (
-                distance <=
-                object.collisionCircle.radius +
-                  nearbyObject.collisionCircle.radius
+                "collisionCircle" in nearbyObject ||
+                "circleRadius" in nearbyObject.collision
               ) {
-                object.collision.collidesWithObjects.push(nearbyObject);
+                const otherCollisionCircleRadius =
+                  "collisionCircle" in nearbyObject
+                    ? nearbyObject.collisionCircle.radius
+                    : nearbyObject.collision.circleRadius;
 
-                // Adjust positions
                 if (
-                  object.collision.isSolid &&
-                  nearbyObject.collision.isSolid
+                  distance <=
+                  collisionCircleRadius + otherCollisionCircleRadius
                 ) {
-                  const otherObject = nearbyObject;
+                  object.collision.collidesWithObjects.push(nearbyObject);
 
-                  // Move the object back to the edge of the collision
-                  const overlap =
-                    object.collisionCircle.radius +
-                    nearbyObject.collisionCircle.radius -
-                    distance;
-                  const direction = vector.normalize(vectorBetween);
-                  const offset =
-                    (overlap * otherObject.collisionCircle.radius) /
-                    (otherObject.collisionCircle.radius +
-                      object.collisionCircle.radius);
+                  // Adjust positions
+                  if (
+                    object.collision.isSolid &&
+                    nearbyObject.collision.isSolid
+                  ) {
+                    // Move the object back to the edge of the collision
+                    const overlap =
+                      collisionCircleRadius +
+                      otherCollisionCircleRadius -
+                      distance;
+                    const direction = vector.normalize(vectorBetween);
+                    const offset =
+                      (overlap * otherCollisionCircleRadius) /
+                      (otherCollisionCircleRadius + collisionCircleRadius);
 
-                  if ("setPosition" in object) {
-                    const newPosition = matrix.fitPoint(
-                      {
-                        x: object.x - direction.x * offset,
-                        y: object.y - direction.y * offset,
-                      },
-                      matrix.create(
-                        object.collisionCircle.radius,
-                        object.collisionCircle.radius,
-                        state.world.size.x - object.collisionCircle.radius,
-                        state.world.size.y - object.collisionCircle.radius,
-                      ),
-                    );
+                    if ("setPosition" in object) {
+                      const newPosition = matrix.fitPoint(
+                        {
+                          x: object.x - direction.x * offset,
+                          y: object.y - direction.y * offset,
+                        },
+                        matrix.create(
+                          collisionCircleRadius,
+                          collisionCircleRadius,
+                          state.world.size.x - collisionCircleRadius,
+                          state.world.size.y - collisionCircleRadius,
+                        ),
+                      );
 
-                    object.setPosition(newPosition);
-                  } else {
-                    const newPosition = matrix.fitPoint(
-                      {
-                        x: object.x - direction.x * offset,
-                        y: object.y - direction.y * offset,
-                      },
-                      matrix.create(
-                        object.collisionCircle.radius,
-                        object.collisionCircle.radius,
-                        state.world.size.x - object.collisionCircle.radius,
-                        state.world.size.y - object.collisionCircle.radius,
-                      ),
-                    );
+                      object.setPosition(newPosition);
+                    } else {
+                      const newPosition = matrix.fitPoint(
+                        {
+                          x: object.x - direction.x * offset,
+                          y: object.y - direction.y * offset,
+                        },
+                        matrix.create(
+                          object.collisionCircle.radius,
+                          object.collisionCircle.radius,
+                          state.world.size.x - object.collisionCircle.radius,
+                          state.world.size.y - object.collisionCircle.radius,
+                        ),
+                      );
 
-                    object.x = newPosition.x;
-                    object.y = newPosition.y;
+                      object.x = newPosition.x;
+                      object.y = newPosition.y;
+                    }
                   }
                 }
               }

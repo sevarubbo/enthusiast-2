@@ -7,6 +7,7 @@ import { createCollisionManager } from "../services/state/collisionManager";
 import { createEnemyC, createHouse, createPlantA, createTower } from "models";
 import { createBossA } from "models/boss-a";
 import { createDefenderA } from "models/defender-a";
+import { createItemShotgun } from "models/item-shotgun";
 import { createPlantEaterA } from "models/plant-eater-a";
 import { createStrangerA } from "models/stranger-a";
 import { createWeaponAItem } from "models/weapon-a-item";
@@ -169,6 +170,7 @@ export function createDefaultState(): State {
         createDefenderA(getRandomPositionInCorner(1)),
         createWeaponAItem(getRandomPositionInCorner(1)),
         createShieldItem(getRandomPositionInCorner(1)),
+        createItemShotgun(getRandomPositionInCorner(1)),
 
         createHealingStationA(
           matrix.fitPoint(

@@ -6,6 +6,7 @@ import type { Vector } from "./vector";
 interface AudioData {
   name: string;
   buffer: AudioBuffer;
+  baseVolume: number;
 }
 
 // Initialize Web Audio API context
@@ -19,6 +20,11 @@ const audioFiles = [
   {
     name: "heavy shot",
     url: "sounds/DS_VUKH_fx_riser_one_shot_fire_inside_short_noise.wav",
+  },
+  {
+    name: "shotgun shot",
+    url: "sounds/GunshotRifle_BW.57613.wav",
+    baseVolume: 0.9,
   },
   {
     name: "basic death",
@@ -80,7 +86,11 @@ export async function loadAudioFiles(): Promise<void> {
     const arrayBuffer = await response.arrayBuffer();
     const buffer = await audioContext.decodeAudioData(arrayBuffer);
 
-    loadedAudioData.push({ name: file.name, buffer });
+    loadedAudioData.push({
+      name: file.name,
+      buffer,
+      baseVolume: "baseVolume" in file ? file.baseVolume : 1,
+    });
   }
 }
 
@@ -101,7 +111,7 @@ export function playSound(
 
     const gainNode = audioContext.createGain();
 
-    gainNode.gain.value = options.volume ?? 1;
+    gainNode.gain.value = (options.volume ?? 1) * audioData.baseVolume;
 
     const panNode = audioContext.createStereoPanner();
 

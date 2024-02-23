@@ -1,5 +1,5 @@
 import { type Bullet } from "./bullet";
-import { createMachineGun } from "./weapon-a";
+import { createDefaultGun } from "./weapon-a";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import {
@@ -23,7 +23,7 @@ export interface DefenderA extends Movable, CollidableCircle, Healthy {
   weapon: Weapon;
 }
 
-const defaultWeapon = createMachineGun();
+const defaultWeapon = createDefaultGun();
 
 export function createDefenderA(
   options: Partial<Pick<DefenderA, "x" | "y">> = {},

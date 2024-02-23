@@ -3,63 +3,15 @@ import {
   drawDefaultRoundObjectView,
   drawObjectAsText,
   drawObjectShield,
+  drawObjectWeapon,
   drawQueue,
   getPlantColor,
 } from "./helpers";
 import { drawObjectBoss } from "./object-boss";
 import { drawCircle, drawCircleOutline, drawRectangle } from "services/canvas";
 import { vector } from "services/vector";
-import type { State, Weapon } from "services/state";
+import type { State } from "services/state";
 import type { StateObject } from "types";
-
-const drawObjectWeapon = (
-  ctx: CanvasRenderingContext2D,
-  state: State,
-  object: StateObject & { weapon: Weapon },
-) => {
-  if (!("collisionCircle" in object)) {
-    throw new Error("Object must have collisionCircle");
-  }
-
-  if (object.weapon.type === "machine_gun_b") {
-    ctx.font = "10px Arial";
-    ctx.fillStyle = "#fff";
-    ctx.textAlign = "center";
-    ctx.fillText(
-      "🗡️",
-      state.cameraManager.toScreen(object).x -
-        object.collisionCircle.radius -
-        18,
-      state.cameraManager.toScreen(object).y + 7,
-    );
-  }
-
-  // Draw ammo
-  if (
-    object.weapon.ammo < object.weapon.maxAmmo ||
-    object.weapon.type === "machine_gun_b"
-  ) {
-    let points = Math.floor((object.weapon.ammo / object.weapon.maxAmmo) * 5);
-    let color =
-      points <= 1 ? "rgba(255, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.5)";
-
-    if (points === 0) {
-      points = 1;
-
-      if (object.weapon.ammo === 0) color = "rgba(255, 0, 0, 0.2)";
-    }
-
-    for (let i = 0; i < points; i++) {
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen(
-          vector.add(object, vector.create(-10 + i * 5, 26)),
-        ),
-        color,
-        radius: 2,
-      });
-    }
-  }
-};
 
 function drawObjectAsCircle(
   ctx: CanvasRenderingContext2D,
@@ -297,6 +249,12 @@ function drawObject(
     }
 
     case "item_reward_a": {
+      drawObjectAsText(ctx, state, object, object.icon);
+
+      return;
+    }
+
+    case "item_shotgun": {
       drawObjectAsText(ctx, state, object, object.icon);
 
       return;

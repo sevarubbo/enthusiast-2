@@ -20,7 +20,7 @@ export const createBossA = (position: Vector) => {
     type: "boss_a",
     color: "#000",
 
-    collisionCircle: { radius: 50 },
+    collisionCircle: { radius: 60 },
     collision: createObjectCollisionManager({
       circleRadius: 50,
     }),
@@ -32,9 +32,11 @@ export const createBossA = (position: Vector) => {
 
     weapon: createWeaponA({
       bulletSize: 4,
-      bulletSpeed: 0.08,
+      bulletSpeed: 0.09,
       bulletStrength: 40,
       shotSound: "heavy shot",
+      fireRate: 1.1,
+      autoRefillRate: 2,
     }),
 
     shield: createObjectShieldManager({ active: true, maxHp: 1000 }),
@@ -129,16 +131,25 @@ export const createBossA = (position: Vector) => {
 
         if (distanceToStrangerSquared > this.fireRange ** 3) return;
 
-        if (this.health.current < this.health.max) return;
-
         this.childrenSpawnInterval.fireIfReady(() => {
-          gameObjectsManager.spawnObject(
-            // Offset position slightly random
-            createShootingEnemyA({
-              x: this.x + Math.random() * 100 - 50,
-              y: this.y + Math.random() * 100 - 50,
-            }),
-          );
+          let numberOfChildren = 1;
+
+          if (Math.random() < 0.5) {
+            numberOfChildren = 2;
+          } else if (Math.random() < 0.2) {
+            numberOfChildren = 3;
+          } else if (Math.random() < 0.1) {
+            numberOfChildren = 5;
+          }
+
+          for (let i = 0; i < numberOfChildren; i++)
+            gameObjectsManager.spawnObject(
+              // Offset position slightly random
+              createShootingEnemyA({
+                x: this.x + Math.random() * 100 - 50,
+                y: this.y + Math.random() * 100 - 50,
+              }),
+            );
         });
       })();
 

@@ -5,6 +5,7 @@ import { createHealingStationA } from "../models/healing-station-a";
 import { createShootingEnemyA } from "../models/shooting-enemy-a";
 import { createWallA } from "../models/wall-a";
 import { createStrangerA } from "models";
+import { createItemShotgun } from "models/item-shotgun";
 import { createGameObjectsManager } from "services/state";
 import type { State } from "services/state";
 
@@ -24,14 +25,14 @@ export const createWorldC = (): State => {
         //   y: 100,
         // }),
         //
-        createShootingEnemyA({
-          x: 400,
-          y: 400,
-        }),
-        createShootingEnemyA({
-          x: 450,
-          y: 450,
-        }),
+        // createShootingEnemyA({
+        //   x: 400,
+        //   y: 400,
+        // }),
+        // createShootingEnemyA({
+        //   x: 450,
+        //   y: 450,
+        // }),
 
         createStrangerA({
           x: 100,
@@ -52,6 +53,11 @@ export const createWorldC = (): State => {
         //   x: 300,
         //   y: 300,
         // }),
+
+        createItemShotgun({
+          x: 100,
+          y: 200,
+        }),
 
         createWallA({
           x: 100,

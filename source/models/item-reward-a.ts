@@ -24,7 +24,23 @@ export const createItemRewardA = (position: Vector) => {
     update(delta: number, state: State) {
       this.health.update(delta, state, this);
 
-      if (this.collision.collidesWithObjects[0]?.type === "stranger_a") {
+      const collidesWith = this.collision.collidesWithObjects[0];
+
+      if (!collidesWith) return;
+
+      if ("health" in collidesWith) {
+        collidesWith.health.current = collidesWith.health.max;
+      }
+
+      if ("shield" in collidesWith) {
+        collidesWith.shield.hp = collidesWith.shield.maxHp;
+      }
+
+      if ("weapon" in collidesWith) {
+        collidesWith.weapon.ammo = collidesWith.weapon.maxAmmo;
+      }
+
+      if (collidesWith.type === "stranger_a") {
         state.gameObjectsManager.despawnObject(this);
 
         state.statsManager.addMoney(1);

@@ -38,6 +38,7 @@ export interface Collidable extends Vector {
 }
 
 export interface CollidableCircle extends Vector {
+  /** @deprecated */
   collisionCircle: { radius: number };
   collision: ReturnType<typeof createObjectCollisionManager>;
 }

@@ -1,5 +1,5 @@
 import { createExplosion } from "./helpers";
-import { createMachineGun } from "./weapon-a";
+import { createDefaultGun } from "./weapon-a";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import { getKeysPressed } from "services/io";
@@ -52,7 +52,7 @@ export function createStrangerA(
     targetPoint: null,
     shootingAngle: 0,
 
-    weapon: createMachineGun(),
+    weapon: createDefaultGun(),
 
     shield: createObjectShieldManager(),
 
@@ -153,7 +153,7 @@ export function createStrangerA(
       }
 
       if (this.weapon.type === "machine_gun_b" && this.weapon.ammo <= 0) {
-        this.weapon = createMachineGun();
+        this.weapon = createDefaultGun();
       }
 
       // After death

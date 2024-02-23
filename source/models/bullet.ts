@@ -73,6 +73,14 @@ export function createBullet(
           otherObject.collision.isSolid &&
           otherObject.id !== this.belongsTo
         ) {
+          // If bullet belongs to the same owner, don't destroy it
+          if (
+            otherObject.type === "bullet" &&
+            otherObject.belongsTo === this.belongsTo
+          ) {
+            continue;
+          }
+
           state.gameObjectsManager.despawnObject(this);
 
           if ("health" in otherObject) {

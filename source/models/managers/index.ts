@@ -3,7 +3,10 @@ import type { Collidable } from "services/state/types";
 import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
-export type ObjectCollisionManager = {
+export type ObjectCollisionManager = (
+  | { boxSize: Vector }
+  | { circleRadius: number }
+) & {
   collidesWithObjects: Array<StateObject & Collidable>;
   lastObjectPosition: Vector;
   isSolid: boolean;
@@ -13,7 +16,7 @@ export type ObjectCollisionManager = {
     width: number;
     height: number;
   };
-} & ({ boxSize: Vector } | { circleRadius: number });
+};
 
 export const createObjectCollisionManager = (
   o: {

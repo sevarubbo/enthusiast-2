@@ -41,7 +41,7 @@ export const createExplosion = (
   }
 };
 
-export const canShootEnemyWithoutFriendlyFire = (
+export const canShootEnemy = (
   object: StateObject,
   enemy: StateObject,
   isFriend: (o: StateObject) => boolean,
@@ -55,6 +55,10 @@ export const canShootEnemyWithoutFriendlyFire = (
   return !getFirstObjectLineCollision(state, shootingSegment, (o) => {
     if (o === object) {
       return false;
+    }
+
+    if (o.type === "wall_a") {
+      return true;
     }
 
     return isFriend(o);

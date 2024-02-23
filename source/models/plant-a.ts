@@ -1,6 +1,8 @@
+import { createDefenderA } from "./defender-a";
 import { createEnemy } from "./enemy";
 import { createEnemyC } from "./enemyC";
 import { createItemRewardA } from "./item-reward-a";
+import { createItemShotgun } from "./item-shotgun";
 import { createPlantEaterA } from "./plant-eater-a";
 import { createShieldItem } from "./shield-item";
 import { createWeaponAItem } from "./weapon-a-item";
@@ -129,6 +131,10 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
+        } else if (Math.random() < 0.002) {
+          state.gameObjectsManager.spawnObject(
+            createItemShotgun({ x: this.x, y: this.y }),
+          );
         } else if (Math.random() < 0.02) {
           state.gameObjectsManager.spawnObject(
             createEnemy({ x: this.x, y: this.y }),
@@ -141,6 +147,8 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           createItemRewardA({ x: this.x, y: this.y });
         } else if (Math.random() < 0.005) {
           createPlantEaterA({ x: this.x, y: this.y });
+        } else if (Math.random() < 0.1) {
+          createDefenderA({ x: this.x, y: this.y });
         }
       }
     },
