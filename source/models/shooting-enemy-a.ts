@@ -30,7 +30,10 @@ export function createShootingEnemyA(
   o: Partial<Pick<ShootingEnemyA, "x" | "y"> & { scale: number }> = {},
 ): ShootingEnemyA {
   const scale = Math.random() * 0.7 + 0.8;
-  const defaultWeapon = createWeaponA();
+  const defaultWeapon = createWeaponA({
+    autoRefillRate: 0.5,
+    fireRate: 1.1,
+  });
 
   return {
     color: "#f00",
