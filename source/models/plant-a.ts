@@ -58,7 +58,7 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           BASE_SPROUT_INTERVAL + Math.random() * BASE_SPROUT_INTERVAL;
 
         if (!this.newGrowth) {
-          this.health.current -= 0.05;
+          this.health.decrease(0.05, this, state);
 
           return;
         }

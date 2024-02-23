@@ -42,6 +42,7 @@ export function createStrangerA(
     health: createObjectHealthManager({
       maxHealth: 30,
       selfHealing: true,
+      woundSound: "health critical",
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.2 }),
     collision: createObjectCollisionManager({

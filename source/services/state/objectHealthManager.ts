@@ -7,9 +7,9 @@ import type { StateObject } from "types";
 
 export interface ObjectHealthManager {
   max: number;
-  current: number;
+  readonly current: number;
   healInterval: IntervalManager | null;
-  decrease(value: number): void;
+  decrease(value: number, owner: StateObject, state: State): void;
   update(delta: number, state: State, object: StateObject): void;
   increase(value: number): void;
 }
@@ -18,37 +18,50 @@ export const createObjectHealthManager = (o: {
   maxHealth: number;
   selfHealing?: boolean;
   deathSound?: SoundName | null;
-}): ObjectHealthManager => ({
-  max: o.maxHealth,
-  current: o.maxHealth,
-  healInterval: o.selfHealing ? createIntervalManager(2000) : null,
-  decrease(value: number) {
-    this.current = Math.max(0, this.current - value);
-  },
-  increase(value: number) {
-    this.current = Math.min(this.max, this.current + value);
-  },
+  woundSound?: SoundName | null;
+}): ObjectHealthManager => {
+  let current = o.maxHealth;
 
-  update(delta, state, object) {
-    this.healInterval?.update(delta, state);
+  return {
+    max: o.maxHealth,
+    healInterval: o.selfHealing ? createIntervalManager(2000) : null,
 
-    // Healing
-    this.healInterval?.fireIfReady(() => {
-      const healingValue = this.max / 50;
+    get current() {
+      return current;
+    },
 
-      this.current = Math.min((this.current += healingValue), this.max);
-    });
+    decrease(value, object, state) {
+      current = Math.max(0, this.current - value);
 
-    // Dying
-    if (this.current <= 0) {
-      state.gameObjectsManager.despawnObject(object);
-
-      if (o.deathSound !== null) {
-        playSound(
-          o.deathSound || "basic death",
-          getSoundPosition(object, state.cameraManager),
-        );
+      if (o.woundSound && current <= this.max / 2) {
+        playSound(o.woundSound, getSoundPosition(object, state.cameraManager));
       }
-    }
-  },
-});
+    },
+    increase(value: number) {
+      current = Math.min(this.max, this.current + value);
+    },
+
+    update(delta, state, object) {
+      this.healInterval?.update(delta, state);
+
+      // Healing
+      this.healInterval?.fireIfReady(() => {
+        const healingValue = this.max / 50;
+
+        current = Math.min((current += healingValue), this.max);
+      });
+
+      // Dying
+      if (this.current <= 0) {
+        state.gameObjectsManager.despawnObject(object);
+
+        if (o.deathSound !== null) {
+          playSound(
+            o.deathSound || "basic death",
+            getSoundPosition(object, state.cameraManager),
+          );
+        }
+      }
+    },
+  };
+};

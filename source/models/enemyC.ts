@@ -102,7 +102,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
 
         this.movement.start(vector.fromAngle(direction));
 
-        this.health.decrease(this.health.max / 100);
+        this.health.decrease(this.health.max / 100, this, state);
       } else {
         this.color = "white";
       }

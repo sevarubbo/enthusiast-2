@@ -67,6 +67,10 @@ const audioFiles = [
     url: "sounds/ESM_Game_Dark_Item_2_Sci_Fi_Abstract_Tech_Impact_Pick_Up_Alien.wav",
     baseVolume: 3,
   },
+  {
+    name: "health critical",
+    url: "sounds/ESM_ACV_Vocals_female_pain_tonal_slight_grunt_hit_02.wav",
+  },
 ] as const;
 
 export type SoundName = (typeof audioFiles)[number]["name"];

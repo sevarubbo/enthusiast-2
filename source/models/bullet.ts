@@ -87,7 +87,7 @@ export function createBullet(
             if ("shield" in otherObject && otherObject.shield.active) {
               otherObject.shield.absorbDamage(this.attack, otherObject, state);
             } else {
-              otherObject.health.decrease(this.attack);
+              otherObject.health.decrease(this.attack, otherObject, state);
 
               playSound("basic hit", getSoundPosition(this, cameraManager));
             }

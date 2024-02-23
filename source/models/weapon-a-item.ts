@@ -17,7 +17,7 @@ export const createWeaponAItem = (position: Vector) =>
     collision: createObjectCollisionManager({
       circleRadius: 15,
     }),
-    health: createObjectHealthManager({ maxHealth: 50 }),
+    health: createObjectHealthManager({ maxHealth: 100 }),
 
     update(delta: number, state: State) {
       this.health.update(delta, state, this);

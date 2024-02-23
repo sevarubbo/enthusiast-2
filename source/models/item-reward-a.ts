@@ -17,7 +17,7 @@ export const createItemRewardA = (position: Vector) => {
     collision: createObjectCollisionManager({
       circleRadius: 15,
     }),
-    health: createObjectHealthManager({ maxHealth: 5 }),
+    health: createObjectHealthManager({ maxHealth: 50 }),
 
     icon: ["🥥", "🍉", "🍇", "🥑"][Math.floor(Math.random() * 4)] as string,
 
@@ -29,7 +29,9 @@ export const createItemRewardA = (position: Vector) => {
       if (!collidesWith) return;
 
       if ("health" in collidesWith) {
-        collidesWith.health.current = collidesWith.health.max;
+        collidesWith.health.increase(
+          collidesWith.health.max - collidesWith.health.current,
+        );
       }
 
       if ("shield" in collidesWith) {

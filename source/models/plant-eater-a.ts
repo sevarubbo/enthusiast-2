@@ -148,7 +148,7 @@ export function createPlantEaterA(
           const te = this.targetEnemy;
 
           this.biteInterval.fireIfReady(() => {
-            te.health.current -= this.attack;
+            te.health.decrease(this.attack, te, state);
 
             if (te.health.current <= 0) {
               this.numberOfPlantsEaten += 1;
@@ -175,7 +175,7 @@ export function createPlantEaterA(
           if (this.health.current >= this.health.max) {
             this.age += 1;
             this.health.max = this.age * BASE_HEALTH;
-            this.health.current = this.health.max;
+            this.health.increase(this.health.max - this.health.current);
           }
         });
       }

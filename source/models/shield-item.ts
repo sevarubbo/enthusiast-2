@@ -27,7 +27,7 @@ export const createShieldItem = (
   collision: createObjectCollisionManager({
     circleRadius: 15,
   }),
-  health: createObjectHealthManager({ maxHealth: 100 }),
+  health: createObjectHealthManager({ maxHealth: 200 }),
   x: o.x,
   y: o.y,
 
