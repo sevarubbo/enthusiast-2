@@ -174,3 +174,48 @@ document.body.style.backgroundColor = "black";
   });
   fitToScreen();
 })();
+
+// Soundcloud widget
+(() => {
+  const widget = document.createElement("iframe");
+
+  // import sc api script
+  const script = document.createElement("script");
+
+  script.src = "https://w.soundcloud.com/player/api.js";
+  document.body.appendChild(script);
+
+  widget.src =
+    // eslint-disable-next-line max-len
+    "https://w.soundcloud.com/player/?url=https://soundcloud.com/land_scap3/sets/8026oo&color=%23000000&auto_play=false&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false";
+  widget.width = "100%";
+  widget.height = "100px";
+  widget.style.position = "fixed";
+  widget.style.left = "0";
+  widget.style.border = "none";
+  widget.allow = "autoplay";
+  widget.style.display = "none";
+
+  document.body.appendChild(widget);
+
+  setTimeout(() => {
+    // eslint-disable-next-line
+    const SC = (window as any).SC;
+
+    const setup = () => {
+      // eslint-disable-next-line
+      const w = SC.Widget(widget);
+
+      // set volume
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+      w.setVolume(10);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+      w.skip(Math.floor(Math.random() * 61));
+
+      window.removeEventListener("click", setup);
+    };
+
+    window.addEventListener("click", setup);
+  }, 1000);
+})();
