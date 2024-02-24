@@ -196,7 +196,7 @@ function drawObject(
 
     case "plant_a": {
       drawObjectAsCircle(ctx, state, {
-        radius: object.collisionCircle.radius,
+        radius: object.collision.circleRadius,
         x: object.x,
         y: object.y,
         color: getPlantColor(object.health.current, object.health.max),

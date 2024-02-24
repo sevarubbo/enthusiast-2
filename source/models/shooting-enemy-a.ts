@@ -153,9 +153,9 @@ export function createShootingEnemyA(
         };
       })();
 
-      // Switch to default weapon when ammo is empty
+      // Drop weapon when ammo is empty
       (() => {
-        if (this.weapon.type === "machine_gun_b" && this.weapon.ammo <= 0) {
+        if (this.weapon.type !== "default" && this.weapon.ammo <= 0) {
           this.weapon = defaultWeapon;
         }
       })();

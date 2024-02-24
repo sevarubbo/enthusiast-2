@@ -1,91 +1,86 @@
 import { createDefenderA } from "./defender-a";
 import { createEnemy } from "./enemy";
 import { createEnemyC } from "./enemyC";
+import { createBaseObject } from "./helpers";
 import { createItemRewardA } from "./item-reward-a";
 import { createItemShotgun } from "./item-shotgun";
 import { createPlantEaterA } from "./plant-eater-a";
 import { createShieldItem } from "./shield-item";
 import { createWeaponAItem } from "./weapon-a-item";
-import { createId } from "helpers";
 import {
-  type Identifiable,
-  type Updatable,
-  type Collidable,
-  type Healthy,
   createObjectCollisionManager,
   createObjectHealthManager,
-  type IntervalManager,
   createIntervalManager,
 } from "services/state";
-
-export interface PlantA extends Identifiable, Updatable, Collidable, Healthy {
-  type: "plant_a";
-  sproutInterval: IntervalManager;
-  newGrowth: boolean;
-  children: number;
-  /** @deprecated */
-  collisionCircle: { radius: number };
-}
+import type { Vector } from "../services/vector";
+import type { State } from "services/state";
 
 const BASE_SPROUT_INTERVAL = 4000;
 
-export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
+export type PlantA = ReturnType<typeof createPlantA>;
+const MIN_SIZE = 1;
+const MAX_SIZE = 5;
+const GROWTH_SPEED = 0.01;
+
+export function createPlantA(position: Vector) {
+  let age = 0;
+  const maxAge = 1000;
+
   return {
-    id: createId(),
+    ...createBaseObject(position),
     type: "plant_a",
-    x: o.x || 0,
-    y: o.y || 0,
-    collisionCircle: { radius: 5 },
     health: createObjectHealthManager({
       maxHealth: 4,
       deathSound: null,
     }),
     collision: createObjectCollisionManager({
-      circleRadius: 5,
+      circleRadius: 1,
     }),
     sproutInterval: createIntervalManager(BASE_SPROUT_INTERVAL, false),
     newGrowth: true,
-    children: 0,
 
-    update(delta, state) {
+    update(delta: number, state: State) {
       this.health.update(delta, state, this);
       this.sproutInterval.update(delta, state);
 
-      const MAX_NUMBER_OF_CHILDREN = 3;
+      this.collision.circleRadius =
+        MIN_SIZE + (age / maxAge) * (MAX_SIZE - MIN_SIZE);
+
+      if (age < maxAge) {
+        age += delta * GROWTH_SPEED;
+      } else {
+        this.health.decrease((delta * GROWTH_SPEED) / 500, this, state);
+      }
 
       this.sproutInterval.fireIfReady(() => {
+        if (age >= maxAge * 0.8) return;
+
         this.sproutInterval.duration =
           BASE_SPROUT_INTERVAL + Math.random() * BASE_SPROUT_INTERVAL;
-
-        if (!this.newGrowth) {
-          this.health.decrease(0.05, this, state);
-
-          return;
-        }
 
         const { gameObjectsManager } = state;
 
         const plantsWithinRange = state.quadtree.query({
-          x: this.x - this.collisionCircle.radius * 10,
-          y: this.y - this.collisionCircle.radius * 10,
-          width: this.collisionCircle.radius * 20,
-          height: this.collisionCircle.radius * 20,
+          x: this.x - this.collision.circleRadius * 10,
+          y: this.y - this.collision.circleRadius * 10,
+          width: this.collision.circleRadius * 20,
+          height: this.collision.circleRadius * 20,
         });
 
         if (
           plantsWithinRange.length < 10 &&
           Object.keys(state.gameObjectsManager.objects).length < 4000
         ) {
-          const RADIUS = 25;
+          const SPAWN_DISTANCE = 34;
           const spawnLocation = {
             x:
               this.x +
-              Math.random() * this.collisionCircle.radius * RADIUS -
-              (this.collisionCircle.radius * RADIUS) / 2,
+              Math.random() * this.collision.circleRadius * SPAWN_DISTANCE -
+              (this.collision.circleRadius * SPAWN_DISTANCE) / 2,
             y:
               this.y +
-              Math.random() * this.collisionCircle.radius * RADIUS -
-              (this.collisionCircle.radius * RADIUS) / 2,
+              Math.random() * this.collision.circleRadius * SPAWN_DISTANCE -
+              (this.collision.circleRadius * SPAWN_DISTANCE) / 2,
           };
 
           let collides = false;
@@ -110,24 +105,17 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
 
           if (!collides) {
             gameObjectsManager.spawnObject(createPlantA(spawnLocation));
-            this.children += 1;
-
-            if (this.children >= MAX_NUMBER_OF_CHILDREN) {
-              this.newGrowth = false;
-            }
           }
-        } else {
-          this.newGrowth = false;
         }
       });
 
       // After death
       if (this.health.current <= 0) {
-        if (Math.random() < 0.0033) {
+        if (Math.random() < 0.0037) {
           state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.0039) {
+        } else if (Math.random() < 0.0035) {
           state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
@@ -147,10 +135,10 @@ export function createPlantA(o: Partial<Pick<PlantA, "x" | "y">> = {}): PlantA {
           createItemRewardA({ x: this.x, y: this.y });
         } else if (Math.random() < 0.005) {
           createPlantEaterA({ x: this.x, y: this.y });
-        } else if (Math.random() < 0.1) {
+        } else if (Math.random() < 0.12) {
           createDefenderA({ x: this.x, y: this.y });
         }
       }
     },
-  };
+  } as const;
 }

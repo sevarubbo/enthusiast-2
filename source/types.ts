@@ -5,7 +5,7 @@ import type {
   House,
   EnemyC,
   StrangerA,
-  PlantA,
+  createPlantA,
 } from "./models";
 import type { createHealingStationA } from "./models/healing-station-a";
 import type { ShieldItem } from "./models/shield-item";
@@ -27,7 +27,7 @@ export type StateObject =
   | Tower
   | Bullet
   | StrangerA
-  | PlantA
+  | ReturnType<typeof createPlantA>
   | PlantEaterA
   | ShootingEnemyA
   | DefenderA

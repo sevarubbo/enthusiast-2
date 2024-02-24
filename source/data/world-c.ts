@@ -2,9 +2,10 @@
 import { createWorldDefaults } from "./defaults";
 import { createDefenderA } from "../models/defender-a";
 import { createHealingStationA } from "../models/healing-station-a";
+import { createPlantEaterA } from "../models/plant-eater-a";
 import { createShootingEnemyA } from "../models/shooting-enemy-a";
 import { createWallA } from "../models/wall-a";
-import { createStrangerA } from "models";
+import { createPlantA, createStrangerA } from "models";
 import { createBossA } from "models/boss-a";
 import { createItemShotgun } from "models/item-shotgun";
 import { createGameObjectsManager } from "services/state";
@@ -20,10 +21,22 @@ export const createWorldC = (): State => {
 
     gameObjectsManager: createGameObjectsManager({
       quadtree: defaults.quadtree,
+
+      update(delta, state) {
+        // Ensure at least one plant
+        if (
+          state.gameObjectsManager.findObjectsByType("plant_a").length === 0
+        ) {
+          state.gameObjectsManager.spawnObject(
+            createPlantA(state.world.getRandomPoint()),
+          );
+        }
+      },
+
       objectsArray: [
         // createDefenderA({
-        //   x: 100,
-        //   y: 100,
+        //   x: 200,
+        //   y: 200,
         // }),
         //
         // createShootingEnemyA({
@@ -40,10 +53,20 @@ export const createWorldC = (): State => {
           y: 100,
         }),
 
-        createBossA({
+        createPlantA({
           x: 300,
           y: 300,
         }),
+
+        // createPlantEaterA({
+        //   x: 300,
+        //   y: 300,
+        // }),
+
+        // createBossA({
+        //   x: 300,
+        //   y: 300,
+        // }),
 
         // createShieldItem({
         //   x: 200,
@@ -60,15 +83,15 @@ export const createWorldC = (): State => {
         //   y: 300,
         // }),
 
-        createItemShotgun({
-          x: 100,
-          y: 200,
-        }),
-
-        createWallA({
-          x: 100,
-          y: 300,
-        }),
+        // createItemShotgun({
+        //   x: 100,
+        //   y: 200,
+        // }),
+        //
+        // createWallA({
+        //   x: 100,
+        //   y: 300,
+        // }),
       ],
     }),
   };

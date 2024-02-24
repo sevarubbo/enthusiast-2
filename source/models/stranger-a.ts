@@ -23,8 +23,6 @@ type TypicalObject = Identifiable &
 
 export interface StrangerA extends TypicalObject {
   type: "stranger_a";
-  isHovered: boolean;
-  isSelected: boolean;
   shootingAngle: number;
   shield: ReturnType<typeof createObjectShieldManager>;
   weapon: Weapon;
@@ -33,6 +31,8 @@ export interface StrangerA extends TypicalObject {
 export function createStrangerA(
   o: Partial<Pick<StrangerA, "x" | "y">> = {},
 ): StrangerA {
+  const defaultWeapon = createDefaultGun();
+
   return {
     id: createId(),
     type: "stranger_a",
@@ -48,12 +48,10 @@ export function createStrangerA(
     collision: createObjectCollisionManager({
       circleRadius: 12,
     }),
-    isHovered: false,
-    isSelected: false,
     targetPoint: null,
     shootingAngle: 0,
 
-    weapon: createDefaultGun(),
+    weapon: defaultWeapon,
 
     shield: createObjectShieldManager(),
 
@@ -64,27 +62,6 @@ export function createStrangerA(
 
       // START: Selectable object logic
       const { worldPointerPosition, isPointerDown } = state.cameraManager;
-
-      // Check for intersection with pointer
-      if (
-        Math.sqrt(
-          (this.x - worldPointerPosition.x) ** 2 +
-            (this.y - worldPointerPosition.y) ** 2,
-        ) < this.collisionCircle.radius
-      ) {
-        this.isHovered = true;
-
-        if (isPointerDown) {
-          this.isSelected = true;
-        }
-      } else {
-        this.isHovered = false;
-
-        // if (this.isSelected && isPointerDown) {
-        //   this.targetPoint = worldPointerPosition;
-        // }
-      }
-      // END
 
       // START: Check collisions with world edges
       const { world } = state;
@@ -153,9 +130,12 @@ export function createStrangerA(
         this.weapon.fireAtAngle(this.shootingAngle);
       }
 
-      if (this.weapon.type === "machine_gun_b" && this.weapon.ammo <= 0) {
-        this.weapon = createDefaultGun();
-      }
+      // Drop weapon when ammo is empty
+      (() => {
+        if (this.weapon.type !== "default" && this.weapon.ammo <= 0) {
+          this.weapon = defaultWeapon;
+        }
+      })();
 
       // After death
       if (this.health.current <= 0) {

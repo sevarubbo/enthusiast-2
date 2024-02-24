@@ -148,7 +148,7 @@ export const createMachineGunB = () => {
     bulletSpeed: 0.9,
     maxAmmo: 50,
     fireRate: 11,
-    bulletStrength: 1.8,
+    bulletStrength: 1.6,
     accuracy: 0.98,
     autoRefillRate: 0,
   });

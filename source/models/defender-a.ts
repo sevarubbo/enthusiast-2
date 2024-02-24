@@ -1,6 +1,6 @@
 import { type Bullet } from "./bullet";
 import { createDefaultGun } from "./weapon-a";
-import { createObjectShieldManager } from "../services/state/objectShieldManager";
+import { createShield } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import {
   createObjectCollisionManager,
@@ -19,7 +19,7 @@ export interface DefenderA extends Movable, CollidableCircle, Healthy {
   shootingRange: number;
   color: string;
   targetEnemyId: string | undefined;
-  shield: ReturnType<typeof createObjectShieldManager>;
+  shield: ReturnType<typeof createShield>;
   weapon: Weapon;
 }
 
@@ -45,7 +45,7 @@ export function createDefenderA(
     }),
     shootingRange: 300,
     targetEnemyId: undefined,
-    shield: createObjectShieldManager(),
+    shield: createShield(),
     weapon: defaultWeapon,
 
     update(delta, state) {
@@ -95,7 +95,7 @@ export function createDefenderA(
         if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
           this.targetEnemyId = enemyBullet.belongsTo;
 
-          return false;
+          return true;
         }
 
         return true;
@@ -168,11 +168,11 @@ export function createDefenderA(
         this.movement.setTargetPoint(shieldItem);
       })();
 
-      if (!idle) {
+      if (idle) {
         // Defend self
         (() => {
           const enemyBullet = this.collision.collidesWithObjects.find(
-            (o) => o.type === "bullet",
+            (o) => o.type === "bullet" && o.belongsTo !== this.id,
           ) as Bullet | undefined;
 
           const targetEnemy =

@@ -1,4 +1,3 @@
-import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import {
@@ -36,6 +35,7 @@ export interface PlantEaterA
   attackRange: number;
   maxAge: number;
   collisionCircle: { radius: number };
+  size: number;
 }
 
 const BASE_ATTACK = 1.6;
@@ -76,6 +76,10 @@ export function createPlantEaterA(
     maxAge: MAX_AGE * 3,
     shield: createObjectShieldManager(),
     attackRange: 0,
+
+    get size() {
+      return Math.min(this.age, this.adultAge);
+    },
 
     update(delta, state) {
       this.health.update(delta, state, this);
@@ -129,7 +133,6 @@ export function createPlantEaterA(
       if (
         this.targetPoint &&
         this.targetEnemy &&
-        "collisionCircle" in this.targetEnemy &&
         "health" in this.targetEnemy
       ) {
         const distance = Math.sqrt(
@@ -137,10 +140,15 @@ export function createPlantEaterA(
             (this.y - this.targetPoint.y) ** 2,
         );
 
+        const teCollisionCircleRadius =
+          "collisionCircle" in this.targetEnemy
+            ? this.targetEnemy.collisionCircle.radius
+            : this.targetEnemy.collision.circleRadius;
+
         if (
           distance <=
           this.collisionCircle.radius +
-            this.targetEnemy.collisionCircle.radius +
+            teCollisionCircleRadius +
             this.attackRange
         ) {
           this.targetPoint = null;
@@ -173,31 +181,29 @@ export function createPlantEaterA(
       if (this.age < this.adultAge) {
         this.growthInterval.fireIfReady(() => {
           if (this.health.current >= this.health.max) {
-            this.age += 1;
-            this.health.max = this.age * BASE_HEALTH;
+            this.health.max = this.size * BASE_HEALTH;
             this.health.increase(this.health.max - this.health.current);
           }
         });
       }
 
-      this.collisionCircle.radius = 5 + this.age;
+      this.collisionCircle.radius = 5 + this.size;
 
       if ("circleRadius" in this.collision) {
         this.collision.circleRadius = this.collisionCircle.radius;
       }
 
-      this.attack = BASE_ATTACK + (BASE_ATTACK * this.age) / this.adultAge;
+      this.attack = BASE_ATTACK + (BASE_ATTACK * this.size) / this.adultAge;
       this.movement.maxSpeed =
-        ((BASE_SPEED + (BASE_SPEED * this.age) / this.adultAge) *
+        ((BASE_SPEED + (BASE_SPEED * this.size) / this.adultAge) *
           this.health.current) /
         this.health.max;
       this.attackRange = this.collisionCircle.radius / 2;
 
       if (this.age >= this.maxAge) {
         gameObjectsManager.despawnObject(this);
-        gameObjectsManager.spawnObject(
-          createShootingEnemyA({ x: this.x, y: this.y }),
-        );
+      } else {
+        this.age += delta / 5000;
       }
     },
   };
