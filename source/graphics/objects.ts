@@ -296,10 +296,10 @@ function drawObject(
 
     default: {
       drawQueue.schedule(2, (ctx2) => {
-        if ("collisionCircle" in object) {
+        if ("collisionCircle" in object || "circleRadius" in object.collision) {
           drawDefaultRoundObjectView(ctx2, state, object);
         } else {
-          throw new Error("Object must have collisionCircle");
+          throw new Error("Object must have collision circle");
         }
       });
     }

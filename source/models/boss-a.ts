@@ -1,6 +1,7 @@
 import { createBaseObject, createExplosion } from "./helpers";
 import { createShootingEnemyA } from "./shooting-enemy-a";
 import { createWeaponA } from "./weapon-a";
+import { createWeaponBElement } from "./weapon-b-element";
 import { getSoundProperties, playSound } from "../services/audio";
 import { matrix } from "services/matrix";
 import {
@@ -15,6 +16,8 @@ import { vector, type Vector } from "services/vector";
 
 export const createBossA = (position: Vector) => {
   let targetPoint: Vector | null = null;
+
+  let testWeapon: object | null = null;
 
   return {
     ...createBaseObject(position),
@@ -65,6 +68,12 @@ export const createBossA = (position: Vector) => {
       this.movement.update(delta, state, this);
       this.weapon.update(delta, state, this);
       this.health.update(delta, state, this);
+
+      if (!testWeapon) {
+        testWeapon = {};
+
+        state.gameObjectsManager.spawnObject(createWeaponBElement(this));
+      }
 
       const { world } = state;
 
