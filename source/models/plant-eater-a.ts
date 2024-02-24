@@ -31,7 +31,6 @@ export interface PlantEaterA
   growthInterval: ReturnType<typeof createIntervalManager>;
   biteInterval: ReturnType<typeof createIntervalManager>;
   age: number;
-  adultAge: number;
   attackRange: number;
   maxAge: number;
   collisionCircle: { radius: number };
@@ -43,6 +42,7 @@ const BASE_SPEED = 0.002;
 const MAX_AGE = 10;
 const MAX_REPRODUCTION_AGE = 8;
 const BASE_HEALTH = 4;
+const AGE_SPEED = 0.0001;
 
 export function createPlantEaterA(
   o: Partial<Pick<PlantEaterA, "x" | "y">> = {},
@@ -72,13 +72,12 @@ export function createPlantEaterA(
     growthInterval: createIntervalManager(10000),
     biteInterval: createIntervalManager(500),
     age: 1,
-    adultAge: MAX_AGE,
-    maxAge: MAX_AGE * 3,
+    maxAge: MAX_AGE,
     shield: createObjectShieldManager(),
     attackRange: 0,
 
     get size() {
-      return Math.min(this.age, this.adultAge);
+      return Math.min(this.age, MAX_REPRODUCTION_AGE);
     },
 
     update(delta, state) {
@@ -178,7 +177,7 @@ export function createPlantEaterA(
         }
       }
 
-      if (this.age < this.adultAge) {
+      if (this.age <= MAX_REPRODUCTION_AGE) {
         this.growthInterval.fireIfReady(() => {
           if (this.health.current >= this.health.max) {
             this.health.max = this.size * BASE_HEALTH;
@@ -193,9 +192,10 @@ export function createPlantEaterA(
         this.collision.circleRadius = this.collisionCircle.radius;
       }
 
-      this.attack = BASE_ATTACK + (BASE_ATTACK * this.size) / this.adultAge;
+      this.attack =
+        BASE_ATTACK + (BASE_ATTACK * this.size) / MAX_REPRODUCTION_AGE;
       this.movement.maxSpeed =
-        ((BASE_SPEED + (BASE_SPEED * this.size) / this.adultAge) *
+        ((BASE_SPEED + (BASE_SPEED * this.size) / MAX_REPRODUCTION_AGE) *
           this.health.current) /
         this.health.max;
       this.attackRange = this.collisionCircle.radius / 2;
@@ -203,7 +203,7 @@ export function createPlantEaterA(
       if (this.age >= this.maxAge) {
         gameObjectsManager.despawnObject(this);
       } else {
-        this.age += delta / 5000;
+        this.age += delta * AGE_SPEED;
       }
     },
   };

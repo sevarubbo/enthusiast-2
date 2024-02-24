@@ -24,7 +24,7 @@ const GROWTH_SPEED = 0.01;
 
 export function createPlantA(position: Vector) {
   let age = 0;
-  const maxAge = 1000;
+  const maxAge = Math.random() * 500 + 500;
 
   return {
     ...createBaseObject(position),
@@ -71,7 +71,7 @@ export function createPlantA(position: Vector) {
           plantsWithinRange.length < 10 &&
           Object.keys(state.gameObjectsManager.objects).length < 4000
         ) {
-          const SPAWN_DISTANCE = 34;
+          const SPAWN_DISTANCE = 100;
           const spawnLocation = {
             x:
               this.x +
