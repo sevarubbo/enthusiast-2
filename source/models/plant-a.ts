@@ -20,13 +20,15 @@ const BASE_SPROUT_INTERVAL = 4000;
 export type PlantA = ReturnType<typeof createPlantA>;
 const MIN_SIZE = 1;
 const MAX_SIZE = 5;
-const GROWTH_SPEED = 0.02;
+const GROWTH_SPEED = 0.005;
 const DECAY_SPEED = GROWTH_SPEED / 250;
 const BASE_HEALTH = 10;
+const BASE_MAX_AGE = 1000;
+const MAX_PLANTS = 3000;
 
 export function createPlantA(position: Vector) {
   let age = 0;
-  const maxAge = Math.random() * 500 + 500;
+  const maxAge = (Math.random() * BASE_MAX_AGE) / 2 + BASE_MAX_AGE / 2;
   const minSproutAge = maxAge * 0.2;
 
   return {
@@ -40,7 +42,6 @@ export function createPlantA(position: Vector) {
       circleRadius: 1,
     }),
     sproutInterval: createIntervalManager(BASE_SPROUT_INTERVAL, false),
-    newGrowth: true,
 
     update(delta: number, state: State) {
       this.health.update(delta, state, this);
@@ -65,27 +66,26 @@ export function createPlantA(position: Vector) {
 
         const { gameObjectsManager } = state;
 
-        const plantsWithinRange = state.quadtree.query({
-          x: this.x - this.collision.circleRadius * 10,
-          y: this.y - this.collision.circleRadius * 10,
-          width: this.collision.circleRadius * 20,
-          height: this.collision.circleRadius * 20,
-        });
+        const plantsWithinRange = state.quadtree.queryRadius(
+          this,
+          this.collision.circleRadius * 10,
+        );
 
         if (
           plantsWithinRange.length < 10 &&
-          Object.keys(state.gameObjectsManager.objects).length < 4000
+          gameObjectsManager.findObjectsByType("plant_a").length < MAX_PLANTS
         ) {
-          const SPAWN_DISTANCE = 100;
+          const SPAWN_DISTANCE = 200;
+
+          const minDistance = this.collision.circleRadius * 2;
+          const [xOffset, yOffset] = [
+            gaussianRandom(10) * this.collision.circleRadius * SPAWN_DISTANCE,
+            gaussianRandom(10) * this.collision.circleRadius * SPAWN_DISTANCE,
+          ];
+
           const spawnLocation = {
-            x:
-              this.x +
-              Math.random() * this.collision.circleRadius * SPAWN_DISTANCE -
-              (this.collision.circleRadius * SPAWN_DISTANCE) / 2,
-            y:
-              this.y +
-              Math.random() * this.collision.circleRadius * SPAWN_DISTANCE -
-              (this.collision.circleRadius * SPAWN_DISTANCE) / 2,
+            x: this.x + xOffset + (xOffset > 0 ? minDistance : -minDistance),
+            y: this.y + yOffset + (yOffset > 0 ? minDistance : -minDistance),
           };
 
           let collides = false;
@@ -116,7 +116,7 @@ export function createPlantA(position: Vector) {
 
       // After death
       if (this.health.current <= 0) {
-        if (Math.random() < 0.0037) {
+        if (Math.random() < 0.004) {
           state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
@@ -128,11 +128,11 @@ export function createPlantA(position: Vector) {
           state.gameObjectsManager.spawnObject(
             createItemShotgun({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.02) {
+        } else if (Math.random() < 0.019) {
           state.gameObjectsManager.spawnObject(
             createEnemy({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.009) {
+        } else if (Math.random() < 0.008) {
           state.gameObjectsManager.spawnObject(
             createEnemyC({ x: this.x, y: this.y }),
           );
@@ -146,4 +146,15 @@ export function createPlantA(position: Vector) {
       }
     },
   } as const;
+}
+
+// Gaussian random. Takes a number and returns a number between -n and n
+function gaussianRandom(n: number) {
+  let r = 0;
+
+  for (let i = 0; i < n; i++) {
+    r += Math.random();
+  }
+
+  return r / n - 0.5;
 }

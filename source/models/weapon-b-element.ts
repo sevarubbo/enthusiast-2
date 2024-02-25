@@ -24,7 +24,7 @@ export const createWeaponBElement = (belongsTo: {
       circleRadius: 20,
     }),
 
-    attack: 10,
+    attack: 5,
 
     update(delta: number, state: State) {
       // Move in circle around belongsTo
@@ -32,7 +32,7 @@ export const createWeaponBElement = (belongsTo: {
         belongsTo.collision.circleRadius +
         this.collision.circleRadius +
         distance;
-      const ANGLE_SPEED = 0.001;
+      const ANGLE_SPEED = 0.0008;
 
       distance += delta * 0.01 * direction;
 

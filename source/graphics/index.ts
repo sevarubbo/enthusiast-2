@@ -28,11 +28,12 @@ const fpsData = {
 };
 
 function drawUI(ctx: CanvasRenderingContext2D, state: State) {
-  ctx.fillStyle = "#fff";
-  ctx.font = "24px serif";
-
   const n = state.statsManager.money;
   const LEFT_OFFSET = 50;
+
+  ctx.fillStyle = "#fff";
+  ctx.font = "24px serif";
+  ctx.textAlign = "left";
 
   ctx.fillText(`SCORE: ${n}`, LEFT_OFFSET, 100);
   ctx.fillText(
@@ -68,6 +69,11 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
     state.gameObjectsManager.findObjectsByType("plant_eater_a");
 
   ctx.fillText(`pe: ${plantEaters.length}`, LEFT_OFFSET, 380);
+
+  // Plants
+  const plants = state.gameObjectsManager.findObjectsByType("plant_a");
+
+  ctx.fillText(`pl: ${plants.length}`, LEFT_OFFSET, 420);
 
   // If stranger died, show the message
   if (state.statsManager.strangerDied) {
@@ -109,8 +115,6 @@ function drawUI(ctx: CanvasRenderingContext2D, state: State) {
 export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
   return {
     draw: (state: State) => {
-      drawQueue.queue = [];
-
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.fillStyle = "#111";
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -122,7 +126,9 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
       });
 
       // Draw UI
-      drawUI(ctx, state);
+      drawQueue.schedule(3, () => {
+        drawUI(ctx, state);
+      });
 
       // Make camera frame clipping
       ctx.save();
@@ -164,12 +170,17 @@ export function createCanvasDrawer(ctx: CanvasRenderingContext2D) {
       // Draw objects
       drawObjects(ctx, state, state.gameObjectsManager.objects);
 
-      // Draw queue
-      drawQueue.queue
-        .sort((a, b) => a.index - b.index)
-        .forEach((q) => {
+      const sortedQueue = drawQueue.queue.sort((a, b) => a.index - b.index);
+
+      while (sortedQueue.length) {
+        const q = sortedQueue.shift();
+
+        if (q) {
           q.fn(ctx);
-        });
+        }
+      }
+
+      drawQueue.queue = [];
 
       ctx.restore(); // Restore the previous clipping state
     },

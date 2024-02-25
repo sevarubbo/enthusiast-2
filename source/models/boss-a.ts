@@ -14,10 +14,19 @@ import {
 import { createShield } from "services/state/objectShieldManager";
 import { vector, type Vector } from "services/vector";
 
+const SPAWN_INTERVAL = 1000;
+const WAVE_INTERVAL = 30000;
+const MIN_SPAWN_NUMBER = 1;
+const MAX_SPAWN_NUMBER = 10;
+const SPAWN_DISTANCE = 100;
+
 export const createBossA = (position: Vector) => {
   let targetPoint: Vector | null = null;
 
   let testWeapon: object | null = null;
+
+  let childrenLeftToSpawn =
+    Math.random() * (MAX_SPAWN_NUMBER - MIN_SPAWN_NUMBER) + MIN_SPAWN_NUMBER;
 
   return {
     ...createBaseObject(position),
@@ -33,7 +42,9 @@ export const createBossA = (position: Vector) => {
       // maxHealth: 100,
       selfHealing: true,
     }),
-    childrenSpawnInterval: createIntervalManager(10000, false),
+    childrenSpawnInterval: createIntervalManager(SPAWN_INTERVAL, false),
+    childrenSpawnWaveInterval: createIntervalManager(WAVE_INTERVAL, false),
+
     movement: createObjectMovementManager({ maxSpeed: 0.01 }),
 
     fireRange: 600,
@@ -136,40 +147,70 @@ export const createBossA = (position: Vector) => {
       })();
 
       // Spawn children
+      // (() => {
+      //   const stranger = gameObjectsManager.findClosestObject(
+      //     this,
+      //     (oo) => oo.type === "stranger_a",
+      //   );
+      //
+      //   if (!stranger) return;
+      //
+      //   const distanceToStrangerSquared = vector.distanceSquared(
+      //     this,
+      //     stranger,
+      //   );
+      //
+      //   if (distanceToStrangerSquared > this.fireRange ** 3) return;
+      //
+      //   this.childrenSpawnInterval.fireIfReady(() => {
+      //     let numberOfChildren = 1;
+      //
+      //     if (Math.random() < 0.5) {
+      //       numberOfChildren = 2;
+      //     } else if (Math.random() < 0.2) {
+      //       numberOfChildren = 3;
+      //     } else if (Math.random() < 0.1) {
+      //       numberOfChildren = 5;
+      //     }
+      //
+      //     for (let i = 0; i < numberOfChildren; i++)
+      //       gameObjectsManager.spawnObject(
+      //         // Offset position slightly random
+      //         createShootingEnemyA({
+      //           x: this.x + Math.random() * 100 - 50,
+      //           y: this.y + Math.random() * 100 - 50,
+      //         }),
+      //       );
+      //   });
+      // })();
+
+      // Spawn children in waves
       (() => {
-        const stranger = gameObjectsManager.findClosestObject(
-          this,
-          (oo) => oo.type === "stranger_a",
-        );
+        this.childrenSpawnWaveInterval.update(delta, state);
 
-        if (!stranger) return;
+        this.childrenSpawnWaveInterval.fireIfReady(() => {
+          const stranger = gameObjectsManager.findClosestObject(
+            this,
+            (oo) => oo.type === "stranger_a",
+          );
 
-        const distanceToStrangerSquared = vector.distanceSquared(
-          this,
-          stranger,
-        );
+          if (!stranger) return;
 
-        if (distanceToStrangerSquared > this.fireRange ** 3) return;
+          childrenLeftToSpawn =
+            Math.random() * (MAX_SPAWN_NUMBER - MIN_SPAWN_NUMBER) +
+            MIN_SPAWN_NUMBER;
+        });
 
+        if (childrenLeftToSpawn <= 0) return;
         this.childrenSpawnInterval.fireIfReady(() => {
-          let numberOfChildren = 1;
+          // Offset position from center using SPAWN_DISTANCE
+          const spawnLocation = {
+            x: this.x + Math.random() * SPAWN_DISTANCE * 2 - SPAWN_DISTANCE,
+            y: this.y + Math.random() * SPAWN_DISTANCE * 2 - SPAWN_DISTANCE,
+          };
 
-          if (Math.random() < 0.5) {
-            numberOfChildren = 2;
-          } else if (Math.random() < 0.2) {
-            numberOfChildren = 3;
-          } else if (Math.random() < 0.1) {
-            numberOfChildren = 5;
-          }
-
-          for (let i = 0; i < numberOfChildren; i++)
-            gameObjectsManager.spawnObject(
-              // Offset position slightly random
-              createShootingEnemyA({
-                x: this.x + Math.random() * 100 - 50,
-                y: this.y + Math.random() * 100 - 50,
-              }),
-            );
+          gameObjectsManager.spawnObject(createShootingEnemyA(spawnLocation));
+          childrenLeftToSpawn--;
         });
       })();
 

@@ -104,38 +104,41 @@ const getRandomPositionInCorner = (corner: 1 | 2 | 3 | 4, margin = 200) => {
   switch (corner) {
     case 1:
       return {
-        x: margin + Math.random() * (WORLD_SIZE.x / 3 - margin),
-        y: margin + Math.random() * (WORLD_SIZE.y / 3 - margin),
+        x: margin + Math.random() * (WORLD_SIZE.x / 3 - margin * 2),
+        y: margin + Math.random() * (WORLD_SIZE.y / 3 - margin * 2),
       };
     case 2:
       return {
         x:
           WORLD_SIZE.x / 2 +
           margin +
-          Math.random() * (WORLD_SIZE.x / 2 - margin),
-        y: margin + Math.random() * (WORLD_SIZE.y / 2 - margin),
+          Math.random() * (WORLD_SIZE.x / 2 - margin * 2),
+        y: margin + Math.random() * (WORLD_SIZE.y / 2 - margin * 2),
       };
     case 3:
       return {
-        x: margin + Math.random() * (WORLD_SIZE.x / 3 - margin),
-        y:
-          (WORLD_SIZE.y * 2) / 3 +
+        x:
+          WORLD_SIZE.x / 2 +
           margin +
-          Math.random() * (WORLD_SIZE.y / 3 - margin),
-      };
-    default:
-      return {
-        x: margin + Math.random() * (WORLD_SIZE.x / 2 - margin),
+          Math.random() * (WORLD_SIZE.x / 2 - margin * 2),
         y:
           WORLD_SIZE.y / 2 +
           margin +
-          Math.random() * (WORLD_SIZE.y / 2 - margin),
+          Math.random() * (WORLD_SIZE.y / 2 - margin * 2),
+      };
+    default:
+      return {
+        x: margin + Math.random() * (WORLD_SIZE.x / 2 - margin * 2),
+        y:
+          WORLD_SIZE.y / 2 +
+          margin +
+          Math.random() * (WORLD_SIZE.y / 2 - margin * 2),
       };
   }
 };
 
-const STRANGER_CORNER = Math.round(Math.random() * 4) as 1 | 2 | 3 | 4;
-const BOSS_CORNER = ((STRANGER_CORNER + 2) % 4) as 1 | 2 | 3 | 4;
+const STRANGER_CORNER = Math.ceil(Math.random() * 4) as 1 | 2 | 3 | 4;
+const BOSS_CORNER = (((STRANGER_CORNER + 1) % 4) + 1) as 1 | 2 | 3 | 4;
 
 const STRANGER_A = createStrangerA(getRandomPositionInCorner(STRANGER_CORNER));
 
@@ -185,7 +188,7 @@ export function createDefaultState(): State {
 
         createHealingStationA(
           getRandomPositionInCorner(
-            ((STRANGER_CORNER + 1) % 4) as 1 | 2 | 3 | 4,
+            (((STRANGER_CORNER + 2) % 4) + 1) as 1 | 2 | 3 | 4,
             500,
           ),
         ),
@@ -201,7 +204,7 @@ export function createDefaultState(): State {
         }),
 
         // Plants eaters
-        ...([1, 2, 3] as const).map((i) => {
+        ...([1, 2, 3, 4] as const).map((i) => {
           return createPlantEaterA(getRandomPositionInCorner(i));
         }),
 

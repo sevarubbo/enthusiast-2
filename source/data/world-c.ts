@@ -62,10 +62,10 @@ export const createWorldC = (): State => {
           y: 300,
         }),
 
-        createPlantEaterA({
-          x: 600,
-          y: 600,
-        }),
+        // createPlantEaterA({
+        //   x: 600,
+        //   y: 600,
+        // }),
 
         // createBossA({
         //   x: 300,

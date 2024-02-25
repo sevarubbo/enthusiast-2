@@ -37,7 +37,7 @@ export interface PlantEaterA
   size: number;
 }
 
-const BASE_ATTACK = 1.8;
+const BASE_ATTACK = 2;
 const BASE_SPEED = 0.002;
 const MAX_AGE = 10;
 const MAX_REPRODUCTION_AGE = MAX_AGE * 0.8;

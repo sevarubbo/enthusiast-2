@@ -65,13 +65,13 @@ export function createShootingEnemyA(
       const getTargetEnemy = () => {
         let enemy: StateObject | undefined = undefined;
 
-        if (this.targetEnemyId) {
-          enemy = gameObjectsManager.objects[this.targetEnemyId];
-        }
+        // if (this.targetEnemyId) {
+        //   enemy = gameObjectsManager.objects[this.targetEnemyId];
+        // }
 
-        if (enemy) {
-          return enemy;
-        }
+        // if (enemy) {
+        //   return enemy;
+        // }
 
         enemy =
           gameObjectsManager.findClosestObject(
