@@ -22,7 +22,7 @@ export interface PlantEaterA
     Healthy,
     Movable {
   type: "plant_eater_a";
-  numberOfPlantsEaten: number;
+  energy: number;
   color: string;
   targetEnemy: StateObject | undefined;
   attack: number;
@@ -37,12 +37,13 @@ export interface PlantEaterA
   size: number;
 }
 
-const BASE_ATTACK = 1.6;
+const BASE_ATTACK = 1.8;
 const BASE_SPEED = 0.002;
 const MAX_AGE = 10;
 const MAX_REPRODUCTION_AGE = 8;
 const BASE_HEALTH = 4;
 const AGE_SPEED = 0.0001;
+const REPRODUCTION_ENERGY = 40;
 
 export function createPlantEaterA(
   o: Partial<Pick<PlantEaterA, "x" | "y">> = {},
@@ -65,7 +66,7 @@ export function createPlantEaterA(
       maxSpeed: 0.03,
     }),
     targetPoint: null,
-    numberOfPlantsEaten: 0,
+    energy: 0,
     targetEnemy: undefined,
     attack: 100,
     lookAroundInterval: createIntervalManager(10000),
@@ -157,22 +158,24 @@ export function createPlantEaterA(
           this.biteInterval.fireIfReady(() => {
             te.health.decrease(this.attack, te, state);
 
-            if (te.health.current <= 0) {
-              this.numberOfPlantsEaten += 1;
+            const energy = this.attack;
 
-              if (
-                this.numberOfPlantsEaten >= 20 &&
-                this.health.current >= this.health.max &&
-                this.age <= MAX_REPRODUCTION_AGE
-              ) {
-                gameObjectsManager.spawnObject(
-                  createPlantEaterA({ x: this.x, y: this.y }),
-                );
-                this.numberOfPlantsEaten = 0;
-              }
+            this.energy += energy;
 
-              this.targetPoint = null;
+            this.health.increase(energy);
+
+            if (
+              this.energy >= REPRODUCTION_ENERGY &&
+              this.health.current >= this.health.max &&
+              this.age <= MAX_REPRODUCTION_AGE
+            ) {
+              gameObjectsManager.spawnObject(
+                createPlantEaterA({ x: this.x, y: this.y }),
+              );
+              this.energy = 0;
             }
+
+            this.targetPoint = null;
           });
         }
       }

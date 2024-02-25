@@ -20,17 +20,19 @@ const BASE_SPROUT_INTERVAL = 4000;
 export type PlantA = ReturnType<typeof createPlantA>;
 const MIN_SIZE = 1;
 const MAX_SIZE = 5;
-const GROWTH_SPEED = 0.01;
+const GROWTH_SPEED = 0.02;
+const BASE_HEALTH = 10;
 
 export function createPlantA(position: Vector) {
   let age = 0;
   const maxAge = Math.random() * 500 + 500;
+  const minSproutAge = maxAge * 0.2;
 
   return {
     ...createBaseObject(position),
     type: "plant_a",
     health: createObjectHealthManager({
-      maxHealth: 4,
+      maxHealth: BASE_HEALTH + Math.random() * BASE_HEALTH,
       deathSound: null,
     }),
     collision: createObjectCollisionManager({
@@ -54,6 +56,8 @@ export function createPlantA(position: Vector) {
 
       this.sproutInterval.fireIfReady(() => {
         if (age >= maxAge * 0.8) return;
+
+        if (age < minSproutAge) return;
 
         this.sproutInterval.duration =
           BASE_SPROUT_INTERVAL + Math.random() * BASE_SPROUT_INTERVAL;
@@ -133,9 +137,9 @@ export function createPlantA(position: Vector) {
           );
         } else if (Math.random() < 0.01) {
           createItemRewardA({ x: this.x, y: this.y });
-        } else if (Math.random() < 0.005) {
+        } else if (Math.random() < 0.0099) {
           createPlantEaterA({ x: this.x, y: this.y });
-        } else if (Math.random() < 0.12) {
+        } else if (Math.random() < 0.14) {
           createDefenderA({ x: this.x, y: this.y });
         }
       }

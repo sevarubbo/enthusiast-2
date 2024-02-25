@@ -194,6 +194,11 @@ export function createDefaultState(): State {
           return createPlantA(getRandomPositionInCorner(i));
         }),
 
+        // More Plants
+        ...([1, 2, 3, 4] as const).map((i) => {
+          return createPlantA(getRandomPositionInCorner(i));
+        }),
+
         // Plants eaters
         ...([1, 2, 3] as const).map((i) => {
           return createPlantEaterA(getRandomPositionInCorner(i));
