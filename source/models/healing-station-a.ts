@@ -13,12 +13,12 @@ export const createHealingStationA = (position: Vector) => {
     ...createBaseObject(position),
     type: "healing_station_a",
 
-    collisionCircle: { radius: 100 },
+    collisionCircle: { radius: 150 },
     collision: createObjectCollisionManager({
       circleRadius: 100,
       isSolid: false,
     }),
-    healInterval: createIntervalManager(500),
+    healInterval: createIntervalManager(250),
 
     get color() {
       return color;

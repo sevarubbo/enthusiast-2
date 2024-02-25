@@ -110,10 +110,10 @@ const getRandomPositionInCorner = (corner: 1 | 2 | 3 | 4, margin = 200) => {
     case 2:
       return {
         x:
-          (WORLD_SIZE.x * 2) / 3 +
+          WORLD_SIZE.x / 2 +
           margin +
-          Math.random() * (WORLD_SIZE.x / 3 - margin),
-        y: margin + Math.random() * (WORLD_SIZE.y / 3 - margin),
+          Math.random() * (WORLD_SIZE.x / 2 - margin),
+        y: margin + Math.random() * (WORLD_SIZE.y / 2 - margin),
       };
     case 3:
       return {
@@ -186,6 +186,7 @@ export function createDefaultState(): State {
         createHealingStationA(
           getRandomPositionInCorner(
             ((STRANGER_CORNER + 1) % 4) as 1 | 2 | 3 | 4,
+            500,
           ),
         ),
 

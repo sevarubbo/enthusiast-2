@@ -40,10 +40,11 @@ export interface PlantEaterA
 const BASE_ATTACK = 1.8;
 const BASE_SPEED = 0.002;
 const MAX_AGE = 10;
-const MAX_REPRODUCTION_AGE = 8;
+const MAX_REPRODUCTION_AGE = MAX_AGE * 0.8;
 const BASE_HEALTH = 4;
-const AGE_SPEED = 0.0001;
-const REPRODUCTION_ENERGY = 40;
+const AGE_SPEED = 0.00005;
+const REPRODUCTION_ENERGY = 28;
+const ENERGY_FROM_PLANT = 0.1;
 
 export function createPlantEaterA(
   o: Partial<Pick<PlantEaterA, "x" | "y">> = {},
@@ -158,7 +159,7 @@ export function createPlantEaterA(
           this.biteInterval.fireIfReady(() => {
             te.health.decrease(this.attack, te, state);
 
-            const energy = this.attack;
+            const energy = this.attack * ENERGY_FROM_PLANT;
 
             this.energy += energy;
 

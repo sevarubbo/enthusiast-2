@@ -21,6 +21,7 @@ export type PlantA = ReturnType<typeof createPlantA>;
 const MIN_SIZE = 1;
 const MAX_SIZE = 5;
 const GROWTH_SPEED = 0.02;
+const DECAY_SPEED = GROWTH_SPEED / 250;
 const BASE_HEALTH = 10;
 
 export function createPlantA(position: Vector) {
@@ -51,7 +52,7 @@ export function createPlantA(position: Vector) {
       if (age < maxAge) {
         age += delta * GROWTH_SPEED;
       } else {
-        this.health.decrease((delta * GROWTH_SPEED) / 500, this, state);
+        this.health.decrease(delta * DECAY_SPEED, this, state);
       }
 
       this.sproutInterval.fireIfReady(() => {

@@ -57,11 +57,15 @@ export const createWorldC = (): State => {
           x: 300,
           y: 300,
         }),
+        createPlantA({
+          x: 500,
+          y: 300,
+        }),
 
-        // createPlantEaterA({
-        //   x: 300,
-        //   y: 300,
-        // }),
+        createPlantEaterA({
+          x: 600,
+          y: 600,
+        }),
 
         // createBossA({
         //   x: 300,
