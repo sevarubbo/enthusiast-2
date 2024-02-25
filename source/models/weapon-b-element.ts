@@ -18,7 +18,7 @@ export const createWeaponBElement = (belongsTo: {
     }),
 
     type: "weapon_b_element",
-    color: "rgba(0, 0, 0, 0.5)",
+    color: "rgba(0, 0, 0, 1)",
 
     collision: createObjectCollisionManager({
       circleRadius: 20,
@@ -36,7 +36,7 @@ export const createWeaponBElement = (belongsTo: {
 
       distance += delta * 0.01 * direction;
 
-      if (distance > 100) {
+      if (distance > 200) {
         direction = -1;
       } else if (distance < 0) {
         direction = 1;
@@ -53,8 +53,14 @@ export const createWeaponBElement = (belongsTo: {
       const collidesWith = this.collision.collidesWithObjects[0];
 
       if (collidesWith && "health" in collidesWith) {
-        if (collidesWith.type !== "shooting_enemy_a") {
-          collidesWith.health.decrease(this.attack, this, state);
+        const attack = this.attack * delta * 0.01;
+
+        if ("shield" in collidesWith && collidesWith.shield.active) {
+          collidesWith.shield.absorbDamage(attack, this, state);
+        } else {
+          if (collidesWith.type !== "shooting_enemy_a") {
+            collidesWith.health.decrease(attack, this, state);
+          }
         }
       }
     },
