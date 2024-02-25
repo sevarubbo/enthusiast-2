@@ -43,7 +43,7 @@ const MAX_AGE = 10;
 const MAX_REPRODUCTION_AGE = MAX_AGE * 0.8;
 const BASE_HEALTH = 4;
 const AGE_SPEED = 0.00005;
-const REPRODUCTION_ENERGY = 28;
+const REPRODUCTION_ENERGY = 26;
 const ENERGY_FROM_PLANT = 0.1;
 
 export function createPlantEaterA(
