@@ -1,3 +1,4 @@
+import { createBloodWhenHitByBullet } from "./blood-particle";
 import { createBloodStain } from "./blood-stain";
 import { createExplosion } from "./helpers";
 import { createDefaultGun } from "./weapon-a";
@@ -137,6 +138,8 @@ export function createStrangerA(
           this.weapon = defaultWeapon;
         }
       })();
+
+      createBloodWhenHitByBullet(this, state);
 
       // After death
       this.health.afterDeath(() => {

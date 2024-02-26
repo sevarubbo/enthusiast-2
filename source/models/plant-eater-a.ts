@@ -1,3 +1,4 @@
+import { createBloodWhenHitByBullet } from "./blood-particle";
 import { createBloodStain } from "./blood-stain";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
@@ -210,6 +211,8 @@ export function createPlantEaterA(
       } else {
         this.age += delta * AGE_SPEED;
       }
+
+      createBloodWhenHitByBullet(this, state);
 
       // After death
       this.health.afterDeath(() => {

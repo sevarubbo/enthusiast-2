@@ -305,7 +305,7 @@ function drawObject(
       drawCircle(ctx, {
         position: state.cameraManager.toScreen(object),
         radius: 2,
-        color: `rgba(255, 0, 0, ${opacity})`,
+        color: `rgba(255, 150, 0, ${opacity})`,
       });
 
       return;
@@ -326,7 +326,7 @@ function drawObject(
       drawCircle(ctx, {
         position: state.cameraManager.toScreen(object),
         radius,
-        color: `rgba(255, 0, 0, ${opacity})`,
+        color: `rgba(255, 150, 0, ${opacity})`,
       });
 
       return;

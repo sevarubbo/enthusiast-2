@@ -3,6 +3,7 @@ import { vector } from "../services/vector";
 import type { State } from "../services/state";
 import type { Vector } from "../services/vector";
 import type { CollidableObject } from "../types";
+import type { Bullet } from "./bullet";
 
 export const createBloodParticle = ({
   position,
@@ -13,7 +14,7 @@ export const createBloodParticle = ({
   direction: Vector;
   speed: number;
 }) => {
-  let timeLeftToLive = 1000; //ms
+  let timeLeftToLive = 10000 + Math.random() * 10000;
   let speed = initialSpeed;
   const gravity = 1 / 500;
 
@@ -54,7 +55,6 @@ export const createBloodExplosion = (
   speed = 1,
 ) => {
   const bulletsCount = size;
-  const angleStep = (2 * Math.PI) / bulletsCount;
 
   const collisionCircleRadius =
     "circleRadius" in object.collision ? object.collision.circleRadius : null;
@@ -68,14 +68,9 @@ export const createBloodExplosion = (
       vector.toAngle(direction) + (i - (size - 1) / 2) * 0.1,
     );
 
-    // Each bullet should be at distance from the center of the enemy
-    // equal to the radius of the enemy
     const position = vector.add(
       object,
-      vector.scale(
-        vector.fromAngle(i * angleStep),
-        collisionCircleRadius * 1.2,
-      ),
+      vector.scale(particleDirection, collisionCircleRadius * 1.2),
     );
 
     state.gameObjectsManager.spawnObject(
@@ -85,5 +80,20 @@ export const createBloodExplosion = (
         speed: (Math.random() * 0.7 + 0.4) * speed,
       }),
     );
+  }
+};
+
+export const createBloodWhenHitByBullet = (
+  object: CollidableObject,
+  state: State,
+) => {
+  if ("shield" in object && object.shield.active) return;
+
+  const bullet = object.collision.collidesWithObjects.find(
+    (oo) => oo.type === "bullet" && oo.belongsTo !== object.id,
+  ) as Bullet | undefined;
+
+  if (bullet) {
+    createBloodExplosion(object, state, bullet.direction, 5, bullet.speed);
   }
 };

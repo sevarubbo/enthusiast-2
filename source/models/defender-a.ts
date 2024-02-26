@@ -1,3 +1,4 @@
+import { createBloodWhenHitByBullet } from "./blood-particle";
 import { createBloodStain } from "./blood-stain";
 import { type Bullet } from "./bullet";
 import { createBaseObject } from "./helpers";
@@ -267,6 +268,8 @@ export function createDefenderA(position: Vector) {
           }
         }
       })();
+
+      createBloodWhenHitByBullet(this, state);
 
       this.health.afterDeath(() => {
         state.gameObjectsManager.spawnObject(

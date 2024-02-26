@@ -33,6 +33,7 @@ const audioFiles = [
   {
     name: "basic hit",
     url: "sounds/ESM_GF_fx_cobblestone_one_shots_footstep_boots_dry_interior_27.wav",
+    baseVolume: 1.1,
   },
   {
     name: "shield hit",
