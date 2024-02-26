@@ -153,16 +153,21 @@ export const createCollisionManager = () => {
 
                       object.setPosition(newPosition);
                     } else {
+                      const objectCollisionCircleRadius =
+                        "collisionCircle" in object
+                          ? object.collisionCircle.radius
+                          : object.collision.circleRadius;
+
                       const newPosition = matrix.fitPoint(
                         {
                           x: object.x - direction.x * offset,
                           y: object.y - direction.y * offset,
                         },
                         matrix.create(
-                          object.collisionCircle.radius,
-                          object.collisionCircle.radius,
-                          state.world.size.x - object.collisionCircle.radius,
-                          state.world.size.y - object.collisionCircle.radius,
+                          objectCollisionCircleRadius,
+                          objectCollisionCircleRadius,
+                          state.world.size.x - objectCollisionCircleRadius,
+                          state.world.size.y - objectCollisionCircleRadius,
                         ),
                       );
 

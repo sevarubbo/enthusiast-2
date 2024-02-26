@@ -11,4 +11,8 @@ export const createStatsManager = () => ({
 
   strangerDied: false,
   bossDied: false,
+
+  get score() {
+    return this.enemiesDied + this.money;
+  },
 });

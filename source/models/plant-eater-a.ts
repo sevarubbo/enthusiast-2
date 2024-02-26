@@ -2,9 +2,9 @@ import { createBloodWhenHitByBullet } from "./blood-particle";
 import { createBloodStain } from "./blood-stain";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
+import { matrix } from "services/matrix";
 import {
   createObjectCollisionManager,
-  type Collidable,
   type Healthy,
   type Identifiable,
   type Updatable,
@@ -12,15 +12,16 @@ import {
   createObjectMovementManager,
   createIntervalManager,
 } from "services/state";
+import { vector } from "services/vector";
 import type { Bullet } from "./bullet";
 import type { PlantA } from "./plant-a";
-import type { Movable } from "services/state";
+import type { CollidableCircle2, Movable } from "services/state";
 import type { StateObject } from "types";
 
 export interface PlantEaterA
   extends Identifiable,
     Updatable,
-    Collidable,
+    CollidableCircle2,
     Healthy,
     Movable {
   type: "plant_eater_a";
@@ -35,7 +36,6 @@ export interface PlantEaterA
   age: number;
   attackRange: number;
   maxAge: number;
-  collisionCircle: { radius: number };
   size: number;
 }
 
@@ -57,7 +57,6 @@ export function createPlantEaterA(
     type: "plant_eater_a",
     x: o.x || 0,
     y: o.y || 0,
-    collisionCircle: { radius: 12 },
     health: createObjectHealthManager({
       maxHealth: 10,
       selfHealing: true,
@@ -68,7 +67,6 @@ export function createPlantEaterA(
     movement: createObjectMovementManager({
       maxSpeed: 0.03,
     }),
-    targetPoint: null,
     energy: 0,
     targetEnemy: undefined,
     attack: 100,
@@ -124,24 +122,38 @@ export function createPlantEaterA(
       }
 
       if (this.targetEnemy) {
-        this.targetPoint = {
+        this.movement.setTargetPoint({
           x: this.targetEnemy.x,
           y: this.targetEnemy.y,
+        });
+      } else if (!this.movement.targetPoint) {
+        const size = this.collision.circleRadius;
+        const RANGE = size * 10;
+
+        const randomPoint = {
+          x: this.x + Math.random() * RANGE * 2 - RANGE,
+          y: this.y + Math.random() * RANGE * 2 - RANGE,
         };
-      } else {
-        this.targetPoint = null;
-        this.movement.stop();
+
+        this.movement.setTargetPoint(
+          matrix.fitPoint(
+            randomPoint,
+            matrix.create(
+              size,
+              size,
+              state.world.size.x - size,
+              state.world.size.y - size,
+            ),
+          ),
+        );
       }
 
       if (
-        this.targetPoint &&
+        this.movement.targetPoint &&
         this.targetEnemy &&
         "health" in this.targetEnemy
       ) {
-        const distance = Math.sqrt(
-          (this.x - this.targetPoint.x) ** 2 +
-            (this.y - this.targetPoint.y) ** 2,
-        );
+        const distanceSquared = vector.distanceSquared(this, this.targetEnemy);
 
         const teCollisionCircleRadius =
           "collisionCircle" in this.targetEnemy
@@ -149,13 +161,13 @@ export function createPlantEaterA(
             : this.targetEnemy.collision.circleRadius;
 
         if (
-          distance <=
-          this.collisionCircle.radius +
+          distanceSquared <=
+          (this.collision.circleRadius +
             teCollisionCircleRadius +
-            this.attackRange
+            this.attackRange) **
+            2
         ) {
-          this.targetPoint = null;
-          this.movement.stop();
+          this.movement.setTargetPoint(null);
           const te = this.targetEnemy;
 
           this.biteInterval.fireIfReady(() => {
@@ -178,7 +190,7 @@ export function createPlantEaterA(
               this.energy = 0;
             }
 
-            this.targetPoint = null;
+            this.movement.setTargetPoint(null);
           });
         }
       }
@@ -192,11 +204,7 @@ export function createPlantEaterA(
         });
       }
 
-      this.collisionCircle.radius = 5 + this.size;
-
-      if ("circleRadius" in this.collision) {
-        this.collision.circleRadius = this.collisionCircle.radius;
-      }
+      this.collision.circleRadius = 5 + this.size;
 
       this.attack =
         BASE_ATTACK + (BASE_ATTACK * this.size) / MAX_REPRODUCTION_AGE;
@@ -204,7 +212,7 @@ export function createPlantEaterA(
         ((BASE_SPEED + (BASE_SPEED * this.size) / MAX_REPRODUCTION_AGE) *
           this.health.current) /
         this.health.max;
-      this.attackRange = this.collisionCircle.radius / 2;
+      this.attackRange = this.collision.circleRadius / 2;
 
       if (this.age >= this.maxAge) {
         gameObjectsManager.despawnObject(this);

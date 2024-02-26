@@ -100,7 +100,9 @@ const getRandomPosition = () => ({
   y: Math.random() * WORLD_SIZE.y,
 });
 
-const getRandomPositionInCorner = (corner: 1 | 2 | 3 | 4, margin = 200) => {
+const getRandomPositionInCorner = (corner: number, margin = 200) => {
+  corner = (corner % 4) + 1;
+
   switch (corner) {
     case 1:
       return {
@@ -186,20 +188,19 @@ export function createWorldA(): State {
 
         createBossA(getRandomPositionInCorner(BOSS_CORNER)),
 
-        createHealingStationA(
-          getRandomPositionInCorner(
-            (((STRANGER_CORNER + 2) % 4) + 1) as 1 | 2 | 3 | 4,
-            500,
-          ),
-        ),
+        createHealingStationA(getRandomPositionInCorner(STRANGER_CORNER, 500)),
+        createTower(getRandomPositionInCorner(STRANGER_CORNER + 1)),
+        createTower(getRandomPositionInCorner(STRANGER_CORNER - 1)),
 
         // Plants
-        ...([1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4] as const).map((i) => {
-          return createPlantA(getRandomPositionInCorner(i));
-        }),
+        ...([1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 5] as const).map(
+          (i) => {
+            return createPlantA(getRandomPositionInCorner(i));
+          },
+        ),
 
         // Plants eaters
-        ...([1, 2, 3, 4, 1, 2, 3, 4] as const).map((i) => {
+        ...([1, 2, 3, 4, 1, 2, 3] as const).map((i) => {
           return createPlantEaterA(getRandomPositionInCorner(i));
         }),
 
@@ -219,8 +220,6 @@ export function createWorldA(): State {
 
           return createEnemyC(pos);
         }),
-
-        createTower(getRandomPositionInCorner(2)),
 
         house,
         HOUSE_2,

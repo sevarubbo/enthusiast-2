@@ -13,7 +13,7 @@ import type { State } from "services/state";
 
 export const createWorldC = (): State => {
   const defaults = createWorldDefaults({
-    worldSize: { x: 600, y: 600 },
+    worldSize: { x: 1200, y: 1200 },
   });
 
   return {
@@ -57,20 +57,20 @@ export const createWorldC = (): State => {
           x: 300,
           y: 300,
         }),
-        createPlantA({
-          x: 500,
-          y: 300,
-        }),
-
-        // createPlantEaterA({
-        //   x: 600,
-        //   y: 600,
+        // createPlantA({
+        //   x: 500,
+        //   y: 300,
         // }),
 
-        createBossA({
-          x: 300,
-          y: 300,
-        }),
+        // createPlantEaterA({
+        //   x: 500,
+        //   y: 400,
+        // }),
+
+        // createBossA({
+        //   x: 300,
+        //   y: 300,
+        // }),
 
         // createShieldItem({
         //   x: 200,

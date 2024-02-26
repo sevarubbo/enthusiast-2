@@ -15,16 +15,15 @@ import {
 import type { Vector } from "../services/vector";
 import type { State } from "services/state";
 
-const BASE_SPROUT_INTERVAL = 4000;
-
 export type PlantA = ReturnType<typeof createPlantA>;
 const MIN_SIZE = 1;
 const MAX_SIZE = 5;
-const GROWTH_SPEED = 0.004;
-const DECAY_SPEED = GROWTH_SPEED / 100;
+const GROWTH_SPEED = 0.007;
+const BASE_SPROUT_INTERVAL = 16 / GROWTH_SPEED;
+const DECAY_SPEED = GROWTH_SPEED / 90;
 const BASE_HEALTH = 10;
-const BASE_MAX_AGE = 800;
-const MAX_PLANTS = 3000;
+const BASE_MAX_AGE = 700;
+const MAX_PLANTS = 2700;
 
 export function createPlantA(position: Vector) {
   let age = 0;
@@ -56,26 +55,25 @@ export function createPlantA(position: Vector) {
         this.health.decrease(delta * DECAY_SPEED, this, state);
       }
 
-      this.sproutInterval.fireIfReady(() => {
-        if (age >= maxAge * 0.8) return;
+      (() => {
+        this.sproutInterval.fireIfReady(() => {
+          if (age >= maxAge * 0.8) return;
 
-        if (age < minSproutAge) return;
+          if (age < minSproutAge) return;
 
-        this.sproutInterval.duration =
-          BASE_SPROUT_INTERVAL + Math.random() * BASE_SPROUT_INTERVAL;
+          if (Math.random() < 0.5) return;
 
-        const { gameObjectsManager } = state;
+          this.sproutInterval.duration =
+            BASE_SPROUT_INTERVAL + Math.random() * BASE_SPROUT_INTERVAL;
 
-        const objectsWithinRange = state.quadtree.queryRadius(
-          this,
-          this.collision.circleRadius * 10,
-        );
+          const { gameObjectsManager } = state;
 
-        if (
-          objectsWithinRange.length < 9 &&
-          gameObjectsManager.findObjectsByType("plant_a").length < MAX_PLANTS
-        ) {
-          const SPAWN_DISTANCE = 200;
+          if (
+            gameObjectsManager.findObjectsByType("plant_a").length >= MAX_PLANTS
+          )
+            return;
+
+          const SPAWN_DISTANCE = 100;
 
           const minDistance = this.collision.circleRadius * 2;
           const [xOffset, yOffset] = [
@@ -88,7 +86,11 @@ export function createPlantA(position: Vector) {
             y: this.y + yOffset + (yOffset > 0 ? minDistance : -minDistance),
           };
 
-          let collides = false;
+          const nearbySolidObjects = state.quadtree
+            .queryRadius(spawnLocation, this.collision.circleRadius * 10)
+            .filter((o) => "collision" in o && o.collision.isSolid);
+
+          if (nearbySolidObjects.length > 2) return;
 
           // Check if spawnLocation is within the world
           if (
@@ -97,30 +99,24 @@ export function createPlantA(position: Vector) {
             spawnLocation.y < 0 ||
             spawnLocation.y > state.world.size.y
           ) {
-            collides = true;
+            return;
           }
 
-          // Check if spawnLocation collides with any other solid objects
-
-          if (!collides) {
-            const collidesWith = this.collision.collidesWithObjects[0];
-
-            collides = !!collidesWith?.collision.isSolid;
-          }
-
-          if (!collides) {
-            gameObjectsManager.spawnObject(createPlantA(spawnLocation));
-          }
-        }
-      });
+          gameObjectsManager.spawnObject(createPlantA(spawnLocation));
+        });
+      })();
 
       // After death
       if (this.health.current <= 0) {
-        if (Math.random() < 0.004) {
+        if (Math.random() < 0.003) {
+          state.gameObjectsManager.spawnObject(
+            createPlantA({ x: this.x, y: this.y }),
+          );
+        } else if (Math.random() < 0.004) {
           state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.0035) {
+        } else if (Math.random() < 0.0032) {
           state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
@@ -128,11 +124,11 @@ export function createPlantA(position: Vector) {
           state.gameObjectsManager.spawnObject(
             createItemShotgun({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.019) {
+        } else if (Math.random() < 0.017) {
           state.gameObjectsManager.spawnObject(
             createEnemy({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.008) {
+        } else if (Math.random() < 0.007) {
           state.gameObjectsManager.spawnObject(
             createEnemyC({ x: this.x, y: this.y }),
           );

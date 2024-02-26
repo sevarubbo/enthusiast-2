@@ -62,6 +62,7 @@ const audioFiles = [
   {
     name: "coin chime",
     url: "sounds/ESM_Christmas_Magic_Positive_Award_Chime_1_Dry_Game.wav",
+    baseVolume: 0.9,
   },
   {
     name: "boss shield hit",

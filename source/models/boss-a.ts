@@ -15,10 +15,10 @@ import { createShield } from "services/state/objectShieldManager";
 import { vector, type Vector } from "services/vector";
 
 const SPAWN_INTERVAL = 1000;
-const WAVE_INTERVAL = 30000;
+const WAVE_INTERVAL = 40000;
 const MIN_SPAWN_NUMBER = 1;
 const MAX_SPAWN_NUMBER = 10;
-const SPAWN_DISTANCE = 100;
+const SPAWN_DISTANCE = 110;
 
 export const createBossA = (position: Vector) => {
   let targetPoint: Vector | null = null;
@@ -218,6 +218,16 @@ export const createBossA = (position: Vector) => {
       (() => {
         this.shield.onShieldLost(() => {
           createExplosion(this, state, 100, 0.1);
+
+          // Create 20 shooting enemies
+          for (let i = 0; i < 20; i++) {
+            const spawnLocation = {
+              x: this.x + Math.random() * SPAWN_DISTANCE * 2 - SPAWN_DISTANCE,
+              y: this.y + Math.random() * SPAWN_DISTANCE * 2 - SPAWN_DISTANCE,
+            };
+
+            gameObjectsManager.spawnObject(createShootingEnemyA(spawnLocation));
+          }
         });
       })();
 

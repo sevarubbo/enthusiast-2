@@ -47,6 +47,12 @@ export interface CollidableCircle extends Vector {
   >;
 }
 
+export interface CollidableCircle2 extends Vector {
+  collision: ReturnType<
+    typeof createObjectCollisionManager<{ circleRadius: number }>
+  >;
+}
+
 export interface Healthy extends Identifiable {
   health: ObjectHealthManager;
 }

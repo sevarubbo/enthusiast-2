@@ -60,17 +60,23 @@ export const canShootEnemy = (
     vector.create(enemy.x, enemy.y),
   ];
 
-  return !getFirstObjectLineCollision(state, shootingSegment, (o) => {
-    if (o === object) {
-      return false;
-    }
+  const friendlyObjectInLine = getFirstObjectLineCollision(
+    state,
+    shootingSegment,
+    (o) => {
+      if (o === object) {
+        return false;
+      }
 
-    if (o.type === "wall_a") {
-      return true;
-    }
+      if (o.type === "wall_a") {
+        return true;
+      }
 
-    return isFriend(o);
-  });
+      return isFriend(o);
+    },
+  );
+
+  return !friendlyObjectInLine;
 };
 
 export const createBaseObject = (position: Vector) => {

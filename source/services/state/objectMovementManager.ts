@@ -81,6 +81,7 @@ export const createObjectMovementManager = (
         object.x = tp.x;
         object.y = tp.y;
         object.targetPoint = null;
+        this.setTargetPoint(null);
 
         this.stop();
 

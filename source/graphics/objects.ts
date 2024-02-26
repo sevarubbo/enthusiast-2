@@ -8,6 +8,7 @@ import {
   getPlantColor,
 } from "./helpers";
 import { drawObjectBoss } from "./object-boss";
+import { drawObjectTower } from "./object-tower";
 import { drawCircle, drawCircleOutline, drawRectangle } from "services/canvas";
 import { vector } from "services/vector";
 import type { State } from "services/state";
@@ -117,37 +118,9 @@ function drawObject(
     }
 
     case "tower": {
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-        ...object,
+      drawQueue.schedule(1, () => {
+        drawObjectTower(ctx, state, object);
       });
-
-      const directionPointPosition = vector.scale(
-        vector.fromAngle(object.angle),
-        10,
-      );
-
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen(
-          vector.add(object, directionPointPosition),
-        ),
-        color: "#fff",
-        radius: 5,
-      });
-
-      if (object.health.current < object.health.max) {
-        const healthBarPosition = vector.add(
-          state.cameraManager.toScreen(object),
-          vector.create(0, -object.radius - 10),
-        );
-
-        drawHealthBar(
-          ctx,
-          healthBarPosition,
-          object.health.current,
-          object.health.max,
-        );
-      }
 
       return;
     }
@@ -159,7 +132,9 @@ function drawObject(
     }
 
     case "house": {
-      drawObjectAsCircle(ctx, state, object);
+      drawQueue.schedule(1, () => {
+        drawObjectAsCircle(ctx, state, object);
+      });
 
       return;
     }
@@ -226,24 +201,26 @@ function drawObject(
     }
 
     case "plant_eater_a": {
-      drawObjectAsCircle(ctx, state, {
-        ...object,
+      drawQueue.schedule(1, () => {
+        drawObjectAsCircle(ctx, state, {
+          ...object,
+        });
+
+        const directionPointPosition = vector.scale(
+          vector.fromAngle(object.movement.angle),
+          object.collision.circleRadius / 1.5,
+        );
+
+        drawCircle(ctx, {
+          position: state.cameraManager.toScreen(
+            vector.add(object, directionPointPosition),
+          ),
+          color: "#000",
+          radius: object.collision.circleRadius / 2,
+        });
+
+        drawObjectShield(ctx, state, object);
       });
-
-      const directionPointPosition = vector.scale(
-        vector.fromAngle(object.movement.angle),
-        object.collisionCircle.radius / 1.5,
-      );
-
-      drawCircle(ctx, {
-        position: state.cameraManager.toScreen(
-          vector.add(object, directionPointPosition),
-        ),
-        color: "#000",
-        radius: object.collisionCircle.radius / 2,
-      });
-
-      drawObjectShield(ctx, state, object);
 
       return;
     }
@@ -275,7 +252,9 @@ function drawObject(
     }
 
     case "item_shotgun": {
-      drawObjectAsText(ctx, state, object, object.icon);
+      drawQueue.schedule(1, () => {
+        drawObjectAsText(ctx, state, object, object.icon);
+      });
 
       return;
     }
@@ -289,12 +268,17 @@ function drawObject(
     }
 
     case "healing_station_a": {
+      ctx.shadowColor = object.color;
+      ctx.shadowBlur = 10;
+
       drawCircleOutline(ctx, {
         position: state.cameraManager.toScreen(object),
         color: object.color,
         radius: object.collisionCircle.radius,
-        lineWidth: 2,
+        lineWidth: 1,
       });
+
+      ctx.shadowBlur = 0;
 
       return;
     }

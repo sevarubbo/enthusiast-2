@@ -1,5 +1,5 @@
 import { createBaseObject } from "./helpers";
-import { playSound } from "services/audio";
+import { getSoundProperties, playSound } from "services/audio";
 import {
   createObjectCollisionManager,
   createObjectHealthManager,
@@ -28,28 +28,41 @@ export const createItemRewardA = (position: Vector) => {
 
       if (!collidesWith) return;
 
-      if ("health" in collidesWith) {
+      let shouldDespawn = false;
+
+      if (
+        "health" in collidesWith &&
+        collidesWith.health.current < collidesWith.health.max
+      ) {
         collidesWith.health.increase(
           collidesWith.health.max - collidesWith.health.current,
         );
+        shouldDespawn = true;
       }
 
-      if ("shield" in collidesWith) {
+      if (
+        "shield" in collidesWith &&
+        collidesWith.shield.hp < collidesWith.shield.maxHp
+      ) {
         collidesWith.shield.hp = collidesWith.shield.maxHp;
+        shouldDespawn = true;
       }
 
-      if ("weapon" in collidesWith) {
+      if (
+        "weapon" in collidesWith &&
+        collidesWith.weapon.ammo < collidesWith.weapon.maxAmmo
+      ) {
         collidesWith.weapon.ammo = collidesWith.weapon.maxAmmo;
+        shouldDespawn = true;
+      }
+
+      if (shouldDespawn) {
+        state.gameObjectsManager.despawnObject(this);
+        playSound("coin chime", getSoundProperties(this, state.cameraManager));
       }
 
       if (collidesWith.type === "stranger_a") {
-        state.gameObjectsManager.despawnObject(this);
-
         state.statsManager.addMoney(1);
-
-        playSound("coin chime", {
-          volume: 0.3,
-        });
       }
     },
   } as const;
