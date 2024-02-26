@@ -1,3 +1,5 @@
+import { createBloodExplosion } from "./blood-particle";
+import { createBloodStain } from "./blood-stain";
 import { canShootEnemy } from "./helpers";
 import { createItemRewardA } from "./item-reward-a";
 import { createItemShotgun } from "./item-shotgun";
@@ -15,6 +17,7 @@ import {
   createObjectCollisionManager,
 } from "services/state";
 import type { StateObject } from "../types";
+import type { Bullet } from "./bullet";
 import type { Weapon, CollidableCircle } from "services/state";
 
 export interface ShootingEnemyA extends Movable, CollidableCircle, Healthy {
@@ -180,8 +183,23 @@ export function createShootingEnemyA(
         };
       })();
 
+      // If hit by a bullet
+      (() => {
+        const bullet = this.collision.collidesWithObjects.find(
+          (oo) => oo.type === "bullet" && oo.belongsTo !== this.id,
+        ) as Bullet | undefined;
+
+        if (bullet) {
+          createBloodExplosion(this, state, bullet.direction, 5, bullet.speed);
+        }
+      })();
+
       // After death
-      if (this.health.current <= 0) {
+      this.health.afterDeath(() => {
+        state.gameObjectsManager.spawnObject(
+          createBloodStain({ x: this.x, y: this.y }),
+        );
+
         state.statsManager.incrementEnemiesDied();
 
         // Drop shield
@@ -204,7 +222,7 @@ export function createShootingEnemyA(
             createItemRewardA({ x: this.x, y: this.y }),
           );
         }
-      }
+      });
     },
   };
 }

@@ -8,8 +8,8 @@ export const createWallA = (
   size: Vector = vector.create(50, 50),
 ) => {
   return {
-    type: "wall_a",
     ...createBaseObject(position),
+    type: "wall_a",
     color: "#fff",
 
     collision: createObjectCollisionManager({

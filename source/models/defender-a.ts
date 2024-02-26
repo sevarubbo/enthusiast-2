@@ -1,40 +1,33 @@
+import { createBloodStain } from "./blood-stain";
 import { type Bullet } from "./bullet";
+import { createBaseObject } from "./helpers";
 import { createDefaultGun } from "./weapon-a";
 import { createShield } from "../services/state/objectShieldManager";
-import { createId } from "helpers";
 import {
+  createIntervalManager,
   createObjectCollisionManager,
   createObjectHealthManager,
   createObjectMovementManager,
-  type Healthy,
-  type Movable,
 } from "services/state";
 import { getFirstObjectLineCollision } from "services/state/helpers";
 import { vector } from "services/vector";
+import type { StrangerA } from "./stranger-a";
 import type { Matrix } from "services/matrix";
-import type { Weapon, CollidableCircle } from "services/state";
+import type { Weapon, State } from "services/state";
+import type { Vector } from "services/vector";
 
-export interface DefenderA extends Movable, CollidableCircle, Healthy {
-  type: "defender_a";
-  shootingRange: number;
-  color: string;
-  targetEnemyId: string | undefined;
-  shield: ReturnType<typeof createShield>;
-  weapon: Weapon;
-}
+export type DefenderA = ReturnType<typeof createDefenderA>;
 
 const defaultWeapon = createDefaultGun();
 
-export function createDefenderA(
-  options: Partial<Pick<DefenderA, "x" | "y">> = {},
-): DefenderA {
+export function createDefenderA(position: Vector) {
+  let targetEnemyId = undefined as string | undefined;
+  let weapon = defaultWeapon as Weapon;
+
   return {
+    ...createBaseObject(position),
     color: "#a50",
-    id: createId(),
     type: "defender_a",
-    x: options.x || 0,
-    y: options.y || 0,
-    collisionCircle: { radius: 12 },
     health: createObjectHealthManager({
       maxHealth: 20,
       selfHealing: true,
@@ -44,27 +37,45 @@ export function createDefenderA(
       circleRadius: 12,
     }),
     shootingRange: 300,
-    targetEnemyId: undefined,
     shield: createShield(),
-    weapon: defaultWeapon,
 
-    update(delta, state) {
+    looseFocusInterval: createIntervalManager(5000),
+
+    get weapon() {
+      return weapon;
+    },
+
+    setWeapon(value: Weapon) {
+      weapon = value;
+    },
+
+    update(delta: number, state: State) {
       this.health.update(delta, state, this);
       this.movement.update(delta, state, this);
-      this.weapon.update(delta, state, this);
+      weapon.update(delta, state, this);
+      this.looseFocusInterval.update(delta);
 
       const { gameObjectsManager } = state;
 
+      this.looseFocusInterval.fireIfReady(() => {
+        targetEnemyId = undefined;
+      });
+
       // Find the closest stranger
-      const closestStranger = state.gameObjectsManager.findClosestObject(
-        this,
-        (oo) => oo.type === "stranger_a",
-      );
+      const closestStranger =
+        state.gameObjectsManager.findClosestObjectByType<StrangerA>(
+          this,
+          "stranger_a",
+        );
 
       let idle = true;
 
       // Defend stranger
       idle = (() => {
+        if (targetEnemyId) {
+          return true;
+        }
+
         if (!closestStranger) {
           this.movement.setTargetPoint(null);
 
@@ -77,7 +88,7 @@ export function createDefenderA(
 
         if (distanceToStranger > this.shootingRange) {
           // Forget about enemy
-          this.targetEnemyId = undefined;
+          targetEnemyId = undefined;
 
           // Go to stranger
           this.movement.setTargetPoint(closestStranger);
@@ -93,7 +104,7 @@ export function createDefenderA(
         ) as Bullet | undefined;
 
         if (enemyBullet && enemyBullet.belongsTo !== closestStranger.id) {
-          this.targetEnemyId = enemyBullet.belongsTo;
+          targetEnemyId = enemyBullet.belongsTo;
 
           return true;
         }
@@ -107,7 +118,7 @@ export function createDefenderA(
           return;
         }
 
-        if (this.weapon.type === "machine_gun_b" && this.weapon.ammo > 0) {
+        if (weapon.type === "machine_gun_b" && weapon.ammo > 0) {
           return;
         }
 
@@ -133,8 +144,8 @@ export function createDefenderA(
 
       // Switch to default weapon when ammo is empty
       (() => {
-        if (this.weapon.type === "machine_gun_b" && this.weapon.ammo <= 0) {
-          this.weapon = defaultWeapon;
+        if (weapon.type === "machine_gun_b" && weapon.ammo <= 0) {
+          weapon = defaultWeapon;
         }
       })();
 
@@ -184,15 +195,15 @@ export function createDefenderA(
               closestStranger &&
               vector.distance(closestStranger, targetEnemy) < this.shootingRange
             ) {
-              this.targetEnemyId = targetEnemy.id;
+              targetEnemyId = targetEnemy.id;
             } else {
-              this.targetEnemyId = undefined;
+              targetEnemyId = undefined;
             }
           }
         })();
 
-        if (!this.targetEnemyId) {
-          this.targetEnemyId = gameObjectsManager.findClosestObject(
+        if (!targetEnemyId) {
+          targetEnemyId = gameObjectsManager.findClosestObject(
             this,
             (oo) =>
               oo.type === "shooting_enemy_a" ||
@@ -210,11 +221,10 @@ export function createDefenderA(
         }
 
         const targetEnemy =
-          this.targetEnemyId &&
-          state.gameObjectsManager.objects[this.targetEnemyId];
+          targetEnemyId && state.gameObjectsManager.objects[targetEnemyId];
 
         if (!targetEnemy) {
-          this.targetEnemyId = undefined;
+          targetEnemyId = undefined;
 
           return;
         }
@@ -234,7 +244,7 @@ export function createDefenderA(
           targetEnemy.x - this.x,
         );
 
-        // Check if can shoot
+        // Check if it can shoot
         const shootingSegment: Matrix = [
           vector.create(this.x, this.y),
           vector.create(targetEnemy.x, targetEnemy.y),
@@ -252,11 +262,17 @@ export function createDefenderA(
         );
 
         if (!willCollideWithFriendlyObject) {
-          if (this.weapon.ammo > 0) {
-            this.weapon.fireAtAngle(this.movement.angle);
+          if (weapon.ammo > 0) {
+            weapon.fireAtAngle(this.movement.angle);
           }
         }
       })();
+
+      this.health.afterDeath(() => {
+        state.gameObjectsManager.spawnObject(
+          createBloodStain({ x: this.x, y: this.y }),
+        );
+      });
     },
-  };
+  } as const;
 }

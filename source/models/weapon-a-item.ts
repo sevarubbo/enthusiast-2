@@ -30,14 +30,19 @@ export const createWeaponAItem = (position: Vector) =>
 
       if (
         collidesWith.type === "stranger_a" ||
-        collidesWith.type === "defender_a" ||
-        collidesWith.type === "shooting_enemy_a"
+        collidesWith.type === "shooting_enemy_a" ||
+        collidesWith.type === "defender_a"
       ) {
         if (
           collidesWith.weapon.type === "default" ||
           collidesWith.weapon.ammo < collidesWith.weapon.maxAmmo
         ) {
-          collidesWith.weapon = createMachineGunB();
+          if ("setWeapon" in collidesWith) {
+            collidesWith.setWeapon(createMachineGunB());
+          } else {
+            collidesWith.weapon = createMachineGunB();
+          }
+
           playSound(
             "weapon pick",
             getSoundProperties(this, state.cameraManager),

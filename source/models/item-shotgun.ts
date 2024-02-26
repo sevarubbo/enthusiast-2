@@ -36,7 +36,12 @@ export const createItemShotgun = (position: Vector) => {
           collidesWith.weapon.type === "default" ||
           collidesWith.weapon.ammo < collidesWith.weapon.maxAmmo
         ) {
-          collidesWith.weapon = createShotgun();
+          if ("setWeapon" in collidesWith) {
+            collidesWith.setWeapon(createShotgun());
+          } else {
+            collidesWith.weapon = createShotgun();
+          }
+
           playSound(
             "weapon pick",
             getSoundProperties(this, state.cameraManager),

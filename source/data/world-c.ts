@@ -67,10 +67,10 @@ export const createWorldC = (): State => {
         //   y: 600,
         // }),
 
-        // createBossA({
-        //   x: 300,
-        //   y: 300,
-        // }),
+        createBossA({
+          x: 300,
+          y: 300,
+        }),
 
         // createShieldItem({
         //   x: 200,

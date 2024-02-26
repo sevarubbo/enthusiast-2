@@ -142,7 +142,7 @@ const BOSS_CORNER = (((STRANGER_CORNER + 1) % 4) + 1) as 1 | 2 | 3 | 4;
 
 const STRANGER_A = createStrangerA(getRandomPositionInCorner(STRANGER_CORNER));
 
-export function createDefaultState(): State {
+export function createWorldA(): State {
   const enemySpawner = createEnemySpawner();
   const house = createHouse(getRandomPosition());
   const HOUSE_2 = createHouse(getRandomPosition());
@@ -194,17 +194,12 @@ export function createDefaultState(): State {
         ),
 
         // Plants
-        ...([1, 2, 3, 4] as const).map((i) => {
-          return createPlantA(getRandomPositionInCorner(i));
-        }),
-
-        // More Plants
-        ...([1, 2, 3, 4] as const).map((i) => {
+        ...([1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4] as const).map((i) => {
           return createPlantA(getRandomPositionInCorner(i));
         }),
 
         // Plants eaters
-        ...([1, 2, 3, 4] as const).map((i) => {
+        ...([1, 2, 3, 4, 1, 2, 3, 4] as const).map((i) => {
           return createPlantEaterA(getRandomPositionInCorner(i));
         }),
 

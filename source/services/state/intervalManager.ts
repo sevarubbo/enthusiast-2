@@ -1,41 +1,19 @@
-import type { Updatable } from "./types";
+export type IntervalManager = ReturnType<typeof createIntervalManager>;
 
-export interface IntervalManager extends Updatable {
-  duration: number;
-  timeSinceLastFire: number;
-  ready: boolean;
-  /** @deprecated */
-  fire(): void;
-  fireIfReady(callback?: () => void): void;
-}
-
-export const createIntervalManager = (
-  duration: number,
-  ready = true,
-): IntervalManager => ({
+export const createIntervalManager = (duration: number, ready = true) => ({
   duration,
   timeSinceLastFire: ready ? Infinity : 0,
   ready,
 
-  fire() {
-    if (!this.ready) {
-      throw new Error("Interval not ready to fire!");
-    }
-
-    this.timeSinceLastFire = 0;
-  },
-
-  fireIfReady(callback) {
+  fireIfReady(callback: () => void) {
     if (this.ready) {
       this.timeSinceLastFire = 0;
 
-      if (callback) {
-        callback();
-      }
+      callback();
     }
   },
 
-  update(delta) {
+  update(delta: number) {
     this.timeSinceLastFire += delta;
     this.ready = false;
 

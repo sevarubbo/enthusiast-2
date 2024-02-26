@@ -7,6 +7,8 @@ import type {
   StrangerA,
   createPlantA,
 } from "./models";
+import type { createBloodParticle } from "./models/blood-particle";
+import type { createBloodStain } from "./models/blood-stain";
 import type { createHealingStationA } from "./models/healing-station-a";
 import type { ShieldItem } from "./models/shield-item";
 import type { createWallA } from "./models/wall-a";
@@ -19,6 +21,9 @@ import type { createItemShotgun } from "models/item-shotgun";
 import type { PlantEaterA } from "models/plant-eater-a";
 import type { ShootingEnemyA } from "models/shooting-enemy-a";
 import type { createWeaponAItem } from "models/weapon-a-item";
+
+type BloodStain = ReturnType<typeof createBloodStain>;
+type BloodParticle = ReturnType<typeof createBloodParticle>;
 
 export type StateObject =
   | Enemy
@@ -39,4 +44,8 @@ export type StateObject =
   | ReturnType<typeof createBossA>
   | ReturnType<typeof createHealingStationA>
   | ReturnType<typeof createWallA>
-  | ReturnType<typeof createWeaponBElement>;
+  | ReturnType<typeof createWeaponBElement>
+  | BloodStain
+  | BloodParticle;
+
+export type CollidableObject = Exclude<StateObject, BloodStain | BloodParticle>;

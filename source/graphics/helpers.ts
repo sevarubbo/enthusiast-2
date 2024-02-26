@@ -9,7 +9,7 @@ import {
 import { vector } from "services/vector";
 import type { State, Weapon } from "services/state";
 import type { createObjectShieldManager } from "services/state/objectShieldManager";
-import type { StateObject } from "types";
+import type { CollidableObject, StateObject } from "types";
 
 export const createGradientArray = (
   colorA: string,
@@ -181,9 +181,6 @@ export const drawQueue = {
     index: 1 | 2 | 3;
     fn: (ctx: CanvasRenderingContext2D) => void;
   }>,
-  clear: () => {
-    drawQueue.queue = [];
-  },
   schedule: (index: 1 | 2 | 3, fn: (ctx: CanvasRenderingContext2D) => void) => {
     drawQueue.queue.push({
       index,
@@ -195,7 +192,7 @@ export const drawQueue = {
 export const drawObjectWeapon = (
   ctx: CanvasRenderingContext2D,
   state: State,
-  object: StateObject & { weapon: Weapon },
+  object: CollidableObject & { weapon: Weapon },
 ) => {
   if (!("collisionCircle" in object) && !("circleRadius" in object.collision)) {
     throw new Error("Object must have collisionCircle");

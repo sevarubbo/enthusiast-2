@@ -75,7 +75,7 @@ export const createBossA = (position: Vector) => {
     },
 
     update(delta: number, state: State) {
-      this.childrenSpawnInterval.update(delta, state);
+      this.childrenSpawnInterval.update(delta);
       this.movement.update(delta, state, this);
       this.weapon.update(delta, state, this);
       this.health.update(delta, state, this);
@@ -186,7 +186,7 @@ export const createBossA = (position: Vector) => {
 
       // Spawn children in waves
       (() => {
-        this.childrenSpawnWaveInterval.update(delta, state);
+        this.childrenSpawnWaveInterval.update(delta);
 
         this.childrenSpawnWaveInterval.fireIfReady(() => {
           const stranger = gameObjectsManager.findClosestObject(

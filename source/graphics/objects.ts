@@ -18,7 +18,15 @@ function drawObjectAsCircle(
   state: State,
   object:
     | { radius: number; x: number; y: number; color: string }
-    | (StateObject & { collisionCircle: { radius: number } }),
+    | (StateObject &
+        (
+          | { collisionCircle: { radius: number } }
+          | {
+              collision: {
+                circleRadius: number;
+              };
+            }
+        )),
 ) {
   if ("health" in object && object.health.current < object.health.max) {
     const healthBarPosition = vector.add(
@@ -43,9 +51,21 @@ function drawObjectAsCircle(
     });
   }
 
+  const radius = (() => {
+    if ("radius" in object) {
+      return object.radius;
+    }
+
+    if ("collisionCircle" in object) {
+      return object.collisionCircle.radius;
+    }
+
+    return object.collision.circleRadius;
+  })();
+
   return drawCircle(ctx, {
     position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
-    radius: "radius" in object ? object.radius : object.collisionCircle.radius,
+    radius,
     color: "color" in object ? object.color : "#fff",
   });
 }
@@ -261,7 +281,9 @@ function drawObject(
     }
 
     case "boss_a": {
-      drawObjectBoss(ctx, state, object);
+      drawQueue.schedule(2, () => {
+        drawObjectBoss(ctx, state, object);
+      });
 
       return;
     }
@@ -272,6 +294,39 @@ function drawObject(
         color: object.color,
         radius: object.collisionCircle.radius,
         lineWidth: 2,
+      });
+
+      return;
+    }
+
+    case "blood_particle": {
+      const opacity = object.timeLeftToLive / object.timeToLive;
+
+      drawCircle(ctx, {
+        position: state.cameraManager.toScreen(object),
+        radius: 2,
+        color: `rgba(255, 0, 0, ${opacity})`,
+      });
+
+      return;
+    }
+
+    case "blood_stain": {
+      const MIN_RADIUS = 5;
+      const MAX_RADIUS = 15;
+
+      // Increase radius based in leftTimeToLive (when 0 it will be MAX_RADIUS)
+      const radius =
+        MIN_RADIUS +
+        (MAX_RADIUS - MIN_RADIUS) *
+          ((object.timeToLive - object.timeLeftToLive) / object.timeToLive);
+
+      const opacity = object.timeLeftToLive / object.timeToLive;
+
+      drawCircle(ctx, {
+        position: state.cameraManager.toScreen(object),
+        radius,
+        color: `rgba(255, 0, 0, ${opacity})`,
       });
 
       return;
@@ -296,7 +351,7 @@ function drawObject(
 
     default: {
       drawQueue.schedule(2, (ctx2) => {
-        if ("collisionCircle" in object || "circleRadius" in object.collision) {
+        if ("collisionCircle" in object || "collision" in object) {
           drawDefaultRoundObjectView(ctx2, state, object);
         } else {
           throw new Error("Object must have collision circle");

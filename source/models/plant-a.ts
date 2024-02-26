@@ -45,7 +45,7 @@ export function createPlantA(position: Vector) {
 
     update(delta: number, state: State) {
       this.health.update(delta, state, this);
-      this.sproutInterval.update(delta, state);
+      this.sproutInterval.update(delta);
 
       this.collision.circleRadius =
         MIN_SIZE + (age / maxAge) * (MAX_SIZE - MIN_SIZE);

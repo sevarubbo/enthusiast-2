@@ -1,3 +1,4 @@
+import { createBloodStain } from "./blood-stain";
 import { createExplosion } from "./helpers";
 import { createDefaultGun } from "./weapon-a";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
@@ -138,12 +139,16 @@ export function createStrangerA(
       })();
 
       // After death
-      if (this.health.current <= 0) {
+      this.health.afterDeath(() => {
+        state.gameObjectsManager.spawnObject(
+          createBloodStain({ x: this.x, y: this.y }),
+        );
+
         createExplosion(this, state, 60);
         state.cameraManager.followPoint = null;
 
         state.statsManager.strangerDied = true;
-      }
+      });
     },
   };
 }

@@ -1,7 +1,7 @@
-import { createDefaultState } from "./data";
 import { createCanvasDrawer } from "./graphics";
 import { createCanvas } from "./services/canvas";
 import { vector } from "./services/vector";
+import { createWorldA } from "data/world-a";
 import { createWorldB } from "data/world-b";
 import { createWorldC } from "data/world-c";
 import {
@@ -139,24 +139,22 @@ document.body.appendChild(volumeControl);
   startButtons.style.display = "flex";
   startButtons.style.gap = "20px";
 
-  [
-    () => createDefaultState(),
-    () => createWorldB(),
-    () => createWorldC(),
-  ].forEach((createWorld, index) => {
-    const button = document.createElement("button");
+  [() => createWorldA(), () => createWorldB(), () => createWorldC()].forEach(
+    (createWorld, index) => {
+      const button = document.createElement("button");
 
-    button.textContent = `World ${index + 1}`;
-    button.style.fontSize = "24px";
+      button.textContent = `World ${index + 1}`;
+      button.style.fontSize = "24px";
 
-    button.addEventListener("click", () => {
-      startGame(createWorld());
+      button.addEventListener("click", () => {
+        startGame(createWorld());
 
-      startButtons.remove();
-    });
+        startButtons.remove();
+      });
 
-    startButtons.appendChild(button);
-  });
+      startButtons.appendChild(button);
+    },
+  );
 
   document.body.appendChild(startButtons);
 })();

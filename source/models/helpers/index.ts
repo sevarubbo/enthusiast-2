@@ -19,7 +19,7 @@ export const createExplosion = (
   const collisionCircleRadius =
     "collisionCircle" in object
       ? object.collisionCircle.radius
-      : "circleRadius" in object.collision
+      : "collision" in object && "circleRadius" in object.collision
         ? object.collision.circleRadius
         : null;
 

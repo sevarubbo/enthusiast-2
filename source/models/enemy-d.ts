@@ -53,7 +53,7 @@ export function createEnemyD(
     update(delta, state) {
       this.health.update(delta, state, this);
       this.movement.update(delta, state, this);
-      this.shootingInterval.update(delta, state);
+      this.shootingInterval.update(delta);
 
       let targetEnemy = state.gameObjectsManager.findClosestObject(
         {

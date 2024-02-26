@@ -8,12 +8,18 @@ export function getFirstObjectLineCollision(
   line: Matrix,
   condition: (object: StateObject) => boolean,
 ): StateObject | null {
-  const { gameObjectsManager } = state;
+  // create rectangle from line
+  const rectangle = {
+    x: line[0].x,
+    y: line[0].y,
+    width: line[1].x - line[0].x,
+    height: line[1].y - line[0].y,
+  };
 
-  for (const otherObjectId in gameObjectsManager.objects) {
-    const otherObject = gameObjectsManager.objects[otherObjectId];
+  const nearbyObjects = state.quadtree.query(rectangle);
 
-    if (!otherObject || !condition(otherObject)) {
+  for (const otherObject of nearbyObjects) {
+    if (!condition(otherObject)) {
       continue;
     }
 
@@ -27,6 +33,10 @@ export function getFirstObjectLineCollision(
       if (circle.collidesWithLine(collisionCircle, line)) {
         return otherObject;
       }
+    }
+
+    if (!("collision" in otherObject)) {
+      continue;
     }
 
     if ("boxSize" in otherObject.collision) {

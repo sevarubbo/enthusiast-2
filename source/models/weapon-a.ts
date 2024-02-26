@@ -68,8 +68,8 @@ export const createWeaponA = <T extends WeaponType = "default">({
         collision: { circleRadius: number };
       } & Identifiable,
     ) => {
-      shootInterval.update(delta, state);
-      autoRefillInterval.update(delta, state);
+      shootInterval.update(delta);
+      autoRefillInterval.update(delta);
 
       if (scheduledShoot) {
         shootInterval.fireIfReady(() => {

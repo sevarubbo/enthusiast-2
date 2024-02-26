@@ -14,6 +14,11 @@ export interface GameObjectsManager extends Updatable {
     radius?: number,
   ): StateObject | null;
   findObjectsByType<T extends StateObject>(type: T["type"]): T[];
+  findClosestObjectByType<T extends StateObject>(
+    point: Vector,
+    type: T["type"],
+    radius?: number,
+  ): T | null;
 }
 
 export const createGameObjectsManager = (
@@ -81,6 +86,18 @@ export const createGameObjectsManager = (
       }
 
       return closestObject;
+    },
+
+    findClosestObjectByType<T extends StateObject>(
+      point: Vector,
+      type: T["type"],
+      radius = 1000,
+    ) {
+      return this.findClosestObject(
+        point,
+        (object) => object.type === type,
+        radius,
+      ) as T;
     },
 
     getObject(id) {

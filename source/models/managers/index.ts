@@ -1,11 +1,11 @@
 import { vector } from "services/vector";
 import type { Vector } from "services/vector";
-import type { StateObject } from "types";
+import type { CollidableObject } from "types";
 
 type TT = { boxSize: Vector } | { circleRadius: number };
 
 export interface ObjectCollisionManager {
-  collidesWithObjects: Array<StateObject>;
+  collidesWithObjects: Array<CollidableObject>;
   lastObjectPosition: Vector;
   isSolid: boolean;
   getRec(position: Vector): {

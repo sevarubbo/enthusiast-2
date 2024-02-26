@@ -17,7 +17,10 @@ export const createCollisionManager = () => {
         }
       });
 
+      // Update collisions
       Object.values(gameObjectsManager.objects).forEach((object) => {
+        if (!("collision" in object)) return;
+
         object.collision.collidesWithObjects = [];
 
         if (
@@ -40,6 +43,8 @@ export const createCollisionManager = () => {
           })();
 
           for (const nearbyObject of nearbyObjects) {
+            if (!("collision" in nearbyObject)) continue;
+
             if (nearbyObject !== object) {
               const vectorBetween = vector.subtract(nearbyObject, object);
               const distance = vector.length(vectorBetween);
@@ -202,6 +207,8 @@ const getCircleIntersectionWithBox = (
 };
 
 const fitObjectToWorld = (object: StateObject, worldSize: Vector) => {
+  if (!("collision" in object)) return;
+
   const objectRect = object.collision.getRec(object);
 
   const newPosition = matrix.fitPoint(

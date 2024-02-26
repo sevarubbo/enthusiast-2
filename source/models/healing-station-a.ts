@@ -1,7 +1,6 @@
 import { createBaseObject } from "./helpers";
 import { createObjectCollisionManager } from "./managers";
 import { createIntervalManager } from "../services/state";
-import type { State } from "../services/state";
 import type { Vector } from "../services/vector";
 
 const HEAL_AMOUNT = 2;
@@ -27,8 +26,8 @@ export const createHealingStationA = (position: Vector) => {
       color = c;
     },
 
-    update(delta: number, state: State) {
-      this.healInterval.update(delta, state);
+    update(delta: number) {
+      this.healInterval.update(delta);
 
       const collidingObjects = this.collision.collidesWithObjects;
 

@@ -1,3 +1,4 @@
+import { createBloodStain } from "./blood-stain";
 import { createObjectShieldManager } from "../services/state/objectShieldManager";
 import { createId } from "helpers";
 import {
@@ -85,9 +86,9 @@ export function createPlantEaterA(
     update(delta, state) {
       this.health.update(delta, state, this);
       this.movement.update(delta, state, this);
-      this.lookAroundInterval.update(delta, state);
-      this.growthInterval.update(delta, state);
-      this.biteInterval.update(delta, state);
+      this.lookAroundInterval.update(delta);
+      this.growthInterval.update(delta);
+      this.biteInterval.update(delta);
 
       // Find the closest plant
       const { gameObjectsManager } = state;
@@ -110,7 +111,7 @@ export function createPlantEaterA(
       }
 
       if (!this.targetEnemy || this.lookAroundInterval.ready) {
-        this.lookAroundInterval.fireIfReady();
+        this.lookAroundInterval.fireIfReady(() => undefined);
         const closestPlant = gameObjectsManager.findClosestObject(
           this,
           (oo) => {
@@ -209,6 +210,13 @@ export function createPlantEaterA(
       } else {
         this.age += delta * AGE_SPEED;
       }
+
+      // After death
+      this.health.afterDeath(() => {
+        state.gameObjectsManager.spawnObject(
+          createBloodStain({ x: this.x, y: this.y }),
+        );
+      });
     },
   };
 }

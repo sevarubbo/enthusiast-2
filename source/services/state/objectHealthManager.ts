@@ -12,6 +12,7 @@ export interface ObjectHealthManager {
   decrease(value: number, owner: StateObject, state: State): void;
   update(delta: number, state: State, object: StateObject): void;
   increase(value: number): void;
+  afterDeath(callback: () => void): void;
 }
 
 export const createObjectHealthManager = (o: {
@@ -41,8 +42,14 @@ export const createObjectHealthManager = (o: {
       current = Math.min(this.max, this.current + value);
     },
 
+    afterDeath(callback: () => void) {
+      if (current <= 0) {
+        callback();
+      }
+    },
+
     update(delta, state, object) {
-      this.healInterval?.update(delta, state);
+      this.healInterval?.update(delta);
 
       // Healing
       this.healInterval?.fireIfReady(() => {
