@@ -61,6 +61,9 @@ export const drawObjectAsText = (
   object: StateObject,
   icon: string,
 ) => {
+  ctx.shadowColor = "#000";
+  ctx.shadowBlur = 20;
+
   // Draw text on top in the middle
   ctx.font = "16px Arial";
   ctx.fillStyle = "#fff";
@@ -70,6 +73,8 @@ export const drawObjectAsText = (
     state.cameraManager.toScreen(object).x,
     state.cameraManager.toScreen(object).y,
   );
+
+  ctx.shadowBlur = 0;
 };
 
 export const drawDefaultRoundObjectView = (

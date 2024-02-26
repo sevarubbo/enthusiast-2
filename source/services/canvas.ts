@@ -48,9 +48,10 @@ export function drawCircle(
   ctx: CanvasRenderingContext2D,
   o: { position: Vector; radius: number; color: string },
 ) {
-  // Add bloor
+  // Add blur
   ctx.shadowColor = o.color;
   ctx.shadowBlur = 20;
+
   ctx.beginPath();
   ctx.arc(o.position.x, o.position.y, o.radius, 0, Math.PI * 2, false);
   ctx.fillStyle = o.color;
@@ -58,6 +59,8 @@ export function drawCircle(
   ctx.fill();
 
   ctx.closePath();
+
+  ctx.shadowBlur = 0;
 }
 
 export const drawCircleOutline = (

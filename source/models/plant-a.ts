@@ -23,7 +23,7 @@ const MAX_SIZE = 5;
 const GROWTH_SPEED = 0.005;
 const DECAY_SPEED = GROWTH_SPEED / 250;
 const BASE_HEALTH = 10;
-const BASE_MAX_AGE = 1000;
+const BASE_MAX_AGE = 800;
 const MAX_PLANTS = 3000;
 
 export function createPlantA(position: Vector) {
@@ -66,13 +66,13 @@ export function createPlantA(position: Vector) {
 
         const { gameObjectsManager } = state;
 
-        const plantsWithinRange = state.quadtree.queryRadius(
+        const objectsWithinRange = state.quadtree.queryRadius(
           this,
           this.collision.circleRadius * 10,
         );
 
         if (
-          plantsWithinRange.length < 10 &&
+          objectsWithinRange.length < 9 &&
           gameObjectsManager.findObjectsByType("plant_a").length < MAX_PLANTS
         ) {
           const SPAWN_DISTANCE = 200;
