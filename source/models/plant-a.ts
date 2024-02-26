@@ -29,6 +29,7 @@ export function createPlantA(position: Vector) {
   let age = 0;
   const maxAge = (Math.random() * BASE_MAX_AGE) / 2 + BASE_MAX_AGE / 2;
   const minSproutAge = maxAge * 0.2;
+  const maxFertilityAge = maxAge * 0.8;
 
   return {
     ...createBaseObject(position),
@@ -57,7 +58,7 @@ export function createPlantA(position: Vector) {
 
       (() => {
         this.sproutInterval.fireIfReady(() => {
-          if (age >= maxAge * 0.8) return;
+          if (age > maxFertilityAge) return;
 
           if (age < minSproutAge) return;
 
