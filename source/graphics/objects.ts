@@ -146,7 +146,7 @@ function drawObject(
     }
 
     case "stranger_a": {
-      drawQueue.schedule(2, () => {
+      drawQueue.schedule(3, () => {
         drawObjectShield(ctx, state, object);
 
         drawObjectAsCircle(ctx, state, {

@@ -5,14 +5,21 @@ import type { StateObject } from "types";
 
 export interface GameObjectsManager extends Updatable {
   objects: Record<string, StateObject>;
+
+  /** @deprecated */
   spawnObject(object: StateObject): void;
+  addObject(object: StateObject): void;
+
+  /** @deprecated */
   despawnObject(object: StateObject): void;
+  removeObject(object: StateObject): void;
+
   getObject(id: string): StateObject;
-  findClosestObject(
+  findClosestObject<T extends StateObject = StateObject>(
     point: Vector,
     filter: (object: StateObject) => boolean,
     radius?: number,
-  ): StateObject | null;
+  ): T | null;
   findObjectsByType<T extends StateObject>(type: T["type"]): T[];
   findClosestObjectByType<T extends StateObject>(
     point: Vector,
@@ -46,7 +53,15 @@ export const createGameObjectsManager = (
       this.objects[object.id] = object;
     },
 
+    addObject(object) {
+      this.objects[object.id] = object;
+    },
+
     despawnObject(object) {
+      delete this.objects[object.id];
+    },
+
+    removeObject(object) {
       delete this.objects[object.id];
     },
 
@@ -64,11 +79,11 @@ export const createGameObjectsManager = (
       return res;
     },
 
-    findClosestObject(
+    findClosestObject<T extends StateObject>(
       point: Vector,
       filter: (object: StateObject) => boolean,
       radius = 1000,
-    ) {
+    ): T | null {
       let closestObject: StateObject | null = null;
       let closestDistance = Infinity;
       const objects = options.quadtree
@@ -85,7 +100,7 @@ export const createGameObjectsManager = (
         }
       }
 
-      return closestObject;
+      return closestObject as T | null;
     },
 
     findClosestObjectByType<T extends StateObject>(

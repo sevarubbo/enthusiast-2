@@ -7,8 +7,12 @@ import { createShootingEnemyA } from "../models/shooting-enemy-a";
 import { createWallA } from "../models/wall-a";
 import { createPlantA, createStrangerA } from "models";
 import { createBossA } from "models/boss-a";
+import { createFactoryA } from "models/factory-a";
 import { createItemShotgun } from "models/item-shotgun";
+import { createRawMaterialMine } from "models/raw-material-mine";
+import { createWorkerA } from "models/worker-a";
 import { createGameObjectsManager } from "services/state";
+import type { Matrix, matrix } from "services/matrix";
 import type { State } from "services/state";
 
 export const createWorldC = (): State => {
@@ -53,10 +57,38 @@ export const createWorldC = (): State => {
           y: 100,
         }),
 
-        createPlantA({
-          x: 300,
+        createRawMaterialMine({
+          position: { x: 100, y: 100 },
+          materialType: "A",
+        }),
+
+        createRawMaterialMine({
+          position: { x: 200, y: 100 },
+          materialType: "B",
+        }),
+
+        createWorkerA({
+          x: 400,
+          y: 400,
+        }),
+
+        createWorkerA({
+          x: 100,
+          y: 400,
+        }),
+
+        createWorkerA({ x: 100, y: 200 }),
+        createWorkerA({ x: 100, y: 200 }),
+
+        createFactoryA({
+          x: 600,
           y: 300,
         }),
+
+        // createPlantA({
+        //   x: 300,
+        //   y: 300,
+        // }),
         // createPlantA({
         //   x: 500,
         //   y: 300,

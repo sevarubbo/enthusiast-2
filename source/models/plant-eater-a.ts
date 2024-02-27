@@ -14,7 +14,6 @@ import {
 } from "services/state";
 import { vector } from "services/vector";
 import type { Bullet } from "./bullet";
-import type { PlantA } from "./plant-a";
 import type { CollidableCircle2, Movable } from "services/state";
 import type { StateObject } from "types";
 
@@ -116,7 +115,7 @@ export function createPlantEaterA(
           (oo) => {
             return oo.type === "plant_a";
           },
-        ) as PlantA | null;
+        );
 
         this.targetEnemy = closestPlant || undefined;
       }

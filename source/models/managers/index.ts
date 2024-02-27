@@ -8,6 +8,7 @@ export interface ObjectCollisionManager {
   collidesWithObjects: Array<CollidableObject>;
   lastObjectPosition: Vector;
   isSolid: boolean;
+  isFixed: boolean;
   getRec(position: Vector): {
     x: number;
     y: number;
@@ -19,12 +20,14 @@ export interface ObjectCollisionManager {
 export const createObjectCollisionManager = <T extends TT>(
   o: T & {
     isSolid?: boolean;
+    isFixed?: boolean;
   },
 ): ObjectCollisionManager & T => {
   return {
     lastObjectPosition: vector.zero,
     collidesWithObjects: [] as ObjectCollisionManager["collidesWithObjects"],
     isSolid: o.isSolid !== false,
+    isFixed: o.isFixed === true,
 
     ...(("boxSize" in o
       ? { boxSize: o.boxSize }

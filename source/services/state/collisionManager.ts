@@ -124,6 +124,7 @@ export const createCollisionManager = () => {
 
                   // Adjust positions
                   if (
+                    !object.collision.isFixed &&
                     object.collision.isSolid &&
                     nearbyObject.collision.isSolid
                   ) {
