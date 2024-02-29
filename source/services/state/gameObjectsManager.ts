@@ -1,5 +1,5 @@
 import type { createQuadtree } from "../quadtree";
-import type { Updatable } from "./types";
+import type { Identifiable, Updatable } from "./types";
 import type { Vector } from "services/vector";
 import type { StateObject } from "types";
 
@@ -8,7 +8,7 @@ export interface GameObjectsManager extends Updatable {
 
   /** @deprecated */
   spawnObject(object: StateObject): void;
-  addObject(object: StateObject): void;
+  addObject(object: Identifiable & Updatable): void;
 
   /** @deprecated */
   despawnObject(object: StateObject): void;
@@ -54,7 +54,7 @@ export const createGameObjectsManager = (
     },
 
     addObject(object) {
-      this.objects[object.id] = object;
+      this.objects[object.id] = object as StateObject;
     },
 
     despawnObject(object) {

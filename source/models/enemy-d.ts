@@ -63,8 +63,6 @@ export function createEnemyD(
         (oo) =>
           oo.type === "stranger_a" ||
           oo.type === "shooting_enemy_a" ||
-          oo.type === "enemyC" ||
-          oo.type === "enemy" ||
           oo.type === "tower",
       );
 

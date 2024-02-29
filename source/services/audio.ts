@@ -84,6 +84,12 @@ const audioFiles = [
     url: "sounds/SciFiExplosion_S08SF.306.wav",
     baseVolume: 5,
   },
+  {
+    name: "sword swing",
+    // eslint-disable-next-line max-len
+    url: "sounds/ESM_Fighting_Game_One_Shot_Designed_Weapons_Blade_Shing_Swing_Whoosh_Knife_Sword_Attack_Draw_Metal_Ring.wav",
+    baseVolume: 2,
+  },
 ] as const;
 
 export type SoundName = (typeof audioFiles)[number]["name"];

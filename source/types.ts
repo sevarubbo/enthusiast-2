@@ -23,7 +23,9 @@ import type { PlantEaterA } from "models/plant-eater-a";
 import type { createRawMaterialA } from "models/raw-material-a";
 import type { createRawMaterialMine } from "models/raw-material-mine";
 import type { ShootingEnemyA } from "models/shooting-enemy-a";
+import type { SlashingEnemyA } from "models/slashing-emeny-a";
 import type { createWeaponAItem } from "models/weapon-a-item";
+import type { SlashingElement } from "models/weapon-slashing";
 import type { createWorkerA } from "models/worker-a";
 
 type BloodStain = ReturnType<typeof createBloodStain>;
@@ -54,6 +56,8 @@ export type StateObject =
   | ReturnType<typeof createRawMaterialA>
   | ReturnType<typeof createRawMaterialMine>
   | ReturnType<typeof createWorkerA>
-  | ReturnType<typeof createFactoryA>;
+  | ReturnType<typeof createFactoryA>
+  | SlashingEnemyA
+  | SlashingElement;
 
 export type CollidableObject = Exclude<StateObject, BloodStain | BloodParticle>;

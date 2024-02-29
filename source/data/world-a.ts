@@ -7,10 +7,13 @@ import { createCollisionManager } from "../services/state/collisionManager";
 import { createEnemyC, createHouse, createPlantA, createTower } from "models";
 import { createBossA } from "models/boss-a";
 import { createDefenderA } from "models/defender-a";
+import { createEnemyFactoryA } from "models/enemy-factory-a";
 import { createItemShotgun } from "models/item-shotgun";
 import { createPlantEaterA } from "models/plant-eater-a";
+import { createRawMaterialMine } from "models/raw-material-mine";
 import { createStrangerA } from "models/stranger-a";
 import { createWeaponAItem } from "models/weapon-a-item";
+import { createWorkerA } from "models/worker-a";
 import { createGameObjectsManager } from "services/state/gameObjectsManager";
 import { createGameSpeedManager } from "services/state/gameSpeedManager";
 import { createStatsManager } from "services/statsManager";
@@ -191,6 +194,17 @@ export function createWorldA(): State {
         createHealingStationA(getRandomPositionInCorner(STRANGER_CORNER, 500)),
         createTower(getRandomPositionInCorner(STRANGER_CORNER + 1)),
         createTower(getRandomPositionInCorner(STRANGER_CORNER - 1)),
+        createEnemyFactoryA(getRandomPositionInCorner(STRANGER_CORNER + 1)),
+        createRawMaterialMine({
+          position: getRandomPositionInCorner(STRANGER_CORNER - 1),
+          materialType: "A",
+        }),
+        createRawMaterialMine({
+          position: getRandomPositionInCorner(STRANGER_CORNER),
+          materialType: "B",
+        }),
+        createWorkerA(getRandomPositionInCorner(STRANGER_CORNER + 1)),
+        createWorkerA(getRandomPositionInCorner(STRANGER_CORNER - 1)),
 
         // Plants
         ...([1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 5] as const).map(

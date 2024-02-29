@@ -14,7 +14,7 @@ export const createWorkerA = (position: Vector) => {
       circleRadius: 5,
     }),
     movement: createObjectMovementManager({
-      maxSpeed: 0.1,
+      maxSpeed: 0.05,
     }),
 
     pickedMaterial: null as null | ReturnType<typeof createRawMaterialA>,
@@ -37,6 +37,7 @@ export const createWorkerA = (position: Vector) => {
         const closestFactory = state.gameObjectsManager.findClosestObjectByType(
           this,
           "factory_a",
+          10000,
         );
 
         this.belongsToFactoryId = closestFactory?.id;
@@ -59,6 +60,7 @@ export const createWorkerA = (position: Vector) => {
             obj.type === "raw_material_a" &&
             obj.materialType === materialType &&
             !obj.isPicked,
+          10000,
         );
 
         if (closestRawMaterial) {

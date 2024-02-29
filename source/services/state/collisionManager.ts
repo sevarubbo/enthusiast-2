@@ -45,6 +45,9 @@ export const createCollisionManager = () => {
           for (const nearbyObject of nearbyObjects) {
             if (!("collision" in nearbyObject)) continue;
 
+            if (object.collision.ignoreCollisions.has(nearbyObject)) continue;
+            if (nearbyObject.collision.ignoreCollisions.has(object)) continue;
+
             if (nearbyObject !== object) {
               const vectorBetween = vector.subtract(nearbyObject, object);
               const distance = vector.length(vectorBetween);
@@ -124,6 +127,7 @@ export const createCollisionManager = () => {
 
                   // Adjust positions
                   if (
+                    !object.collision.ignoreCollisions.has(nearbyObject) &&
                     !object.collision.isFixed &&
                     object.collision.isSolid &&
                     nearbyObject.collision.isSolid

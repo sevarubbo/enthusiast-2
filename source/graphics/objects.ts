@@ -176,7 +176,7 @@ function drawObject(
           vector.create(0, -object.collisionCircle.radius - 10),
         );
 
-        drawQueue.schedule(1, (ctx2) => {
+        drawQueue.schedule(3, (ctx2) => {
           drawHealthBar(
             ctx2,
             healthBarPosition,
@@ -329,6 +329,12 @@ function drawObject(
         height: box.y,
         color: object.color,
       });
+
+      return;
+    }
+
+    case "slashing_element": {
+      drawObjectAsCircle(ctx, state, object);
 
       return;
     }

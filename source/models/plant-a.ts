@@ -117,7 +117,7 @@ export function createPlantA(position: Vector) {
           state.gameObjectsManager.spawnObject(
             createShieldItem({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.0032) {
+        } else if (Math.random() < 0.0029) {
           state.gameObjectsManager.spawnObject(
             createWeaponAItem({ x: this.x, y: this.y }),
           );
@@ -125,7 +125,7 @@ export function createPlantA(position: Vector) {
           state.gameObjectsManager.spawnObject(
             createItemShotgun({ x: this.x, y: this.y }),
           );
-        } else if (Math.random() < 0.017) {
+        } else if (Math.random() < 0.015) {
           state.gameObjectsManager.spawnObject(
             createEnemy({ x: this.x, y: this.y }),
           );
@@ -137,7 +137,7 @@ export function createPlantA(position: Vector) {
           createItemRewardA({ x: this.x, y: this.y });
         } else if (Math.random() < 0.0099) {
           createPlantEaterA({ x: this.x, y: this.y });
-        } else if (Math.random() < 0.14) {
+        } else if (Math.random() < 0.15) {
           createDefenderA({ x: this.x, y: this.y });
         }
       }
