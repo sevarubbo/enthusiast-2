@@ -6,6 +6,10 @@ import {
   createObjectMovementManager,
   createObjectHealthManager,
 } from "services/state";
+import {
+  createObjectShieldManager,
+  createShield,
+} from "services/state/objectShieldManager";
 import { vector, type Vector } from "services/vector";
 import type { SlashingElement } from "./weapon-slashing";
 import type { State } from "services/state";
@@ -37,6 +41,7 @@ export const createSlashingEnemyA = (position: Vector) => {
       maxHealth: 100,
       selfHealing: true,
     }),
+    shield: createShield(),
 
     update(delta: number, state: State) {
       this.movement.update(delta, state, this);
@@ -50,15 +55,21 @@ export const createSlashingEnemyA = (position: Vector) => {
         }
       })();
 
+      const { gameObjectsManager } = state;
+
       const targetEnemy =
-        (targetEnemyId && state.gameObjectsManager.objects[targetEnemyId]) ||
-        state.gameObjectsManager.findClosestObjectByType(this, "stranger_a");
+        (targetEnemyId && gameObjectsManager.objects[targetEnemyId]) ||
+        gameObjectsManager.findClosestObjectByType(this, "stranger_a") ||
+        gameObjectsManager.findClosestObjectByType(this, "shooting_enemy_a") ||
+        gameObjectsManager.findClosestObjectByType(this, "tower");
 
       targetEnemyId = targetEnemy?.id;
 
       (() => {
         if (targetEnemy) {
           this.movement.setTargetPoint(targetEnemy);
+        } else {
+          this.movement.setTargetPoint(null);
         }
       })();
 

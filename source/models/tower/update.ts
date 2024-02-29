@@ -18,7 +18,8 @@ const isEnemy = (object: StateObject) => {
     object.type === "plant_eater_a" ||
     object.type === "stranger_a" ||
     object.type === "shooting_enemy_b" ||
-    object.type === "enemyC"
+    object.type === "enemyC" ||
+    object.type === "slashing_enemy_a"
   );
 };
 

@@ -92,7 +92,8 @@ export function createShootingEnemyA(
             (oo) =>
               oo.type === "plant_eater_a" ||
               oo.type === "enemyC" ||
-              oo.type === "enemy",
+              oo.type === "enemy" ||
+              oo.type === "slashing_enemy_a",
           ) ||
           undefined;
 
