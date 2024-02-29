@@ -19,17 +19,22 @@ function drawObjectAsCircle(
   state: State,
   object:
     | { radius: number; x: number; y: number; color: string }
-    | (StateObject &
-        (
-          | { collisionCircle: { radius: number } }
-          | {
-              collision: {
-                circleRadius: number;
-              };
-            }
-        )),
+    | (StateObject & {
+        collision: {
+          circleRadius: number;
+        };
+      }),
+  options: {
+    showHealthBar?: boolean;
+  } = {
+    showHealthBar: true,
+  },
 ) {
-  if ("health" in object && object.health.current < object.health.max) {
+  if (
+    options.showHealthBar &&
+    "health" in object &&
+    object.health.current < object.health.max
+  ) {
     const healthBarPosition = vector.add(
       state.cameraManager.toScreen(object),
 
@@ -55,10 +60,6 @@ function drawObjectAsCircle(
   const radius = (() => {
     if ("radius" in object) {
       return object.radius;
-    }
-
-    if ("collisionCircle" in object) {
-      return object.collisionCircle.radius;
     }
 
     return object.collision.circleRadius;
@@ -112,7 +113,9 @@ function drawObject(
 
   switch (object.type) {
     case "enemy": {
-      drawObjectAsCircle(ctx, state, object);
+      drawObjectAsCircle(ctx, state, object, {
+        showHealthBar: false,
+      });
 
       return;
     }
@@ -140,7 +143,9 @@ function drawObject(
     }
 
     case "enemyC": {
-      drawObjectAsCircle(ctx, state, object);
+      drawObjectAsCircle(ctx, state, object, {
+        showHealthBar: false,
+      });
 
       return;
     }
@@ -173,7 +178,7 @@ function drawObject(
       if (object.health.current < object.health.max) {
         const healthBarPosition = vector.add(
           state.cameraManager.toScreen(object),
-          vector.create(0, -object.collisionCircle.radius - 10),
+          vector.create(0, -object.collision.circleRadius - 10),
         );
 
         drawQueue.schedule(3, (ctx2) => {
@@ -274,7 +279,7 @@ function drawObject(
       drawCircleOutline(ctx, {
         position: state.cameraManager.toScreen(object),
         color: object.color,
-        radius: object.collisionCircle.radius,
+        radius: object.collision.circleRadius,
         lineWidth: 1,
       });
 
@@ -341,7 +346,7 @@ function drawObject(
 
     default: {
       drawQueue.schedule(2, (ctx2) => {
-        if ("collisionCircle" in object || "collision" in object) {
+        if ("collision" in object) {
           drawDefaultRoundObjectView(ctx2, state, object);
         } else {
           throw new Error("Object must have collision circle");

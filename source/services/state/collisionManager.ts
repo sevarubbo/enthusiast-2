@@ -23,16 +23,11 @@ export const createCollisionManager = () => {
 
         object.collision.collidesWithObjects = [];
 
-        if (
-          "collisionCircle" in object ||
-          ("collision" in object && "circleRadius" in object.collision)
-        ) {
+        if ("collision" in object && "circleRadius" in object.collision) {
           const collisionCircleRadius =
-            "collisionCircle" in object
-              ? object.collisionCircle.radius
-              : "circleRadius" in object.collision
-                ? object.collision.circleRadius
-                : null;
+            "circleRadius" in object.collision
+              ? object.collision.circleRadius
+              : null;
 
           if (!collisionCircleRadius) {
             return;
@@ -110,14 +105,9 @@ export const createCollisionManager = () => {
                     fitObjectToWorld(nearbyObject, state.world.size);
                   }
                 }
-              } else if (
-                "collisionCircle" in nearbyObject ||
-                "circleRadius" in nearbyObject.collision
-              ) {
+              } else if ("circleRadius" in nearbyObject.collision) {
                 const otherCollisionCircleRadius =
-                  "collisionCircle" in nearbyObject
-                    ? nearbyObject.collisionCircle.radius
-                    : nearbyObject.collision.circleRadius;
+                  nearbyObject.collision.circleRadius;
 
                 if (
                   distance <=
@@ -159,9 +149,7 @@ export const createCollisionManager = () => {
                       object.setPosition(newPosition);
                     } else {
                       const objectCollisionCircleRadius =
-                        "collisionCircle" in object
-                          ? object.collisionCircle.radius
-                          : object.collision.circleRadius;
+                        object.collision.circleRadius;
 
                       const newPosition = matrix.fitPoint(
                         {

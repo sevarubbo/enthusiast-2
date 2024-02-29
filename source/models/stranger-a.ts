@@ -40,7 +40,6 @@ export function createStrangerA(
     type: "stranger_a",
     x: o.x || 0,
     y: o.y || 0,
-    collisionCircle: { radius: 12 },
     health: createObjectHealthManager({
       maxHealth: 30,
       selfHealing: true,
@@ -67,7 +66,7 @@ export function createStrangerA(
 
       // START: Check collisions with world edges
       const { world } = state;
-      const { radius } = this.collisionCircle;
+      const radius = this.collision.circleRadius;
 
       if (this.x > world.size.x - radius) {
         this.x = world.size.x - radius;

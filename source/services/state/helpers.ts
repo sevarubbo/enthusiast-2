@@ -10,10 +10,10 @@ export function getFirstObjectLineCollision(
 ): StateObject | null {
   // create rectangle from line
   const rectangle = {
-    x: line[0].x,
-    y: line[0].y,
-    width: line[1].x - line[0].x,
-    height: line[1].y - line[0].y,
+    x: line[0].x < line[1].x ? line[0].x : line[1].x,
+    y: line[0].y < line[1].y ? line[0].y : line[1].y,
+    width: Math.abs(line[0].x - line[1].x),
+    height: Math.abs(line[0].y - line[1].y),
   };
 
   const nearbyObjects = state.quadtree.query(rectangle);
@@ -23,11 +23,11 @@ export function getFirstObjectLineCollision(
       continue;
     }
 
-    if ("collisionCircle" in otherObject) {
+    if ("collision" in otherObject && "circleRadius" in otherObject.collision) {
       const collisionCircle = {
         x: otherObject.x,
         y: otherObject.y,
-        radius: otherObject.collisionCircle.radius,
+        radius: otherObject.collision.circleRadius,
       };
 
       if (circle.collidesWithLine(collisionCircle, line)) {

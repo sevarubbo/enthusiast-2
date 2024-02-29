@@ -30,7 +30,7 @@ export function createDefenderA(position: Vector) {
     color: "#a50",
     type: "defender_a",
     health: createObjectHealthManager({
-      maxHealth: 20,
+      maxHealth: 25,
       selfHealing: true,
     }),
     movement: createObjectMovementManager({ maxSpeed: 0.08 }),
@@ -209,6 +209,7 @@ export function createDefenderA(position: Vector) {
             (oo) =>
               oo.type === "shooting_enemy_a" ||
               oo.type === "shooting_enemy_b" ||
+              oo.type === "slashing_enemy_a" ||
               oo.type === "boss_a",
             this.shootingRange,
           )?.id;

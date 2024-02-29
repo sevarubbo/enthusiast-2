@@ -14,13 +14,13 @@ import {
 } from "services/state";
 import { vector } from "services/vector";
 import type { Bullet } from "./bullet";
-import type { CollidableCircle2, Movable } from "services/state";
+import type { CollidableCircle, Movable } from "services/state";
 import type { StateObject } from "types";
 
 export interface PlantEaterA
   extends Identifiable,
     Updatable,
-    CollidableCircle2,
+    CollidableCircle,
     Healthy,
     Movable {
   type: "plant_eater_a";
@@ -154,10 +154,7 @@ export function createPlantEaterA(
       ) {
         const distanceSquared = vector.distanceSquared(this, this.targetEnemy);
 
-        const teCollisionCircleRadius =
-          "collisionCircle" in this.targetEnemy
-            ? this.targetEnemy.collisionCircle.radius
-            : this.targetEnemy.collision.circleRadius;
+        const teCollisionCircleRadius = this.targetEnemy.collision.circleRadius;
 
         if (
           distanceSquared <=

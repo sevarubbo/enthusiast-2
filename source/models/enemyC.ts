@@ -38,7 +38,6 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
     y: o.y || 0,
     color: "white",
     radius: 12,
-    collisionCircle: { radius: 12 },
     health: createObjectHealthManager({
       maxHealth: 10,
     }),
@@ -59,7 +58,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
       const { world } = state;
 
       // Check collisions with world edges
-      const { radius } = this.collisionCircle;
+      const radius = this.collision.circleRadius;
       const { speedVector } = this.movement;
 
       if (this.x < radius) {
@@ -120,7 +119,7 @@ export function createEnemyC(o: Partial<Pick<EnemyC, "x" | "y">> = {}): EnemyC {
             this,
             vector.scale(
               vector.fromAngle(i * angleStep),
-              this.collisionCircle.radius * 2,
+              this.collision.circleRadius * 2,
             ),
           );
 

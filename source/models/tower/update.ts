@@ -11,15 +11,28 @@ type ObjectUpdateFunction<T extends Updatable> = (
   ...args: Parameters<T["update"]>
 ) => void;
 
+type TowerEnemy =
+  | "shooting_enemy_a"
+  | "defender_a"
+  | "enemy"
+  | "plant_eater_a"
+  | "stranger_a"
+  | "shooting_enemy_b"
+  | "enemyC"
+  | "slashing_enemy_a"
+  | "boss_a";
+
 const isEnemy = (object: StateObject) => {
   return (
-    object.type === "enemy" ||
     object.type === "shooting_enemy_a" ||
+    object.type === "defender_a" ||
+    object.type === "enemy" ||
     object.type === "plant_eater_a" ||
     object.type === "stranger_a" ||
     object.type === "shooting_enemy_b" ||
     object.type === "enemyC" ||
-    object.type === "slashing_enemy_a"
+    object.type === "slashing_enemy_a" ||
+    object.type === "boss_a"
   );
 };
 
@@ -48,6 +61,10 @@ const canShootEnemy = (
         return false;
       }
 
+      if (!("health" in object)) {
+        return true;
+      }
+
       if (isEnemy(object)) {
         return false;
       }
@@ -65,13 +82,30 @@ const canShootEnemy = (
 
 const findTargetEnemy: ObjectUpdateFunction<Tower> = (self, d, state) => {
   const { gameObjectsManager } = state;
-  const closestEnemy = gameObjectsManager.findClosestObject(
-    self,
-    (object) => {
-      return isEnemy(object) && canShootEnemy(self, state, object);
-    },
-    self.shootingRange,
-  );
+  const closestEnemy = (() => {
+    for (const enemyType of [
+      "stranger_a",
+      "defender_a",
+      "slashing_enemy_a",
+      "shooting_enemy_a",
+      "shooting_enemy_b",
+      "boss_a",
+      "enemy",
+      "enemyC",
+      "plant_eater_a",
+    ] as const) {
+      const enemy = gameObjectsManager.findClosestObjectByType(
+        self,
+        enemyType as TowerEnemy,
+      );
+
+      if (enemy && canShootEnemy(self, state, enemy)) {
+        return enemy;
+      }
+    }
+
+    return null;
+  })();
 
   self.targetEnemyId = closestEnemy?.id;
 };

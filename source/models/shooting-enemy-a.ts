@@ -43,7 +43,6 @@ export function createShootingEnemyA(
     type: "shooting_enemy_a",
     x: o.x || 0,
     y: o.y || 0,
-    collisionCircle: { radius: scale * 12 },
     health: createObjectHealthManager({
       maxHealth: 8 + scale * 8,
       selfHealing: true,
@@ -85,6 +84,10 @@ export function createShootingEnemyA(
           ) ||
           gameObjectsManager.findClosestObject(
             this,
+            (oo) => oo.type === "slashing_enemy_a",
+          ) ||
+          gameObjectsManager.findClosestObject(
+            this,
             (oo) => oo.type === "tower",
           ) ||
           gameObjectsManager.findClosestObject(
@@ -92,8 +95,7 @@ export function createShootingEnemyA(
             (oo) =>
               oo.type === "plant_eater_a" ||
               oo.type === "enemyC" ||
-              oo.type === "enemy" ||
-              oo.type === "slashing_enemy_a",
+              oo.type === "enemy",
           ) ||
           undefined;
 

@@ -5,7 +5,12 @@ import { createHealingStationA } from "../models/healing-station-a";
 import { createPlantEaterA } from "../models/plant-eater-a";
 import { createShootingEnemyA } from "../models/shooting-enemy-a";
 import { createWallA } from "../models/wall-a";
-import { createHouse, createPlantA, createStrangerA } from "models";
+import {
+  createHouse,
+  createPlantA,
+  createStrangerA,
+  createTower,
+} from "models";
 import { createBossA } from "models/boss-a";
 import { createFactoryA } from "models/factory-a";
 import { createItemShotgun } from "models/item-shotgun";
@@ -65,10 +70,25 @@ export const createWorldD = (): State => {
           y: 100,
         }),
 
-        createSlashingEnemyA({
+        createWallA({
+          x: 100,
+          y: 100,
+        }),
+
+        createTower({
           x: 300,
           y: 300,
         }),
+
+        // createSlashingEnemyA({
+        //   x: 300,
+        //   y: 300,
+        // }),
+        //
+        // createSlashingEnemyA({
+        //   x: 300,
+        //   y: 300,
+        // }),
       ],
     }),
   };

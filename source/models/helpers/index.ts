@@ -17,11 +17,9 @@ export const createExplosion = (
   const angleStep = (2 * Math.PI) / bulletsCount;
 
   const collisionCircleRadius =
-    "collisionCircle" in object
-      ? object.collisionCircle.radius
-      : "collision" in object && "circleRadius" in object.collision
-        ? object.collision.circleRadius
-        : null;
+    "collision" in object && "circleRadius" in object.collision
+      ? object.collision.circleRadius
+      : null;
 
   if (!collisionCircleRadius) {
     throw new Error("No collision circle radius");
@@ -68,7 +66,8 @@ export const canShootEnemy = (
         return false;
       }
 
-      if (o.type === "wall_a") {
+      // Don't shoot object with no health
+      if (!("health" in o)) {
         return true;
       }
 

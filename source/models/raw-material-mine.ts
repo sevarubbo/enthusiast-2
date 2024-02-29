@@ -4,6 +4,8 @@ import { createRawMaterialA } from "./raw-material-a";
 import { createIntervalManager, type State } from "services/state";
 import type { Vector } from "services/vector";
 
+const MAX_RAW_MATERIALS = 40;
+
 export const createRawMaterialMine = ({
   position,
   materialType,
@@ -19,14 +21,12 @@ export const createRawMaterialMine = ({
       circleRadius: 10,
       isSolid: false,
     }),
-    spawnInterval: createIntervalManager(4000, true),
+    spawnInterval: createIntervalManager(20000, true),
 
     update(delta: number, state: State) {
       this.spawnInterval.update(delta);
 
       this.spawnInterval.fireIfReady(() => {
-        const MAX_RAW_MATERIALS = 20;
-
         if (
           state.quadtree.queryRadius(this, 100).filter((obj) => {
             return obj.type === "raw_material_a";
