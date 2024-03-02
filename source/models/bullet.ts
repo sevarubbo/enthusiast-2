@@ -42,7 +42,6 @@ export function createBullet(
     type: "bullet",
     color: "#f0f0f0",
     radius: o.size || RADIUS,
-    collisionCircle: { radius: o.size || RADIUS },
     speed,
     collision: createObjectCollisionManager({
       circleRadius: o.size || RADIUS,

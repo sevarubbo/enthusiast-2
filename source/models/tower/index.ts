@@ -45,15 +45,13 @@ export function createTower(o: Partial<Pick<Tower, "x" | "y">> = {}): Tower {
     color: "#6566b8",
     radius: 20,
     angle: 0,
-    collisionCircle: {
-      radius: 20,
-    },
     health: createObjectHealthManager({
       maxHealth: 200,
       selfHealing: true,
     }),
     collision: createObjectCollisionManager({
       circleRadius: 20,
+      isFixed: true,
     }),
     aimError: 0.02,
     rotateSpeed: 2 / 1000,

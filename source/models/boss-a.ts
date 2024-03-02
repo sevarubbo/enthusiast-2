@@ -146,56 +146,11 @@ export const createBossA = (position: Vector) => {
         this.weapon.fireAtAngle(this.movement.angle);
       })();
 
-      // Spawn children
-      // (() => {
-      //   const stranger = gameObjectsManager.findClosestObject(
-      //     this,
-      //     (oo) => oo.type === "stranger_a",
-      //   );
-      //
-      //   if (!stranger) return;
-      //
-      //   const distanceToStrangerSquared = vector.distanceSquared(
-      //     this,
-      //     stranger,
-      //   );
-      //
-      //   if (distanceToStrangerSquared > this.fireRange ** 3) return;
-      //
-      //   this.childrenSpawnInterval.fireIfReady(() => {
-      //     let numberOfChildren = 1;
-      //
-      //     if (Math.random() < 0.5) {
-      //       numberOfChildren = 2;
-      //     } else if (Math.random() < 0.2) {
-      //       numberOfChildren = 3;
-      //     } else if (Math.random() < 0.1) {
-      //       numberOfChildren = 5;
-      //     }
-      //
-      //     for (let i = 0; i < numberOfChildren; i++)
-      //       gameObjectsManager.spawnObject(
-      //         // Offset position slightly random
-      //         createShootingEnemyA({
-      //           x: this.x + Math.random() * 100 - 50,
-      //           y: this.y + Math.random() * 100 - 50,
-      //         }),
-      //       );
-      //   });
-      // })();
-
       // Spawn children in waves
       (() => {
         this.childrenSpawnWaveInterval.update(delta);
 
         this.childrenSpawnWaveInterval.fireIfReady(() => {
-          const stranger = gameObjectsManager.findClosestObject(
-            this,
-            (oo) => oo.type === "stranger_a",
-          );
-
-          if (!stranger) return;
-
           childrenLeftToSpawn =
             Math.random() * (MAX_SPAWN_NUMBER - MIN_SPAWN_NUMBER) +
             MIN_SPAWN_NUMBER;
@@ -209,7 +164,7 @@ export const createBossA = (position: Vector) => {
             y: this.y + Math.random() * SPAWN_DISTANCE * 2 - SPAWN_DISTANCE,
           };
 
-          gameObjectsManager.spawnObject(createShootingEnemyA(spawnLocation));
+          gameObjectsManager.addObject(createShootingEnemyA(spawnLocation));
           childrenLeftToSpawn--;
         });
       })();

@@ -14,6 +14,7 @@ import type { State } from "services/state";
 export type SlashingEnemyA = ReturnType<typeof createSlashingEnemyA>;
 
 const ATTACK_MS = 800;
+const MAX_ATTACK_RANGE = 80;
 
 export const createSlashingEnemyA = (position: Vector) => {
   let slashingElement: SlashingElement | null = null;
@@ -21,7 +22,7 @@ export const createSlashingEnemyA = (position: Vector) => {
   let attackMSLeft = attackMS;
   const attackRechargeMS = 400;
   let targetEnemyId: string | undefined;
-  const maxAttackRange = 80;
+  const maxAttackRange = MAX_ATTACK_RANGE;
   let attackFinished = true;
 
   return {
@@ -57,6 +58,7 @@ export const createSlashingEnemyA = (position: Vector) => {
       const targetEnemy =
         (targetEnemyId && gameObjectsManager.objects[targetEnemyId]) ||
         gameObjectsManager.findClosestObjectByType(this, "stranger_a") ||
+        gameObjectsManager.findClosestObjectByType(this, "defender_a") ||
         gameObjectsManager.findClosestObjectByType(this, "shooting_enemy_a") ||
         gameObjectsManager.findClosestObjectByType(this, "tower");
 
@@ -89,6 +91,11 @@ export const createSlashingEnemyA = (position: Vector) => {
           vector.distance(this, targetEnemy),
         );
 
+        // Look at the target
+        this.movement.angle = vector.toAngle(
+          vector.direction(this, targetEnemy),
+        );
+
         // Swing the slashing element
         // Calculate angle based on attackMSLeft
         const angle =
@@ -109,16 +116,18 @@ export const createSlashingEnemyA = (position: Vector) => {
       // Attempt to attack
       (() => {
         slashingElement.setPosition(this);
+        const withinRange =
+          targetEnemy &&
+          vector.distanceSquared(this, targetEnemy) < maxAttackRange ** 2;
+
+        if (withinRange) {
+          this.movement.setTargetPoint(null);
+        }
 
         // Always finish the attack if it's started
 
         if (attackMSLeft > 0) {
-          if (
-            (targetEnemy &&
-              vector.distanceSquared(this, targetEnemy) <
-                maxAttackRange ** 2) ||
-            !attackFinished
-          ) {
+          if (withinRange || !attackFinished) {
             animateSword();
           }
         } else {
@@ -136,6 +145,7 @@ export const createSlashingEnemyA = (position: Vector) => {
       this.health.afterDeath(() => {
         if (slashingElement) {
           state.gameObjectsManager.removeObject(slashingElement);
+          state.statsManager.incrementEnemiesDied();
         }
       });
     },

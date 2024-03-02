@@ -40,7 +40,6 @@ export function createEnemy(o: Partial<Pick<Enemy, "x" | "y">> = {}): Enemy {
     y: o.y || 0,
     color: "red",
     radius: 7,
-    collisionCircle: { radius: 7 },
     health: createObjectHealthManager({
       maxHealth: 10,
     }),

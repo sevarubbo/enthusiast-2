@@ -37,17 +37,7 @@ export interface Collidable extends Vector {
   collision: ReturnType<typeof createObjectCollisionManager>;
 }
 
-export type WithCollision = CollidableCircle | Collidable;
-
 export interface CollidableCircle extends Vector {
-  /** @deprecated */
-  collisionCircle: { radius: number };
-  collision: ReturnType<
-    typeof createObjectCollisionManager<{ circleRadius: number }>
-  >;
-}
-
-export interface CollidableCircle2 extends Vector {
   collision: ReturnType<
     typeof createObjectCollisionManager<{ circleRadius: number }>
   >;

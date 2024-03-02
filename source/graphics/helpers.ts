@@ -80,16 +80,9 @@ export const drawObjectAsText = (
 export const drawDefaultRoundObjectView = (
   ctx: CanvasRenderingContext2D,
   state: State,
-  object: StateObject &
-    (
-      | { collisionCircle: { radius: number } }
-      | { collision: { circleRadius: number } }
-    ),
+  object: StateObject & { collision: { circleRadius: number } },
 ) => {
-  const collisionCircleRadius =
-    "collisionCircle" in object
-      ? object.collisionCircle.radius
-      : object.collision.circleRadius;
+  const collisionCircleRadius = object.collision.circleRadius;
 
   drawCircle(ctx, {
     position: state.cameraManager.toScreen({ x: object.x, y: object.y }),
@@ -103,12 +96,14 @@ export const drawDefaultRoundObjectView = (
       vector.create(0, -collisionCircleRadius - 10),
     );
 
-    drawHealthBar(
-      ctx,
-      healthBarPosition,
-      object.health.current,
-      object.health.max,
-    );
+    drawQueue.schedule(1, () => {
+      drawHealthBar(
+        ctx,
+        healthBarPosition,
+        object.health.current,
+        object.health.max,
+      );
+    });
   }
 
   if ("shootingAngle" in object) {
@@ -153,15 +148,9 @@ export const drawObjectShield = (
   // Object with shield
   object: StateObject & {
     shield: ReturnType<typeof createObjectShieldManager>;
-  } & (
-      | { collisionCircle: { radius: number } }
-      | { collision: { circleRadius: number } }
-    ),
+  } & { collision: { circleRadius: number } },
 ) => {
-  const collisionCircleRadius =
-    "collisionCircle" in object
-      ? object.collisionCircle.radius
-      : object.collision.circleRadius;
+  const collisionCircleRadius = object.collision.circleRadius;
 
   if (object.shield.active) {
     drawCircleOutline(ctx, {
@@ -199,16 +188,11 @@ export const drawObjectWeapon = (
   state: State,
   object: CollidableObject & { weapon: Weapon },
 ) => {
-  if (!("collisionCircle" in object) && !("circleRadius" in object.collision)) {
+  if (!("circleRadius" in object.collision)) {
     throw new Error("Object must have collisionCircle");
   }
 
-  let collisionCircleRadius =
-    "collisionCircle" in object ? object.collisionCircle.radius : null;
-
-  if (collisionCircleRadius === null && "circleRadius" in object.collision) {
-    collisionCircleRadius = object.collision.circleRadius;
-  }
+  const collisionCircleRadius = object.collision.circleRadius;
 
   if (!collisionCircleRadius) {
     throw new Error("Object must have collisionCircle");

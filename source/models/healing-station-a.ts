@@ -16,9 +16,8 @@ export const createHealingStationA = (position: Vector) => {
     ...createBaseObject(position),
     type: "healing_station_a",
 
-    collisionCircle: { radius: 150 },
     collision: createObjectCollisionManager({
-      circleRadius: 100,
+      circleRadius: 150,
       isSolid: false,
     }),
     healInterval: createIntervalManager(250),

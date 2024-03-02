@@ -13,7 +13,6 @@ export const createWeaponAItem = (position: Vector) =>
     ...createBaseObject(position),
     type: "weapon_a_item",
     color: "blue",
-    collisionCircle: { radius: 15 },
     collision: createObjectCollisionManager({
       circleRadius: 15,
     }),

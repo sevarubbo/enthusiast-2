@@ -11,9 +11,6 @@ export const createItemRewardA = (position: Vector) => {
   return {
     ...createBaseObject(position),
     type: "item_reward_a",
-    collisionCircle: {
-      radius: 15,
-    },
     collision: createObjectCollisionManager({
       circleRadius: 15,
     }),

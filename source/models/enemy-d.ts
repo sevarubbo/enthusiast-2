@@ -36,7 +36,6 @@ export function createEnemyD(
     type: "shooting_enemy_b",
     x: o.x || 0,
     y: o.y || 0,
-    collisionCircle: { radius: scale * 110 },
     health: createObjectHealthManager({
       maxHealth: BASE_HEALTH + scale * BASE_HEALTH,
       selfHealing: true,
@@ -77,8 +76,8 @@ export function createEnemyD(
           Math.sqrt(
             (targetEnemy.x - this.x) ** 2 + (targetEnemy.y - this.y) ** 2,
           ) -
-          ("collisionCircle" in targetEnemy
-            ? targetEnemy.collisionCircle.radius
+          ("collision" in targetEnemy && "circleRadius" in targetEnemy.collision
+            ? targetEnemy.collision.circleRadius
             : 0);
 
         // Aim at the stranger
@@ -95,7 +94,7 @@ export function createEnemyD(
             this,
             vector.scale(
               vector.fromAngle(this.movement.angle),
-              this.collisionCircle.radius,
+              this.collision.circleRadius,
             ),
           );
 

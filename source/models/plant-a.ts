@@ -52,6 +52,7 @@ export function createPlantA(position: Vector) {
 
       if (age < maxAge) {
         age += delta * GROWTH_SPEED;
+        age = Math.min(age, maxAge);
       } else {
         this.health.decrease(delta * DECAY_SPEED, this, state);
       }
