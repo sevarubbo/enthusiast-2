@@ -6,10 +6,7 @@ import {
   createObjectMovementManager,
   createObjectHealthManager,
 } from "services/state";
-import {
-  createObjectShieldManager,
-  createShield,
-} from "services/state/objectShieldManager";
+import { createShield } from "services/state/objectShieldManager";
 import { vector, type Vector } from "services/vector";
 import type { SlashingElement } from "./weapon-slashing";
 import type { State } from "services/state";
