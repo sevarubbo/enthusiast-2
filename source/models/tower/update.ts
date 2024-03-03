@@ -61,7 +61,7 @@ const canShootEnemy = (
         return false;
       }
 
-      if (!("health" in object)) {
+      if (!("health" in object) && !(object.type === "bullet")) {
         return true;
       }
 

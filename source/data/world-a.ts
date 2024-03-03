@@ -9,6 +9,7 @@ import { createBossA } from "models/boss-a";
 import { createDefenderA } from "models/defender-a";
 import { createEnemyFactoryA } from "models/enemy-factory-a";
 import { createItemShotgun } from "models/item-shotgun";
+import { createPlantBSeed } from "models/plant-b-seed";
 import { createPlantEaterA } from "models/plant-eater-a";
 import { createRawMaterialMine } from "models/raw-material-mine";
 import { createStrangerA } from "models/stranger-a";
@@ -205,6 +206,14 @@ export function createWorldA(): State {
         }),
         createWorkerA(getRandomPositionInCorner(STRANGER_CORNER + 1)),
         createWorkerA(getRandomPositionInCorner(STRANGER_CORNER - 1)),
+
+        createPlantBSeed(getRandomPositionInCorner(STRANGER_CORNER + 1)),
+        createPlantBSeed(getRandomPositionInCorner(STRANGER_CORNER + 1)),
+        createPlantBSeed(getRandomPositionInCorner(STRANGER_CORNER + 1)),
+        createRawMaterialMine({
+          position: getRandomPositionInCorner(STRANGER_CORNER + 1),
+          materialType: "A",
+        }),
 
         // Plants
         ...([1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 5] as const).map(

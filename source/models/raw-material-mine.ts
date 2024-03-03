@@ -4,7 +4,7 @@ import { createRawMaterialA } from "./raw-material-a";
 import { createIntervalManager, type State } from "services/state";
 import type { Vector } from "services/vector";
 
-const MAX_RAW_MATERIALS = 40;
+const MAX_RAW_MATERIALS = 100;
 
 export const createRawMaterialMine = ({
   position,

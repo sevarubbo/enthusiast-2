@@ -1,4 +1,5 @@
 import { vector } from "../vector";
+import { matrix } from "services/matrix";
 import type { StateObject } from "../../types";
 import type { Vector } from "../vector";
 import type { Movable, State } from "./types";
@@ -18,6 +19,12 @@ export interface ObjectMovementManager {
   targetPoint: Vector | null;
   setTargetPoint(targetPoint: Vector | null): void;
   moveToTargetPoint(object: Movable, v: Vector | null | undefined): void;
+
+  moveInBrownianMotion(
+    delta: number,
+    state: State,
+    object: StateObject & Movable,
+  ): void;
 
   update(delta: number, state: State, object: StateObject & Movable): void;
 }
@@ -91,6 +98,25 @@ export const createObjectMovementManager = (
       this.start(vector.direction(object, tp));
 
       return;
+    },
+
+    moveInBrownianMotion(delta, state, object) {
+      if (this.targetPoint) {
+        return;
+      }
+
+      const newTargetPoint = matrix.fitPoint(
+        vector.add(
+          object,
+          vector.create(
+            (Math.random() - 0.5) * 1000,
+            (Math.random() - 0.5) * 1000,
+          ),
+        ),
+        matrix.create(0, 0, state.world.size.x, state.world.size.y),
+      );
+
+      this.targetPoint = newTargetPoint;
     },
 
     update(delta, state, object) {

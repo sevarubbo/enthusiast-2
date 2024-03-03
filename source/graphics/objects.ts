@@ -344,8 +344,18 @@ function drawObject(
       return;
     }
 
+    case "plant_b_seed": {
+      drawQueue.schedule(3, () => {
+        drawObjectAsCircle(ctx, state, object);
+      });
+
+      return;
+    }
+
     default: {
-      drawQueue.schedule(2, (ctx2) => {
+      const zIndex = "collision" in object && object.collision.isSolid ? 3 : 2;
+
+      drawQueue.schedule(zIndex, (ctx2) => {
         if ("collision" in object) {
           drawDefaultRoundObjectView(ctx2, state, object);
         } else {
