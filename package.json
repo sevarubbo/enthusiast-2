@@ -18,12 +18,12 @@
     "eslint-config-seva": "sevarubbo/eslint-config-seva",
     "husky": "^9.0.11",
     "prettier": "^3.2.4",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   },
   "dependencies": {
-    "@typescript-eslint/parser": "^7.0.2"
+    "@typescript-eslint/parser": "^7.1.1"
   },
   "resolutions": {
-    "@typescript-eslint/parser": "^7.0.2"
+    "@typescript-eslint/parser": "^7.1.1"
   }
 }
