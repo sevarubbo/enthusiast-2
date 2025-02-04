@@ -1,4 +1,4 @@
-# enthusiast-2
+# Game
 
 A game or whatever this is that I built while being sick, available [here](https://spontaneous-naiad-f2c8de.netlify.app/).
 
